@@ -1,9 +1,11 @@
 plugins {
     id("java")
+    id("org.springframework.boot") version "3.2.5"
+    id("io.spring.dependency-management") version "1.1.5"
 }
 
 group = "com.emotionalcart"
-version = "1.0.0"
+version = "0.0.1-SNAPSHOT"
 
 repositories {
     mavenCentral()
@@ -11,7 +13,7 @@ repositories {
 
 dependencies {
     implementation(project(":common"))
-    testImplementation(platform("org.junit:junit-bom:5.10.0"))
+    testImplementation(platform("org.junit:junit-bom"))
     testImplementation("org.junit.jupiter:junit-jupiter")
 }
 
