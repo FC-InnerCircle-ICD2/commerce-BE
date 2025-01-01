@@ -1,0 +1,106 @@
+### **1. Technology Stack**
+- **Framework**: Java Spring Boot 3, Gradle, Java 21
+- **Dependencies**:
+    - Spring Web, Spring Data JPA, Lombok, MySQL driver
+- **Databases**: MySQL
+- **Caching/Task Queue**: Redis, EhCache, RabbitMQ, or Kafka (if needed)
+
+---
+
+### **2. Application Logic Design**
+- **Layer Separation**:
+    - **Controller**: Handles requests and responses
+    - **Service**: Business logic
+    - **Repository(DAO)**: Database interaction
+- **Separation of DTO and Entity**:
+    - DTO: Data transfer between Controller ↔ Service
+    - Entity: Directly interacts with the database
+- RestController handles requests/responses and does not Autowire Repositories directly (Controller → Service → Repository flow).
+- Avoid writing raw SQL unless optimizing performance.
+
+---
+
+### **3. Entities**
+- **Annotations**: Entity classes are annotated with `@Entity`.
+- **Lombok**: Use `@Data`, `@Getter`, `@Setter` to minimize boilerplate code.
+- **ID Configuration**:
+    - `@Id` + `@GeneratedValue(generator = "uuid")`
+    - `@GenericGenerator(name = "uuid", strategy = "uuid2")`
+- **Lazy Loading**: Use `FetchType.LAZY` by default for relationships.
+- **Validation**: Ensure data integrity using annotations like `@Valid`, `@NotNull`, `@Size`.
+
+---
+
+### **4. Repository (DAO)**
+- **Repository Interface**: Extend `JpaRepository`.
+- **Query Writing**:
+    - Use `@Query` for custom queries.
+    - Follow naming conventions for Query Methods (e.g., `findBy`, `countBy`).
+- **Entity Graph**:
+    - Use `@EntityGraph(attributePaths={"..."})` to avoid N+1 problems.
+- **DTO Mapping**: Map multi-join queries to DTOs.
+
+---
+
+### **5. Service**
+- **Class Structure**:
+    - Implementation: `class SvcService`
+- **Annotations**: Add `@Service` to indicate Spring management.
+- **Dependency Injection**: Use `@RequiredArgsConstructor` with `private final` fields.
+- **Transaction Management**:
+    - Use `@Transactional` for database consistency.
+
+---
+
+### **6. RestController**
+- Configure base routes with `@RestController` and `@RequestMapping("/api/v1")`.
+- Use HTTP method-specific mappings (e.g., `@GetMapping`, `@PostMapping`) for routing.
+- Wrap all method logic in try-catch and manage exceptions with a GlobalExceptionHandler.
+
+---
+
+### **7. Configuration and Properties**
+- Separate profiles using `application-{profile}.yml` for dev, test, prod environments.
+- Use `@ConfigurationProperties` for type-safe configuration.
+
+---
+
+### **8. Testing**
+- Use `@SpringBootTest` to load the application context.
+- Use in-memory DB (e.g., H2) for testing Repository layers.
+
+---
+
+### **9. Error Handling and Validation**
+- Use `@ControllerAdvice` and `@ExceptionHandler` for global and method-level exception handling.
+- Validate data integrity with Spring Validator (`@Valid`, `BindingResult`).
+- Define custom exceptions tailored to business logic.
+
+---
+
+### **10. Security**
+- JWT-based token authentication.
+- RBAC (Role-Based Access Control) or OAuth2 for authorization.
+- Apply filters to protect against SQL Injection, XSS, CSRF.
+
+---
+
+### **11. Performance and Scalability**
+- Caching: Use Redis or EhCache to reduce database load.
+- Asynchronous Tasks: Optimize response times with `@Async`.
+- Database Optimization: Use JPQL and fetch join (`JOIN FETCH`).
+
+---
+
+### **12. Build and Deployment**
+- Manage dependencies and builds with Gradle.
+- Containerize applications using Docker.
+- Set up CI/CD pipelines with Jenkins or GitHub Actions.
+
+---
+
+### **13. Best Practices**
+- Role Separation: Controllers handle HTTP requests, Services manage business logic, and Repositories handle database interactions.
+- Loose Coupling: Use dependency injection to improve testability and reusability.
+- Task Scheduling: Use `@Scheduled` and `@Async` for scheduled and asynchronous tasks.
+- Comprehensive Testing: Conduct regression, integration, and unit testing with JUnit and Spring Test.
