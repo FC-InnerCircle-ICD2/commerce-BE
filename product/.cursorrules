@@ -1,7 +1,7 @@
 ### **1. Technology Stack**
 - **Framework**: Java Spring Boot 3, Gradle, Java 21
 - **Dependencies**:
-    - Spring Web, Spring Data JPA, Lombok, MySQL driver
+    - Spring Web, Spring Data JPA, MySQL driver
 - **Databases**: MySQL
 - **Caching/Task Queue**: Redis, EhCache, RabbitMQ, or Kafka (if needed)
 
@@ -22,7 +22,6 @@
 
 ### **3. Entities**
 - **Annotations**: Entity classes are annotated with `@Entity`.
-- **Lombok**: Use `@Data`, `@Getter`, `@Setter` to minimize boilerplate code.
 - **ID Configuration**:
     - `@Id` + `@GeneratedValue(generator = "uuid")`
     - `@GenericGenerator(name = "uuid", strategy = "uuid2")`
