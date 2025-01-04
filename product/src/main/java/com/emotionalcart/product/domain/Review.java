@@ -31,17 +31,17 @@ public class Review extends BaseEntity {
 
     @Size(min = 1, max = 5)
     @NotNull
-    private String rating;
+    private Integer rating;
 
     private String content;
 
-    public Review(
+    private Review(
             String userId,
             String productId,
             String productName,
             String productOptionId,
             String productOptionName,
-            String rating,
+            Integer rating,
             String content
     ) {
         this.userId = userId;
@@ -51,5 +51,24 @@ public class Review extends BaseEntity {
         this.productOptionName = productOptionName;
         this.rating = rating;
         this.content = content;
+    }
+
+    public static Review of(
+            String userId,
+            String productId,
+            String productName,
+            String productOptionId,
+            String productOptionName,
+            Integer rating,
+            String content
+    ) {
+        return new Review(userId,
+                productId,
+                productName,
+                productOptionId,
+                productOptionName,
+                rating,
+                content
+        );
     }
 }

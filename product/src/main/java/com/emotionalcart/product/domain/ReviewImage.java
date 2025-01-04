@@ -41,7 +41,7 @@ public class ReviewImage extends com.emotionalcart.product.domain.BaseEntity {
     @NotNull
     private Integer fileOrder;
 
-    public ReviewImage(
+    private ReviewImage(
             Long reviewId,
             String bucketName,
             String originalFileName,
@@ -57,5 +57,25 @@ public class ReviewImage extends com.emotionalcart.product.domain.BaseEntity {
         this.fileType = fileType;
         this.fileSize = fileSize;
         this.fileOrder = fileOrder;
+    }
+
+    public static ReviewImage of(
+            Long reviewId,
+            String bucketName,
+            String originalFileName,
+            String filePath,
+            String fileType,
+            Long fileSize,
+            Integer fileOrder
+    ) {
+        return new ReviewImage(
+                reviewId,
+                bucketName,
+                originalFileName,
+                filePath,
+                fileType,
+                fileSize,
+                fileOrder
+        );
     }
 }

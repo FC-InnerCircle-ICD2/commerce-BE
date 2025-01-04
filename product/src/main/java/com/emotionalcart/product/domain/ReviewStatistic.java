@@ -23,7 +23,7 @@ public class ReviewStatistic extends BaseEntity {
     @NotNull
     private Integer reviewCount = 0;
 
-    public ReviewStatistic(
+    private ReviewStatistic(
             Long productId,
             Double averageRating,
             Integer reviewCount
@@ -31,5 +31,13 @@ public class ReviewStatistic extends BaseEntity {
         this.productId = productId;
         this.averageRating = averageRating;
         this.reviewCount = reviewCount;
+    }
+
+    public static ReviewStatistic of(
+            Long productId,
+            Double averageRating,
+            Integer reviewCount
+    ) {
+        return new ReviewStatistic(productId, averageRating, reviewCount);
     }
 }
