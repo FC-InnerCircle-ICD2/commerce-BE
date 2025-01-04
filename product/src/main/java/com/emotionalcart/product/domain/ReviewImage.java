@@ -1,48 +1,44 @@
 package com.emotionalcart.product.domain;
 
-
-import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.Table;
+import jakarta.validation.constraints.NotNull;
+import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-import lombok.Setter;
-import org.hibernate.annotations.Comment;
 
 @Entity
-@Table(name = "review_image")
+@Table
 @Getter
-@Setter
-@NoArgsConstructor
+@NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class ReviewImage extends com.emotionalcart.product.domain.BaseEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column(name = "review_id", nullable = false)
+    @NotNull
     private Long reviewId;
 
-    @Column(name = "bucket_name", nullable = false, length = 100)
+    @NotNull
     private String bucketName;
 
-    @Column(name = "original_file_name", nullable = false, length = 260)
+    @NotNull
     private String originalFileName;
 
-    @Column(name = "file_path", nullable = false)
+    @NotNull
     private String filePath;
 
-    @Column(name = "file_type", nullable = false)
+    @NotNull
     private String fileType;
 
-    @Column(name = "file_size", nullable = false)
+    @NotNull
     private Long fileSize;
 
-    @Column(name = "file_order", nullable = false)
-    @Comment("파일 순서")
+    @NotNull
     private Integer fileOrder;
 
     public ReviewImage(

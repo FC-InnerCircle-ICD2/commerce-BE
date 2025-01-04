@@ -1,27 +1,26 @@
 package com.emotionalcart.product.domain;
 
-import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.Id;
 import jakarta.persistence.Table;
+import jakarta.validation.constraints.NotNull;
+import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-import lombok.Setter;
 
 @Entity
-@Table(name = "review_statistic")
+@Table
 @Getter
-@Setter
-@NoArgsConstructor
-public class ReviewStatistic extends com.emotionalcart.product.domain.BaseEntity {
+@NoArgsConstructor(access = AccessLevel.PROTECTED)
+public class ReviewStatistic extends BaseEntity {
 
     @Id
     private Long productId;
 
-    @Column(name = "avarage_rating", nullable = false)
+    @NotNull
     private Double averageRating = 0.0;
 
-    @Column(name = "review_count", nullable = false)
+    @NotNull
     private Integer reviewCount = 0;
 
     public ReviewStatistic(

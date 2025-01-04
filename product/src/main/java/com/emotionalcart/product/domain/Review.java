@@ -1,42 +1,38 @@
 package com.emotionalcart.product.domain;
 
 import jakarta.persistence.*;
+import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
+import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-import lombok.Setter;
 
 @Entity
-@Table(name = "review")
+@Table
 @Getter
-@Setter
-@NoArgsConstructor
-public class Review extends com.emotionalcart.product.domain.BaseEntity {
+@NoArgsConstructor(access = AccessLevel.PROTECTED)
+public class Review extends BaseEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column(name = "user_id", nullable = false)
+    @NotNull
     private String userId;
 
-    @Column(name = "product_id", nullable = false)
+    @NotNull
     private String productId;
 
-    @Column(name = "product_name")
     private String productName;
 
-    @Column(name = "product_option_id")
     private String productOptionId;
 
-    @Column(name = "product_option_name")
     private String productOptionName;
 
     @Size(min = 1, max = 5)
-    @Column(name = "rating", nullable = false)
+    @NotNull
     private String rating;
 
-    @Column(name = "content")
     private String content;
 
     public Review(
