@@ -5,6 +5,7 @@ import jakarta.persistence.*;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import org.springframework.util.CollectionUtils;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -35,7 +36,7 @@ public class ProductOption {
     private boolean required = false;
 
     @OneToMany(mappedBy = "productOption", fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
-    private List<ProductOptionDetail> productOptionDetails = new ArrayList<>();
+    private List<ProductOptionDetail> productOptionDetails;
 
     public static ProductOption of(Product product) {
         ProductOption option = new ProductOption();
@@ -45,6 +46,9 @@ public class ProductOption {
     }
 
     public void addDetail(ProductOptionDetail detail) {
+        if (CollectionUtils.isEmpty(productOptionDetails)) {
+            productOptionDetails = new ArrayList<>();
+        }
         productOptionDetails.add(detail);
     }
 
