@@ -21,9 +21,13 @@ public class ProductImage extends BaseImageEntity {
     @NotNull
     private Long productId;
 
+    @NotNull
+    private boolean isRepresentative;
+
     private ProductImage(
             Long productOptionId,
             Long productId,
+            boolean isRepresentative,
             String bucketName,
             String originalFileName,
             String filePath,
@@ -34,5 +38,6 @@ public class ProductImage extends BaseImageEntity {
         super(bucketName, originalFileName, filePath, fileType, fileSize, fileOrder);
         this.productOptionId = productOptionId;
         this.productId = productId;
+        this.isRepresentative = isRepresentative;
     }
 }
