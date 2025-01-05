@@ -1,11 +1,19 @@
 package com.emotionalcart.order.domain.entity;
 
 import jakarta.persistence.*;
+import lombok.AccessLevel;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 
+/**
+ * 주문 항목
+ *
+ * @author yeji cho
+ * @since 2025.1.5
+ */
 @Getter
 @Entity
-@Table(name = "order_item")
+@NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class OrderItem {
 
     @Id
