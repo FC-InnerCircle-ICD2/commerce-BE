@@ -28,7 +28,7 @@ public class ProductOption extends BaseEntity {
 
     @Size(min = 1)
     @NotNull
-    private Integer order;
+    private Integer optionOrder;
 
     @NotNull
     private Boolean isRequired;
@@ -43,7 +43,7 @@ public class ProductOption extends BaseEntity {
             Long productId,
             String name,
             Integer quantity,
-            Integer order,
+            Integer optionOrder,
             Boolean isRequired,
             Integer sellPrice,
             String status
@@ -51,7 +51,7 @@ public class ProductOption extends BaseEntity {
         this.productId = productId;
         this.name = name;
         this.quantity = quantity;
-        this.order = order;
+        this.optionOrder = optionOrder;
         this.isRequired = isRequired;
         this.sellPrice = sellPrice;
         this.status = status;
