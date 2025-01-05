@@ -1,6 +1,5 @@
 package com.emotionalcart.order.presentation.advice;
 
-import com.emotionalcart.order.presentation.util.ApiUtil;
 import com.emotionalcart.order.presentation.util.enums.ErrorMessages;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
@@ -22,30 +21,38 @@ public class GlobalExceptionHandler {
      * IllegalArgumentException 처리
      *
      * @param ex 발생한 IllegalArgumentException
-     * @return ResponseEntity<ApiUtil.ErrorResponse> 잘못된 요청 응답
+     * @return ResponseEntity<ErrorResponse> 잘못된 요청 응답
      */
     @ExceptionHandler(IllegalArgumentException.class)
-    public ResponseEntity<ApiUtil.ErrorResponse> handleIllegalArgumentException(IllegalArgumentException ex) {
+    public ResponseEntity<ErrorResponse> handleIllegalArgumentException(IllegalArgumentException ex) {
         // 예외 메시지 로깅
         log.error("IllegalArgumentException 발생: {}", ex.getMessage());
 
         // 사용자 친화적인 메시지 반환
-        return ApiUtil.error(HttpStatus.BAD_REQUEST, ErrorMessages.BAD_REQUEST.getMessage());
+        ErrorResponse errorResponse =
+            new ErrorResponse(HttpStatus.BAD_REQUEST.value(), ErrorMessages.BAD_REQUEST.getMessage());
+        return ResponseEntity.badRequest().body(errorResponse);
     }
 
     /**
      * 모든 예외 처리
      *
      * @param ex 발생한 Exception
-     * @return ResponseEntity<ApiUtil.ErrorResponse> 서버 오류 응답
+     * @return ResponseEntity<ErrorResponse> 서버 오류 응답
      */
     @ExceptionHandler(Exception.class)
-    public ResponseEntity<ApiUtil.ErrorResponse> handleGlobalException(Exception ex) {
+    public ResponseEntity<ErrorResponse> handleGlobalException(Exception ex) {
         // 예외 메시지 로깅
         log.error("Exception 발생: {}", ex.getMessage(), ex);
 
         // 사용자 친화적인 메시지 반환
-        return ApiUtil.error(HttpStatus.INTERNAL_SERVER_ERROR, ErrorMessages.INTERNAL_SERVER_ERROR.getMessage());
+        ErrorResponse errorResponse =
+            new ErrorResponse(HttpStatus.INTERNAL_SERVER_ERROR.value(), ErrorMessages.INTERNAL_SERVER_ERROR.getMessage());
+        return ResponseEntity.internalServerError().body(errorResponse);
+    }
+
+    public record ErrorResponse(int errorCode, String errorMessage) {
+
     }
 
 }
