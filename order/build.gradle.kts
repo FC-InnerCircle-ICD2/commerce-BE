@@ -12,7 +12,6 @@ repositories {
 }
 
 dependencies {
-    implementation(project(":common"))
     testImplementation(platform("org.junit:junit-bom"))
     testImplementation("org.junit.jupiter:junit-jupiter")
 }
