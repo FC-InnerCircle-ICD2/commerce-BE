@@ -1,13 +1,19 @@
 package com.emotionalcart.order.domain.entity;
 
 import jakarta.persistence.*;
+import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
+/**
+ * 주문 수신자
+ *
+ * @author yeji cho
+ * @since 2025.1.5
+ */
 @Entity
 @Getter
-@NoArgsConstructor
-@Table
+@NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class OrderRecipient {
 
     @Id
@@ -34,22 +40,10 @@ public class OrderRecipient {
     private String recipientsPhone;
 
     /**
-     * 우편번호
+     * 주소 정보 (우편번호, 기본주소, 상세주소)
      */
-    @Column(nullable = false, length = 10)
-    private String postalCode;
-
-    /**
-     * 기본주소
-     */
-    @Column(nullable = false, length = 50)
-    private String defaultAddress;
-
-    /**
-     * 상세주소
-     */
-    @Column(nullable = false, length = 100)
-    private String detailAddress;
+    @Embedded
+    private OrderAddress address;
 
     /**
      * 주문요청사항
