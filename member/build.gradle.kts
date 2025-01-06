@@ -12,7 +12,15 @@ repositories {
 }
 
 dependencies {
-    implementation(project(":common"))
+    implementation(project(":common")) // 공통 모듈 사용
+    implementation("org.springframework.boot:spring-boot-starter-cache")
+    implementation("org.springframework.boot:spring-boot-starter-data-jpa")
+    implementation("org.springframework.boot:spring-boot-starter-validation")
+    implementation("org.springframework.boot:spring-boot-starter-web")
+    compileOnly("org.projectlombok:lombok")
+    runtimeOnly("com.mysql:mysql-connector-j")  // MySQL 드라이버
+    annotationProcessor("org.projectlombok:lombok")
+    developmentOnly("org.springframework.boot:spring-boot-devtools")
     testImplementation(platform("org.junit:junit-bom"))
     testImplementation("org.junit.jupiter:junit-jupiter")
 }
