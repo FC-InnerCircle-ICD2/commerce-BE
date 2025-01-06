@@ -42,7 +42,7 @@ public class OrderItem extends BaseEntity {
      */
     @Embedded
     @Column(nullable = false)
-    private Price orderItemPrice;
+    private Money orderItemPrice;
 
     /**
      * 수량

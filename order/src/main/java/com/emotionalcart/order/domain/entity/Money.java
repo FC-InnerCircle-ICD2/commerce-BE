@@ -8,7 +8,7 @@ import java.math.BigDecimal;
 
 @Embeddable
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-public class Price {
+public class Money {
 
     /**
      * 금액
