@@ -53,12 +53,6 @@ public class Order {
     private Long orderMemberId;
 
     /**
-     * 삭제여부
-     */
-    @Column(nullable = false)
-    private Boolean isDeleted;
-
-    /**
      * 주문상태
      */
     @Enumerated(EnumType.STRING)
