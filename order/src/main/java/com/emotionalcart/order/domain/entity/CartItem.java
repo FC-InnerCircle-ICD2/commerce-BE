@@ -1,5 +1,6 @@
 package com.emotionalcart.order.domain.entity;
 
+import com.emotionalcart.order.common.generator.IdGenerator;
 import jakarta.persistence.*;
 import lombok.AccessLevel;
 import lombok.Getter;
@@ -22,7 +23,7 @@ import java.time.LocalDateTime;
 public class CartItem {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @IdGenerator
     private Long id;
 
     /**
