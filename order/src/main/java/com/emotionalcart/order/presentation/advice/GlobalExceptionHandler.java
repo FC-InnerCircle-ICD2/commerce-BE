@@ -1,6 +1,6 @@
 package com.emotionalcart.order.presentation.advice;
 
-import com.emotionalcart.order.presentation.util.enums.ErrorMessages;
+import com.emotionalcart.order.presentation.util.enums.OrderErrorCode;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -30,7 +30,7 @@ public class GlobalExceptionHandler {
 
         // 사용자 친화적인 메시지 반환
         ErrorResponse errorResponse =
-            new ErrorResponse(HttpStatus.BAD_REQUEST.value(), ErrorMessages.BAD_REQUEST.getMessage());
+            new ErrorResponse(HttpStatus.BAD_REQUEST.value(), OrderErrorCode.BAD_REQUEST.getMessage());
         return ResponseEntity.badRequest().body(errorResponse);
     }
 
@@ -47,7 +47,7 @@ public class GlobalExceptionHandler {
 
         // 사용자 친화적인 메시지 반환
         ErrorResponse errorResponse =
-            new ErrorResponse(HttpStatus.INTERNAL_SERVER_ERROR.value(), ErrorMessages.INTERNAL_SERVER_ERROR.getMessage());
+            new ErrorResponse(HttpStatus.INTERNAL_SERVER_ERROR.value(), OrderErrorCode.INTERNAL_SERVER_ERROR.getMessage());
         return ResponseEntity.internalServerError().body(errorResponse);
     }
 
