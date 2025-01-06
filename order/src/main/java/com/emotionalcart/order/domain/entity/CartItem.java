@@ -35,7 +35,7 @@ public class CartItem {
      */
     @Embedded
     @Column(nullable = false)
-    private Price totalPrice;
+    private Money totalPrice;
 
     /**
      * 수정일시

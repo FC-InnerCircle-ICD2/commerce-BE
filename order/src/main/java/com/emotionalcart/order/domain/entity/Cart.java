@@ -32,7 +32,7 @@ public class Cart extends AuditableEntity {
      */
     @Embedded
     @Column(nullable = false)
-    private Price totalPrice;
+    private Money totalPrice;
 
     /**
      * 장바구니 담은 일시

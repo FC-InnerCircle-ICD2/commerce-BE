@@ -39,7 +39,7 @@ public class Order {
      */
     @Embedded
     @Column(nullable = false)
-    private Price totalPrice;
+    private Money totalPrice;
 
     /**
      * 주문일시

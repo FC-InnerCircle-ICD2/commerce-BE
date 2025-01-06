@@ -39,7 +39,7 @@ public class OrderItemHistory extends AuditableEntity {
      */
     @Embedded
     @Column(nullable = false)
-    private Price orderItemPrice;
+    private Money orderItemPrice;
 
     /**
      * 수량
