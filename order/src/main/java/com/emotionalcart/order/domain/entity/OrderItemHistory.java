@@ -1,13 +1,13 @@
 package com.emotionalcart.order.domain.entity;
 
 import com.emotionalcart.order.common.generator.IdGenerator;
+import jakarta.persistence.Column;
+import jakarta.persistence.Embedded;
 import jakarta.persistence.Entity;
 import jakarta.persistence.Id;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-
-import java.time.LocalDateTime;
 
 /**
  * 주문 항목 내역
@@ -18,7 +18,7 @@ import java.time.LocalDateTime;
 @Getter
 @Entity
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-public class OrderItemHistory {
+public class OrderItemHistory extends AuditableEntity {
 
     @Id
     @IdGenerator
@@ -37,21 +37,13 @@ public class OrderItemHistory {
     /**
      * 결제 금액
      */
-    private int orderItemPrice;
+    @Embedded
+    @Column(nullable = false)
+    private Price orderItemPrice;
 
     /**
      * 수량
      */
     private int quantity;
-
-    /**
-     * 생성일시
-     */
-    private LocalDateTime createdAt;
-
-    /**
-     * 수정일시
-     */
-    private LocalDateTime updatedAt;
 
 }

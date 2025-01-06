@@ -5,9 +5,6 @@ import jakarta.persistence.*;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-import org.springframework.data.annotation.CreatedDate;
-
-import java.time.LocalDateTime;
 
 /**
  * 주문 항목
@@ -18,7 +15,7 @@ import java.time.LocalDateTime;
 @Getter
 @Entity
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-public class OrderItem {
+public class OrderItem extends BaseEntity {
 
     @Id
     @IdGenerator
@@ -43,18 +40,14 @@ public class OrderItem {
     /**
      * 결제 금액
      */
+    @Embedded
     @Column(nullable = false)
-    private int orderItemPrice;
+    private Price orderItemPrice;
 
     /**
      * 수량
      */
     @Column(nullable = false)
-    private Integer quantity;
+    private int quantity;
 
-    /**
-     * 생성일시
-     */
-    @CreatedDate
-    private LocalDateTime createdAt;
 }

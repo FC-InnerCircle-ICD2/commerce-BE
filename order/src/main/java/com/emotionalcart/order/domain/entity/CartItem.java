@@ -5,8 +5,6 @@ import jakarta.persistence.*;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-import org.springframework.data.annotation.CreatedBy;
-import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.annotation.LastModifiedDate;
 
 import java.time.LocalDateTime;
@@ -35,26 +33,9 @@ public class CartItem {
     /**
      * 총 항목 가격
      */
+    @Embedded
     @Column(nullable = false)
-    private int totalPrice;
-
-    /**
-     * 주문일시
-     */
-    @CreatedDate
-    private LocalDateTime orderedAt;
-
-    /**
-     * 주문 회원 식별자
-     */
-    @CreatedBy
-    private Long orderMemberId;
-
-    /**
-     * 생성일시
-     */
-    @Column(nullable = false)
-    private LocalDateTime createdAt;
+    private Price totalPrice;
 
     /**
      * 수정일시
