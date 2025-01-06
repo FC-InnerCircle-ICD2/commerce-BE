@@ -1,5 +1,6 @@
 package com.emotionalcart.order.domain.entity;
 
+import com.emotionalcart.order.common.generator.IdGenerator;
 import jakarta.persistence.*;
 import lombok.AccessLevel;
 import lombok.Getter;
@@ -17,7 +18,7 @@ import lombok.NoArgsConstructor;
 public class OrderRecipient {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @IdGenerator
     private Long id;
 
     /**

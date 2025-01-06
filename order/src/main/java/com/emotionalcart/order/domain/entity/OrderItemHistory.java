@@ -1,6 +1,6 @@
 package com.emotionalcart.order.domain.entity;
 
-import jakarta.persistence.Column;
+import com.emotionalcart.order.common.generator.IdGenerator;
 import jakarta.persistence.Entity;
 import jakarta.persistence.Id;
 import lombok.AccessLevel;
@@ -20,7 +20,8 @@ import java.time.LocalDateTime;
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class OrderItemHistory {
 
-    @Id @Column(nullable = false)
+    @Id
+    @IdGenerator
     private Long id;
 
     /**
