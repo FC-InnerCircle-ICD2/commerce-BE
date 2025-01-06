@@ -4,6 +4,9 @@ import jakarta.persistence.*;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import org.springframework.data.annotation.CreatedDate;
+
+import java.time.LocalDateTime;
 
 /**
  * 주문 항목
@@ -20,7 +23,8 @@ public class OrderItem {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @ManyToOne @JoinColumn(name = "order_id")
+    @ManyToOne
+    @JoinColumn(name = "order_id")
     private Order order;
 
     /**
@@ -30,21 +34,26 @@ public class OrderItem {
     private Long productId;
 
     /**
-     * 상품 옵션 아이디
+     * 상품 이름
      */
     @Column(nullable = false)
-    private Long productOptionsId;
+    private Long productName;
 
     /**
-     * 최종 가격 : 주문 갯수 + 단가
+     * 결제 금액
      */
     @Column(nullable = false)
-    private Integer totalPrice;
+    private int orderItemPrice;
 
     /**
-     * 주문 항목 별 가격
+     * 수량
      */
     @Column(nullable = false)
-    private Integer orderItemPrice;
+    private Integer quantity;
 
+    /**
+     * 생성일시
+     */
+    @CreatedDate
+    private LocalDateTime createdAt;
 }
