@@ -7,7 +7,6 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import org.springframework.data.annotation.CreatedBy;
 import org.springframework.data.annotation.CreatedDate;
-import org.springframework.data.annotation.LastModifiedDate;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
@@ -22,7 +21,7 @@ import java.util.List;
 @Getter
 @Entity
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-public class Cart {
+public class Cart extends AuditableEntity {
 
     @Id
     @IdGenerator
@@ -31,38 +30,21 @@ public class Cart {
     /**
      * 총 주문 금액
      */
+    @Embedded
     @Column(nullable = false)
-    private int totalPrice;
+    private Price totalPrice;
 
     /**
-     * 주문일시
+     * 장바구니 담은 일시
      */
     @CreatedDate
-    private LocalDateTime orderedAt;
+    private LocalDateTime cartedAt;
 
     /**
-     * 주문 회원 식별자
+     * 장바구니 담은 회원 식별자
      */
     @CreatedBy
-    private Long orderMemberId;
-
-    /**
-     * 생성일시
-     */
-    @Column(nullable = false)
-    private LocalDateTime createdAt;
-
-    /**
-     * 수정일시
-     */
-    @LastModifiedDate
-    private LocalDateTime updatedAt;
-
-    /**
-     * 만료일시
-     */
-    @Column(nullable = false)
-    private LocalDateTime expiredAt;
+    private Long cartMemberId;
 
     /**
      * CartItem과의 연관관계

@@ -32,13 +32,13 @@ public class OrderRecipient {
      * 수신자명
      */
     @Column(nullable = false, length = 50)
-    private String recipientsName;
+    private String recipientName;
 
     /**
      * 수신자 전화번호
      */
     @Column(nullable = false, length = 11)
-    private String recipientsPhone;
+    private String recipientPhone;
 
     /**
      * 주소 정보 (우편번호, 기본주소, 상세주소)
