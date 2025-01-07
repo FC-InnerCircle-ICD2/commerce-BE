@@ -44,12 +44,6 @@ public class CartItem {
     private LocalDateTime updatedAt;
 
     /**
-     * 만료일시
-     */
-    @Column(nullable = false)
-    private LocalDateTime expiredAt;
-
-    /**
      * Cart와의 연관관계
      */
     @ManyToOne(fetch = FetchType.LAZY)
