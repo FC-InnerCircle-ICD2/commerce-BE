@@ -21,7 +21,7 @@ import java.util.List;
 @Getter
 @Entity
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-public class Order {
+public class Orders {
 
     @Id
     @IdGenerator
@@ -63,13 +63,13 @@ public class Order {
     /**
      * 주문 항목 목록
      */
-    @OneToMany(mappedBy = "order", cascade = CascadeType.ALL, orphanRemoval = true)
+    @OneToMany(mappedBy = "orders", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<OrderItem> orderItems;
 
     /**
      * 수신자 정보
      */
-    @OneToOne(mappedBy = "order", cascade = CascadeType.ALL, orphanRemoval = true)
+    @OneToOne(mappedBy = "orders", cascade = CascadeType.ALL, orphanRemoval = true)
     private OrderRecipient orderRecipient;
 
 }

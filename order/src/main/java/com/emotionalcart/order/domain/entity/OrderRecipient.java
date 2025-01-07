@@ -26,7 +26,7 @@ public class OrderRecipient {
      */
     @OneToOne
     @JoinColumn(name = "order_id", nullable = false)
-    private Order order;
+    private Orders orders;
 
     /**
      * 수신자명
