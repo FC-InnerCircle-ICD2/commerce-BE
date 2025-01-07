@@ -7,7 +7,7 @@ import org.springframework.http.HttpStatus;
 public class ProductException extends RuntimeException {
 
     private final HttpStatus httpStatus;
-    private final Integer errorCode;
+    private final String errorCode;
     private final String errorMessage;
 
     public ProductException(ErrorCode errorCode) {

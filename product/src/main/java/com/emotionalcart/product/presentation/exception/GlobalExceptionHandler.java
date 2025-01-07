@@ -35,6 +35,6 @@ public class GlobalExceptionHandler {
                              .body(response);
     }
 
-    public record ExceptionResponse(int errorCode, String errorMessage) {
+    public record ExceptionResponse(String errorCode, String errorMessage) {
     }
 }
