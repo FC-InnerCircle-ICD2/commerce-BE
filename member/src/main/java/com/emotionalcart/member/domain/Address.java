@@ -1,44 +1,82 @@
 package com.emotionalcart.member.domain;
 
 import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
+import jakarta.validation.constraints.NotNull;
+import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-import lombok.Setter;
 
 @Entity
-@Table
 @Getter
-@Setter
-@NoArgsConstructor
-@AllArgsConstructor
+@NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class Address extends BaseEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column(nullable = false)
+    @NotNull
     private String memberId;
 
-    @Column(nullable = false)
+    @NotNull
     private String recipientName;
 
-    @Column(nullable = false)
+    @NotNull
     private String recipientPhone;
 
-    @Column(nullable = false)
+    @NotNull
     private String postalCode;
 
-    @Column(nullable = false)
+    @NotNull
     private String defaultAddress;
 
-    @Column(nullable = false)
+    @NotNull
     private String detailAddress;
 
-    @Column(nullable = false)
+    @NotNull
     private String commonPassword;
 
     private Boolean isDefault = false;
 
+    private Address(
+            String memberId,
+            String recipientName,
+            String recipientPhone,
+            String postalCode,
+            String defaultAddress,
+            String detailAddress,
+            String commonPassword,
+            Boolean isDefault
+    ) {
+        this.memberId = memberId;
+        this.recipientName = recipientName;
+        this.recipientPhone = recipientPhone;
+        this.postalCode = postalCode;
+        this.defaultAddress = defaultAddress;
+        this.detailAddress = detailAddress;
+        this.commonPassword = commonPassword;
+        this.isDefault = isDefault;
+    }
+
+    public static Address of(
+            String memberId,
+            String recipientName,
+            String recipientPhone,
+            String postalCode,
+            String defaultAddress,
+            String detailAddress,
+            String commonPassword,
+            Boolean isDefault
+    ) {
+        return new Address(
+                memberId,
+                recipientName,
+                recipientPhone,
+                postalCode,
+                defaultAddress,
+                detailAddress,
+                commonPassword,
+                isDefault
+        );
+    }
 }
