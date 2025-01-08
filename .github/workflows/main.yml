@@ -1,0 +1,48 @@
+name: Java CI with Gradle
+
+on:
+  push:
+    branches: [ 'main' ]
+  pull_request:
+    types: [ opened, reopened ]
+    branches: [ 'main' ]
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+      - name: Set up JDK 21
+        uses: actions/setup-java@v3
+        with:
+          java-version: '21'
+          distribution: 'corretto'
+
+      #- name: create properties for CI Test
+      #  run: |
+      #    cd src/main/resources
+      #    echo "${{ secrets.OAUTH_PROPERTIES }}" > oauth.properties
+      #    echo "${{ secrets.SECURITY_PROPERTIES }}" > security.properties
+      #    echo "${{ secrets.APPLICATION_PROPERTIES }}" > application.properties
+
+      - name: Grant execute permission for gradlew
+        run: chmod +x gradlew
+
+      - name: Build with Gradle
+        run: ./gradlew clean build -x test
+
+      - name: Run Tests
+        run: |
+          ./gradlew --info test
+      #- name: Upload Artifact
+      #  uses: actions/upload-artifact@v3
+      #  with:
+      #    name: springboot-jar
+      #    path: build/libs/*.jar
+
+      - name: Notify Discord on Failure
+        if: failure()
+        run: |
+          curl -H "Content-Type: application/json" -X POST -d '{
+            "content": "CI build failed on commit: ${{ github.sha }}. Check the Actions tab for more details. \n(from: ${{ github.head_ref }} > ${{ github.base_ref }} "
+          }' ${{ secrets.DISCORD_WEBHOOK_URL }}
