@@ -1,0 +1,17 @@
+spring:
+  application:
+    name: order-service
+  flyway:
+    enabled: false
+  datasource:
+    url: jdbc:mysql://localhost:3306/camsungcart  # 데이터베이스 URL
+    username: your_username                              # 데이터베이스 사용자명
+    password: your_password                              # 데이터베이스 비밀번호
+    driver-class-name: com.mysql.cj.jdbc.Driver          # MySQL JDBC 드라이버 클래스
+  jpa:
+    hibernate:
+      ddl-auto: create-drop                                   # 스키마 자동 생성/업데이트 옵션 (create, update, validate, none)
+    show-sql: true                                       # 쿼리 로깅 활성화 (테스트 중 유용)
+    database-platform: org.hibernate.dialect.MySQL8Dialect # Hibernate Dialect 지정
+server:
+  port: 9999
