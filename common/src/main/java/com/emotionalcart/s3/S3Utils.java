@@ -1,11 +1,12 @@
 package com.emotionalcart.s3;
 
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Component;
 import org.springframework.web.multipart.MultipartFile;
 import software.amazon.awssdk.core.sync.RequestBody;
 import software.amazon.awssdk.services.s3.S3Client;
+import software.amazon.awssdk.services.s3.model.DeleteObjectRequest;
+import software.amazon.awssdk.services.s3.model.DeleteObjectResponse;
 import software.amazon.awssdk.services.s3.model.PutObjectRequest;
 import software.amazon.awssdk.services.s3.model.PutObjectResponse;
 
@@ -20,29 +21,39 @@ public class S3Utils {
         this.s3Client = s3Client;
     }
 
-    public ResponseEntity<String> uploadFile(String bucketName, String directory, MultipartFile file) {
-        try {
-            String key = directory + "/" + file.getOriginalFilename();
-            log.info("upload key: " + key);
+    public String uploadFile(String bucketName, String directory, String id, MultipartFile file) throws Exception {
+        String key = directory + "/" + id + "/" + file.getOriginalFilename();
+        log.info("upload key: " + key);
 
-            PutObjectRequest request = PutObjectRequest.builder()
-                                                       .bucket(bucketName)
-                                                       .key(key)
-                                                       .build();
+        PutObjectRequest request = PutObjectRequest.builder()
+                                                   .bucket(bucketName)
+                                                   .key(key)
+                                                   .build();
 
-            PutObjectResponse response = s3Client.putObject(request, RequestBody.fromBytes(file.getBytes()));
+        PutObjectResponse response = s3Client.putObject(request, RequestBody.fromBytes(file.getBytes()));
 
-            if (response.sdkHttpResponse().isSuccessful()) {
-                return ResponseEntity.ok(createS3FileUrl(bucketName, key));
-            } else {
-                return ResponseEntity.internalServerError().body("Cannot upload file: " + file.getOriginalFilename());
-            }
-        } catch (IOException e) {
-            return ResponseEntity.internalServerError().body("Cannot upload file: " + file.getOriginalFilename());
+        if (response.sdkHttpResponse().isSuccessful()) {
+            return createS3FileUrl(bucketName, key);
+        } else {
+            throw new RuntimeException(response.sdkHttpResponse().statusText().toString());
         }
     }
 
     private String createS3FileUrl(String bucketName, String key) {
         return String.format("https://%s.s3.amazonaws.com/%s", bucketName, key);
+    }
+
+
+    public void deleteFile(String bucketName, String key) throws RuntimeException {
+        DeleteObjectRequest deleteRequest = DeleteObjectRequest.builder()
+                                                               .bucket(bucketName)
+                                                               .key(key)
+                                                               .build();
+
+        DeleteObjectResponse response = s3Client.deleteObject(deleteRequest);
+
+        if (!response.sdkHttpResponse().isSuccessful()) {
+            throw new RuntimeException(response.sdkHttpResponse().statusText().toString());
+        }
     }
 }
