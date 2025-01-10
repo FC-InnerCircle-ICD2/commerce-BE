@@ -1,5 +1,6 @@
 package com.emotionalcart.s3;
 
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
 import org.springframework.web.multipart.MultipartFile;
@@ -14,12 +15,9 @@ import java.io.IOException;
 
 @Slf4j
 @Component
+@RequiredArgsConstructor
 public class S3Utils {
     private final S3Client s3Client;
-
-    public S3Utils(S3Client s3Client) {
-        this.s3Client = s3Client;
-    }
 
     public String uploadFile(String bucketName, String directory, String id, MultipartFile file) throws Exception {
         String key = directory + "/" + id + "/" + file.getOriginalFilename();
@@ -34,15 +32,13 @@ public class S3Utils {
 
         if (response.sdkHttpResponse().isSuccessful()) {
             return createS3FileUrl(bucketName, key);
-        } else {
-            throw new RuntimeException(response.sdkHttpResponse().statusText().toString());
         }
+        throw new RuntimeException(response.sdkHttpResponse().statusText().toString());
     }
 
     private String createS3FileUrl(String bucketName, String key) {
         return String.format("https://%s.s3.amazonaws.com/%s", bucketName, key);
     }
-
 
     public void deleteFile(String bucketName, String key) throws RuntimeException {
         DeleteObjectRequest deleteRequest = DeleteObjectRequest.builder()
