@@ -1,6 +1,6 @@
 package com.emotionalcart.order.domain.entity;
 
-import com.emotionalcart.order.common.generator.IdGenerator;
+import com.emotionalcart.order.domain.generator.IdGenerator;
 import jakarta.persistence.*;
 import lombok.AccessLevel;
 import lombok.Getter;

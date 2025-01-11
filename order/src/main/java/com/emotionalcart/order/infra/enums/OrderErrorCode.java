@@ -1,4 +1,4 @@
-package com.emotionalcart.order.presentation.util.enums;
+package com.emotionalcart.order.infra.enums;
 
 import lombok.Getter;
 import org.springframework.http.HttpStatus;

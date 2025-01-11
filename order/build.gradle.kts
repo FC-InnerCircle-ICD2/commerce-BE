@@ -1,5 +1,5 @@
 plugins {
-    id("java")
+    java
     id("org.springframework.boot") version "3.4.1"
     id("io.spring.dependency-management") version "1.1.5"
 }
@@ -8,13 +8,17 @@ val springCloudVersion by extra("2024.0.0")
 group = "com.emotionalcart"
 version = "0.0.1-SNAPSHOT"
 
+java {
+    toolchain {
+        languageVersion = JavaLanguageVersion.of(21)
+    }
+}
+
 repositories {
     mavenCentral()
 }
-
 dependencies {
-
-    implementation(project(":common"))
+    implementation("org.springframework.boot:spring-boot-starter")
     // https://mvnrepository.com/artifact/org.springframework.boot/spring-boot-starter-web
     implementation("org.springframework.boot:spring-boot-starter-web")
     implementation("org.springframework.boot:spring-boot-starter-mail")
@@ -40,15 +44,20 @@ dependencies {
 
     // https://mvnrepository.com/artifact/org.springframework.boot/spring-boot-starter-test
     testImplementation("org.springframework.boot:spring-boot-starter-test")
+    testRuntimeOnly("org.junit.platform:junit-platform-launcher")
+    // https://mvnrepository.com/artifact/com.tngtech.archunit/archunit-junit5
+    testImplementation("com.tngtech.archunit:archunit-junit5:1.3.0")
 
 
 }
+
 dependencyManagement {
     imports {
         mavenBom("org.springframework.cloud:spring-cloud-dependencies:$springCloudVersion")
     }
 }
 
-tasks.test {
+
+tasks.withType<Test> {
     useJUnitPlatform()
 }
