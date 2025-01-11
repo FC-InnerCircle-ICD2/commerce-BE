@@ -8,6 +8,16 @@ spring:
       max-file-size: 10MB
       max-request-size: 10MB
 
+  datasource:
+    url: ${DATASOURCE_RUL:jdbc:mysql://localhost:3306/emotional_cart}
+    username: ${DATASOURCE_USERNAME}
+    password: ${DATASOURCE_PASSWORD}
+    driver-class-name: com.mysql.cj.jdbc.Driver
+  jpa:
+    hibernate:
+      ddl-auto: update
+    show-sql: true
+
 aws:
   s3:
     access-key: ${AWS_S3_ACCESS_KEY}
