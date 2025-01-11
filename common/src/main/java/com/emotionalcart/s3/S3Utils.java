@@ -11,8 +11,6 @@ import software.amazon.awssdk.services.s3.model.DeleteObjectResponse;
 import software.amazon.awssdk.services.s3.model.PutObjectRequest;
 import software.amazon.awssdk.services.s3.model.PutObjectResponse;
 
-import java.io.IOException;
-
 @Slf4j
 @Component
 @RequiredArgsConstructor
