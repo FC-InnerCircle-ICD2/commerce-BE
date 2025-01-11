@@ -1,10 +1,13 @@
-package com.emotionalcart.order.presentation.advice;
+package com.emotionalcart.order.infra.advice;
 
-import com.emotionalcart.order.presentation.util.enums.OrderErrorCode;
+import com.emotionalcart.order.infra.advice.exceptions.InvalidValueRequestException;
+import com.emotionalcart.order.infra.advice.exceptions.RequiredValueException;
+import com.emotionalcart.order.infra.enums.OrderErrorCode;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.ExceptionHandler;
+import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 
 /**
@@ -49,6 +52,18 @@ public class GlobalExceptionHandler {
         ErrorResponse errorResponse =
             new ErrorResponse(HttpStatus.INTERNAL_SERVER_ERROR.value(), OrderErrorCode.INTERNAL_SERVER_ERROR.getMessage());
         return ResponseEntity.internalServerError().body(errorResponse);
+    }
+
+    @ExceptionHandler({RequiredValueException.class, InvalidValueRequestException.class})
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
+    public ResponseEntity<ErrorResponse> handleRequiredValueException(Exception ex) {
+        // 예외 메시지 로깅
+        log.error("{} 발생: {}", ex.getClass().getName(), ex.getMessage());
+
+        // 사용자 친화적인 메시지 반환
+        ErrorResponse errorResponse =
+            new ErrorResponse(HttpStatus.BAD_REQUEST.value(), OrderErrorCode.BAD_REQUEST.getMessage());
+        return ResponseEntity.badRequest().body(errorResponse);
     }
 
     public record ErrorResponse(int errorCode, String errorMessage) {

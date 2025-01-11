@@ -1,6 +1,7 @@
 package com.emotionalcart.order.domain.entity;
 
-import com.emotionalcart.order.common.generator.IdGenerator;
+import com.emotionalcart.order.domain.dto.CreateOrderItem;
+import com.emotionalcart.order.domain.generator.IdGenerator;
 import jakarta.persistence.*;
 import lombok.AccessLevel;
 import lombok.Getter;
@@ -35,7 +36,7 @@ public class OrderItem extends BaseEntity {
      * 상품 이름
      */
     @Column(nullable = false)
-    private Long productName;
+    private String productName;
 
     /**
      * 결제 금액
@@ -49,5 +50,15 @@ public class OrderItem extends BaseEntity {
      */
     @Column(nullable = false)
     private int quantity;
+
+    public static OrderItem createOrderItem(Orders orders, CreateOrderItem orderItem) {
+        OrderItem item = new OrderItem();
+        item.orders = orders;
+        item.productId = orderItem.getProductId();
+        item.productName = orderItem.getProductName();
+        item.orderItemPrice = Money.of(orderItem.getPrice());
+        item.quantity = orderItem.getQuantity();
+        return item;
+    }
 
 }
