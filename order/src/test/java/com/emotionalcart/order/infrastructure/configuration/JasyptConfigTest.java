@@ -1,6 +1,7 @@
 package com.emotionalcart.order.infrastructure.configuration;
 
 import com.ulisesbocchio.jasyptspringboot.annotation.EnableEncryptableProperties;
+import lombok.extern.slf4j.Slf4j;
 import org.jasypt.encryption.StringEncryptor;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.DisplayName;
@@ -10,6 +11,7 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.context.annotation.Import;
 import org.springframework.test.context.ActiveProfiles;
 
+@Slf4j
 @ActiveProfiles("test")
 @SpringBootTest
 @Import(TestContainerConfiguration.class)
@@ -27,7 +29,7 @@ class JasyptConfigTest {
         String test = "jasypt";
         // then
         String encrypt = stringEncryptor.encrypt(test);
-        System.out.println("Encrypt :: {} " + encrypt);
+        log.info("Encrypt :: {} " + encrypt);
         Assertions.assertEquals(test, stringEncryptor.decrypt(encrypt));
     }
 

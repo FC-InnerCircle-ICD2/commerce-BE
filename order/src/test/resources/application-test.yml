@@ -5,11 +5,6 @@ spring:
     name: order-service
   flyway:
     enabled: false
-  datasource:
-    url: ENC(g3BoVmX79B0gnkAdAaI79qG1/1WvRWnTiPbZHRYadqpu5Gw+5kbwl/yyokW1rGexuHbqbjixe82OS3L7YBThixWTC3sXUI9TxQy4uQVpGFs=)
-    username: ENC(orCpbpK8M/XNCRXLB/vx4E0IHx83CsSLCRtYIDV33mfePb5d5GaKfACA8CFu8AdZ)
-    password: ENC(OLvQJpANoRaDWew3bS+k3Qf8l8pPogNiI0xrfGSHFf9RNg/SiJ5XumAQFr8ZMAnq)
-    driver-class-name: com.mysql.cj.jdbc.Driver
   jpa:
     hibernate:
       ddl-auto: create-drop
