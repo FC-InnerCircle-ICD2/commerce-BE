@@ -1,4 +1,4 @@
-package com.emotionalcart.order.domain.entity;
+package com.emotionalcart.order.domain.order.entity;
 
 import jakarta.persistence.EntityListeners;
 import jakarta.persistence.MappedSuperclass;

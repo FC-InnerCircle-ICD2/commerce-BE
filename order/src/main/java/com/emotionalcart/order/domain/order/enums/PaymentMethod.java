@@ -1,4 +1,4 @@
-package com.emotionalcart.order.domain.enums;
+package com.emotionalcart.order.domain.order.enums;
 
 /**
  * 결제수단

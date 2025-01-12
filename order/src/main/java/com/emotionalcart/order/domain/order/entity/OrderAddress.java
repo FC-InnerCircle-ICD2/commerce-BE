@@ -1,4 +1,4 @@
-package com.emotionalcart.order.domain.entity;
+package com.emotionalcart.order.domain.order.entity;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Embeddable;

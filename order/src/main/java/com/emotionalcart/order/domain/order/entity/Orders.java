@@ -1,8 +1,8 @@
-package com.emotionalcart.order.domain.entity;
+package com.emotionalcart.order.domain.order.entity;
 
-import com.emotionalcart.order.domain.entity.generator.IdGenerator;
-import com.emotionalcart.order.domain.enums.OrderStatus;
-import com.emotionalcart.order.domain.enums.PaymentMethod;
+import com.emotionalcart.order.domain.order.entity.generator.IdGenerator;
+import com.emotionalcart.order.domain.order.enums.OrderStatus;
+import com.emotionalcart.order.domain.order.enums.PaymentMethod;
 import jakarta.persistence.*;
 import lombok.AccessLevel;
 import lombok.Getter;

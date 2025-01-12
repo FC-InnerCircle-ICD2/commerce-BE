@@ -1,4 +1,4 @@
-package com.emotionalcart.order.domain.entity.generator;
+package com.emotionalcart.order.domain.order.entity.generator;
 
 import org.hibernate.engine.spi.SharedSessionContractImplementor;
 import org.hibernate.id.IdentifierGenerator;

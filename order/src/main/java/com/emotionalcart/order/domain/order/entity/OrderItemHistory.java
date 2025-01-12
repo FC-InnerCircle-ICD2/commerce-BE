@@ -1,6 +1,6 @@
-package com.emotionalcart.order.domain.entity;
+package com.emotionalcart.order.domain.order.entity;
 
-import com.emotionalcart.order.domain.entity.generator.IdGenerator;
+import com.emotionalcart.order.domain.order.entity.generator.IdGenerator;
 import jakarta.persistence.Column;
 import jakarta.persistence.Embedded;
 import jakarta.persistence.Entity;

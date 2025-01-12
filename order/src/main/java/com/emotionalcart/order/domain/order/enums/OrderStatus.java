@@ -1,4 +1,4 @@
-package com.emotionalcart.order.domain.enums;
+package com.emotionalcart.order.domain.order.enums;
 
 public enum OrderStatus {
     PENDING, // 주문 대기
