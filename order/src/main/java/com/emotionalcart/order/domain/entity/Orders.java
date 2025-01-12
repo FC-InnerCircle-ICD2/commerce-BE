@@ -1,6 +1,6 @@
 package com.emotionalcart.order.domain.entity;
 
-import com.emotionalcart.order.common.generator.IdGenerator;
+import com.emotionalcart.order.domain.entity.generator.IdGenerator;
 import com.emotionalcart.order.domain.enums.OrderStatus;
 import com.emotionalcart.order.domain.enums.PaymentMethod;
 import jakarta.persistence.*;

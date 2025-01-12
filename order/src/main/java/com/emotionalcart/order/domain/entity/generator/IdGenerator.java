@@ -1,4 +1,4 @@
-package com.emotionalcart.order.common.generator;
+package com.emotionalcart.order.domain.entity.generator;
 
 import org.hibernate.annotations.IdGeneratorType;
 
