@@ -29,7 +29,7 @@ class JasyptConfigTest {
         String test = "jasypt";
         // then
         String encrypt = stringEncryptor.encrypt(test);
-        log.info("Encrypt :: {} " + encrypt);
+        log.info("Encrypt :: {}", encrypt);
         Assertions.assertEquals(test, stringEncryptor.decrypt(encrypt));
     }
 
