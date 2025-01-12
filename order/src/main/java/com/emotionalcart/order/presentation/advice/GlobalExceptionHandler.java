@@ -1,8 +1,10 @@
 package com.emotionalcart.order.presentation.advice;
 
+import com.emotionalcart.order.presentation.advice.exceptions.ProductStockException;
+import com.emotionalcart.order.presentation.util.enums.CommonHttpStatus;
 import com.emotionalcart.order.presentation.util.enums.OrderErrorCode;
+import com.emotionalcart.order.presentation.util.enums.OrderHttpStatus;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
@@ -25,12 +27,10 @@ public class GlobalExceptionHandler {
      */
     @ExceptionHandler(IllegalArgumentException.class)
     public ResponseEntity<ErrorResponse> handleIllegalArgumentException(IllegalArgumentException ex) {
-        // 예외 메시지 로깅
         log.error("IllegalArgumentException 발생: {}", ex.getMessage());
 
-        // 사용자 친화적인 메시지 반환
         ErrorResponse errorResponse =
-            new ErrorResponse(HttpStatus.BAD_REQUEST.value(), OrderErrorCode.BAD_REQUEST.getMessage());
+            new ErrorResponse(CommonHttpStatus.BAD_REQUEST.value(), OrderErrorCode.BAD_REQUEST.getMessage());
         return ResponseEntity.badRequest().body(errorResponse);
     }
 
@@ -42,16 +42,30 @@ public class GlobalExceptionHandler {
      */
     @ExceptionHandler(Exception.class)
     public ResponseEntity<ErrorResponse> handleGlobalException(Exception ex) {
-        // 예외 메시지 로깅
         log.error("Exception 발생: {}", ex.getMessage(), ex);
 
-        // 사용자 친화적인 메시지 반환
         ErrorResponse errorResponse =
-            new ErrorResponse(HttpStatus.INTERNAL_SERVER_ERROR.value(), OrderErrorCode.INTERNAL_SERVER_ERROR.getMessage());
+            new ErrorResponse(CommonHttpStatus.INTERNAL_SERVER_ERROR.value(), OrderErrorCode.INTERNAL_SERVER_ERROR.getMessage());
         return ResponseEntity.internalServerError().body(errorResponse);
     }
 
-    public record ErrorResponse(int errorCode, String errorMessage) {
+    /**
+     * 상품 재고 예외처리
+     *
+     * @param ex 발생한 Exception
+     * @return ResponseEntity<ErrorResponse> 서버 오류 응답
+     */
+    @ExceptionHandler(ProductStockException.class)
+    public ResponseEntity<ErrorResponse> productStockException(ProductStockException ex) {
+        // 예외 메시지 로깅
+        log.error("Exception 발생: {}", ex.getMessage(), ex);
+
+        ErrorResponse errorResponse =
+            new ErrorResponse(OrderHttpStatus.RESOURCE_NOT_FOUND.value(), OrderErrorCode.RESOURCE_NOT_FOUND.getMessage());
+        return ResponseEntity.internalServerError().body(errorResponse);
+    }
+
+    public record ErrorResponse(String errorCode, String errorMessage) {
 
     }
 

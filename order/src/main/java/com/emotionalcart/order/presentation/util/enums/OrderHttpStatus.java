@@ -8,16 +8,16 @@ import lombok.Getter;
 @Getter
 public enum OrderHttpStatus {
 
-    NULL_VALUE_ERROR(5000),
-    RESOURCE_NOT_FOUND(5001);
+    NULL_VALUE_ERROR("ORDER-101"),
+    RESOURCE_NOT_FOUND("ORDER-102");
 
-    private final int code;
+    private final String code;
 
-    OrderHttpStatus(int code) {
+    OrderHttpStatus(String code) {
         this.code = code;
     }
 
-    public int value() {
+    public String value() {
         return code;
     }
 }
