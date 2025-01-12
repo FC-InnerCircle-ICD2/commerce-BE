@@ -7,7 +7,7 @@ import org.testcontainers.containers.MySQLContainer;
 import org.testcontainers.utility.DockerImageName;
 
 @TestConfiguration(proxyBeanMethods = false)
-class TestContainerConfiguration {
+public class TestContainerConfiguration {
 
     @Bean
     @ServiceConnection(name = "mysql")
