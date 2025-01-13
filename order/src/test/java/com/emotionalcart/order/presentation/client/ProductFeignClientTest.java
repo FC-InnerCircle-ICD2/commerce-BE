@@ -2,10 +2,10 @@ package com.emotionalcart.order.presentation.client;
 
 import com.emotionalcart.order.domain.stock.service.ProductStockService;
 import com.emotionalcart.order.infrastructure.configuration.TestContainerConfiguration;
-import com.emotionalcart.order.presentation.client.dto.ProductStockRequest;
 import com.emotionalcart.order.presentation.client.dto.UpdateStockRequest;
 import com.github.tomakehurst.wiremock.http.ResponseDefinition;
 import lombok.extern.slf4j.Slf4j;
+import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -15,6 +15,8 @@ import org.springframework.context.annotation.Import;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.TestPropertySource;
 import org.testcontainers.shaded.com.fasterxml.jackson.databind.ObjectMapper;
+
+import java.util.List;
 
 import static com.github.tomakehurst.wiremock.client.WireMock.*;
 import static org.junit.Assert.assertEquals;
@@ -66,14 +68,17 @@ class ProductFeignClientTest {
             """;
 
         // then: 응답 검증
-        ResponseDefinition response = stubFor(post(urlEqualTo("/api/v1/product/stock"))
-                                                  .withRequestBody(equalToJson(requestBody))
+        ResponseDefinition response = stubFor(get(urlEqualTo("/api/v1/product/stock"))
+                                                  .withQueryParam("productId", equalTo("1"))
+                                                  .withQueryParam("productOptionId", equalTo("1"))
+                                                  .withQueryParam("productId", equalTo("2"))
+                                                  .withQueryParam("productOptionId", equalTo("2"))
                                                   .willReturn(aResponse()
                                                                   .withStatus(OK.value())
                                                                   .withHeader("Content-Type", APPLICATION_JSON_VALUE)
                                                                   .withBody(expect))).getResponse();
         // then
-        assertEquals(200, response.getStatus());
+        Assertions.assertEquals(200, response.getStatus());
     }
 
     @Test
@@ -81,14 +86,12 @@ class ProductFeignClientTest {
     void failure_internalServerError() {
         // given: 요청 데이터 정의
         String requestBody = """
-            {
-                "products": [
-                    {
-                        "productId": 1,
-                        "productOptionId": 1
-                    }
-                ]
-            }
+            [
+                {
+                    "productId": 1,
+                    "productOptionId": 1
+                }
+            ]
             """;
 
         String errorResponse = """
@@ -99,8 +102,9 @@ class ProductFeignClientTest {
             """;
 
         // when: WireMock에 실패 응답 정의
-        stubFor(post(urlEqualTo("/api/v1/product/stock"))
-                    .withRequestBody(equalToJson(requestBody))
+        stubFor(get(urlPathEqualTo("/api/v1/product/stock"))
+                    .withQueryParam("productId", equalTo("1"))
+                    .withQueryParam("productOptionId", equalTo("1"))
                     .willReturn(aResponse()
                                     .withStatus(500)
                                     .withHeader("Content-Type", APPLICATION_JSON_VALUE)
@@ -108,7 +112,7 @@ class ProductFeignClientTest {
 
         // then: 응답 검증
         Exception exception = assertThrows(RuntimeException.class, () -> {
-            productStockService.getStock(objectMapper.readValue(requestBody, ProductStockRequest.class)); // 예시
+            productStockService.getStock(objectMapper.readValue(requestBody, List.class)); // 예시
         });
 
         assertTrue(exception.getMessage().contains("상품 재고 조회를 실패하였습니다."));
@@ -131,7 +135,7 @@ class ProductFeignClientTest {
             """;
         // when
         // then: 응답 검증
-        ResponseDefinition response = stubFor(post(urlEqualTo("/api/v1/product/stock"))
+        ResponseDefinition response = stubFor(put(urlEqualTo("/api/v1/product/stock"))
                                                   .withRequestBody(equalToJson(requestBody))
                                                   .willReturn(aResponse()
                                                                   .withStatus(OK.value())

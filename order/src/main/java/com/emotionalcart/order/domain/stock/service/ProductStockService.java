@@ -28,7 +28,7 @@ public class ProductStockService {
      * @param productStockRequest
      * @return
      */
-    public List<ProductStock> getStock(ProductStockRequest productStockRequest) {
+    public List<ProductStock> getStock(List<ProductStockRequest> productStockRequest) {
         ResponseEntity<Object> productStock = productFeignClient.getProductStock(productStockRequest);
         validateResponse(productStock);
 
