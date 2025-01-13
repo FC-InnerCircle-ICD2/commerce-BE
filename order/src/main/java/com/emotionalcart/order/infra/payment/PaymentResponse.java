@@ -4,6 +4,8 @@ import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
+import java.util.UUID;
+
 @Getter
 @NoArgsConstructor(access = AccessLevel.PRIVATE)
 public class PaymentResponse {
@@ -18,10 +20,18 @@ public class PaymentResponse {
 
     public static class PaymentBody {
 
+        private String paymentId;
+
+    }
+
+    public String getPaymentId() {
+        return body.paymentId;
     }
 
     public static PaymentResponse empty() {
-        return new PaymentResponse();
+        PaymentResponse paymentResponse = new PaymentResponse();
+        paymentResponse.body.paymentId = UUID.randomUUID().toString();
+        return paymentResponse;
     }
 
 }

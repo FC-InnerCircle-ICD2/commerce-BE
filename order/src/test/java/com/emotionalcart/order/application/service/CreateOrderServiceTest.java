@@ -8,7 +8,6 @@ import com.emotionalcart.order.domain.enums.PaymentMethod;
 import com.emotionalcart.order.infra.advice.exceptions.InvalidValueRequestException;
 import com.emotionalcart.order.infra.advice.exceptions.RequiredValueException;
 import com.emotionalcart.order.infra.order.OrderRepository;
-import com.emotionalcart.order.infra.payment.PaymentResponse;
 import com.emotionalcart.order.infra.payment.PaymentService;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -41,9 +40,9 @@ class CreateOrderServiceTest {
         CreateOrder createOrder = CreateOrder.builder().paymentMethod(PaymentMethod.CARD).build();
         createOrder.addItem(1L, 1L, "상품명", 1000L, 1);
         createOrder.createNewCardInfo("1234567890123456", "12/24", "123", "ddd");
+        createOrder.createDeliveryInfo("이름", "010-1234-5678", "12345", "서울시 강남구", "상세주소", "비고");
         // when
         when(orderRepository.save(any())).thenReturn(Orders.defaultOrder());
-        when(paymentService.pay(any())).thenReturn(PaymentResponse.empty());
         CreatedOrder order = createOrderService.createOrder(createOrder);
         // then
         assertThat(order).isNotNull();
@@ -78,6 +77,7 @@ class CreateOrderServiceTest {
         // given
         CreateOrder createOrder = CreateOrder.builder().paymentMethod(PaymentMethod.TOSS).build();
         createOrder.addItem(1L, 1L, "상품명", 1000L, 1);
+        createOrder.createDeliveryInfo(null, null, null, null, null, null);
 
         // when & then
         assertThatThrownBy(() -> createOrderService.createOrder(createOrder))
@@ -93,6 +93,7 @@ class CreateOrderServiceTest {
         CreateOrder createOrder = CreateOrder.builder().paymentMethod(PaymentMethod.CARD).build();
         createOrder.addItem(null, 1L, "상품명", 1000L, 1);
         createOrder.createNewCardInfo("1234567890123456", "12/21", "123", "ddd");
+        createOrder.createDeliveryInfo(null, null, null, null, null, null);
 
         // when & then
         assertThatThrownBy(() -> createOrderService.createOrder(createOrder))
@@ -108,6 +109,7 @@ class CreateOrderServiceTest {
         CreateOrder createOrder = CreateOrder.builder().paymentMethod(PaymentMethod.CARD).build();
         createOrder.addItem(1L, null, "상품명", 1000L, 1);
         createOrder.createNewCardInfo("1234567890123456", "12/21", "123", "ddd");
+        createOrder.createDeliveryInfo(null, null, null, null, null, null);
         // when & then
         assertThatThrownBy(() -> createOrderService.createOrder(createOrder))
             .isInstanceOf(RequiredValueException.class)
@@ -121,6 +123,7 @@ class CreateOrderServiceTest {
         CreateOrder createOrder = CreateOrder.builder().paymentMethod(PaymentMethod.CARD).build();
         createOrder.addItem(1L, null, null, 1000L, 1);
         createOrder.createNewCardInfo("1234567890123456", "12/21", "123", "ddd");
+        createOrder.createDeliveryInfo(null, null, null, null, null, null);
         // when & then
         assertThatThrownBy(() -> createOrderService.createOrder(createOrder))
             .isInstanceOf(RequiredValueException.class)
@@ -134,9 +137,10 @@ class CreateOrderServiceTest {
         CreateOrder createOrder = CreateOrder.builder().paymentMethod(PaymentMethod.CARD).build();
         createOrder.addItem(1L, null, null, 99L, 1);
         createOrder.createNewCardInfo("1234567890123456", "12/21", "123", "ddd");
+        createOrder.createDeliveryInfo(null, null, null, null, null, null);
         // when & then
         assertThatThrownBy(() -> createOrderService.createOrder(createOrder))
-            .isInstanceOf(RequiredValueException.class)
+            .isInstanceOfAny(RequiredValueException.class)
             .hasMessageContaining("상품 금액은 100원 이상이어야 합니다.");
     }
 
@@ -147,6 +151,7 @@ class CreateOrderServiceTest {
         CreateOrder createOrder = CreateOrder.builder().paymentMethod(PaymentMethod.CARD).build();
         createOrder.addItem(1L, null, null, 1000L, 0);
         createOrder.createNewCardInfo("1234567890123456", "12/21", "123", "ddd");
+        createOrder.createDeliveryInfo(null, null, null, null, null, null);
         // when & then
         assertThatThrownBy(() -> createOrderService.createOrder(createOrder))
             .isInstanceOf(RequiredValueException.class)
@@ -159,6 +164,7 @@ class CreateOrderServiceTest {
         // given
         CreateOrder createOrder = CreateOrder.builder().paymentMethod(PaymentMethod.CARD).build();
         createOrder.addItem(1L, 1L, "상품명", 1000L, 1);
+        createOrder.createDeliveryInfo(null, null, null, null, null, null);
         // when & then
         assertThatThrownBy(() -> createOrderService.createOrder(createOrder))
             .isInstanceOfAny(InvalidValueRequestException.class)
@@ -172,6 +178,7 @@ class CreateOrderServiceTest {
         CreateOrder createOrder = CreateOrder.builder().paymentMethod(PaymentMethod.CARD).build();
         createOrder.addItem(1L, 1L, "상품명", 1000L, 1);
         createOrder.createNewCardInfo(null, null, null, null);
+        createOrder.createDeliveryInfo(null, null, null, null, null, null);
         // when & then
         assertThatThrownBy(() -> createOrderService.createOrder(createOrder))
             .isInstanceOf(RequiredValueException.class)
@@ -190,7 +197,7 @@ class CreateOrderServiceTest {
         CreateOrder createOrder = CreateOrder.builder().paymentMethod(PaymentMethod.CARD).build();
         createOrder.addItem(1L, 1L, "상품명", 1000L, 1);
         createOrder.createNewCardInfo("12345678901234", "1234", "123", "ddd");
-        ;
+        createOrder.createDeliveryInfo(null, null, null, null, null, null);
         // when & then
         assertThatThrownBy(() -> createOrderService.createOrder(createOrder))
             .isInstanceOfAny(InvalidValueRequestException.class)
@@ -216,6 +223,7 @@ class CreateOrderServiceTest {
         CreateOrder createOrder = CreateOrder.builder().paymentMethod(PaymentMethod.CARD).build();
         createOrder.addItem(1L, 1L, "상품명", 1000L, 1);
         createOrder.createNewCardInfo("1234567890123456", "12/21", "abc", "ddd");
+        createOrder.createDeliveryInfo(null, null, null, null, null, null);
         // when & then
         assertThatThrownBy(() -> createOrderService.createOrder(createOrder))
             .isInstanceOfAny(InvalidValueRequestException.class)
@@ -226,28 +234,6 @@ class CreateOrderServiceTest {
         assertThatThrownBy(() -> createOrderService.createOrder(createOrder))
             .isInstanceOfAny(InvalidValueRequestException.class)
             .hasMessageContaining("CVC는 3자리여야 합니다.");
-    }
-
-    @Test
-    @DisplayName("결제 요청 성공")
-    void request_payment() {
-        // given
-
-        // when
-
-        // then
-
-    }
-
-    @Test
-    @DisplayName("배송 요청 성공")
-    void request_shipment() {
-        // given
-
-        // when
-
-        // then
-
     }
 
 }

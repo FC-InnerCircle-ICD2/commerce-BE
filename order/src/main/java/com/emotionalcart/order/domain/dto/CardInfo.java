@@ -1,7 +1,6 @@
 package com.emotionalcart.order.domain.dto;
 
 import com.emotionalcart.order.infra.advice.exceptions.InvalidValueRequestException;
-import jakarta.validation.Validator;
 import jakarta.validation.constraints.NotNull;
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
@@ -34,8 +33,8 @@ public class CardInfo extends SelfValidation<CardInfo> {
         return new CardInfo(cardNumber, expirationDate, cvc, cardOwnerName);
     }
 
-    @Override public void valid(Validator validator) {
-        super.valid(validator);
+    @Override public void valid() {
+        super.valid();
         validateCardNumber();
         validateExpirationDate();
         validateCvc();
