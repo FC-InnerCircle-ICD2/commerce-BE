@@ -1,6 +1,5 @@
 package com.emotionalcart.order.infra.payment;
 
-import com.emotionalcart.order.domain.entity.Orders;
 import lombok.Getter;
 
 @Getter
@@ -10,7 +9,7 @@ public class PaymentInfo {
 
     private PaymentBody body;
 
-    public static PaymentInfo create(Orders orders) {
+    public static PaymentInfo create() {
         return null;
     }
 

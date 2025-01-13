@@ -63,6 +63,16 @@ public class Orders {
     private OrderStatus status = OrderStatus.PENDING;
 
     /**
+     * 결제 식별자
+     */
+    private String paymentId;
+
+    /**
+     * 배송 식별자
+     */
+    private String shipmentId;
+
+    /**
      * 주문 항목 목록
      */
     @OneToMany(mappedBy = "orders", cascade = CascadeType.ALL, orphanRemoval = true)
@@ -99,12 +109,18 @@ public class Orders {
         this.orderItems = orderItems.stream().map(orderItem -> OrderItem.createOrderItem(this, orderItem)).toList();
     }
 
-    public void finishPayment() {
-        this.status = OrderStatus.PAYMENT_COMPLETED;
+    /**
+     * 주문 상태를 결제 요청으로 변경한다.
+     */
+    public void requestPayment() {
+        this.status = OrderStatus.PAYMENT_REQUESTED;
     }
 
-    public void finishShipment() {
-        this.status = OrderStatus.READY_TO_SHIP;
+    /**
+     * 주문 상태를 배송 요청으로 변경한다.
+     */
+    public void requestShipment() {
+        this.status = OrderStatus.SHIP_REQUESTED;
     }
 
 }

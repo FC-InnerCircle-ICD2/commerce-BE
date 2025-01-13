@@ -2,7 +2,6 @@ package com.emotionalcart.order.domain.dto;
 
 import com.emotionalcart.order.domain.enums.PaymentMethod;
 import com.emotionalcart.order.infra.advice.exceptions.InvalidValueRequestException;
-import jakarta.validation.Validator;
 import jakarta.validation.constraints.NotNull;
 import lombok.Builder;
 import lombok.Getter;
@@ -29,6 +28,12 @@ public class CreateOrder extends SelfValidation<CreateOrder> {
      * 결제 수단이 카드일 경우 필수
      */
     private CardInfo cardInfo;
+
+    /**
+     * 배송 정보
+     */
+    @NotNull(message = "배송 정보를 입력해주세요.")
+    private DeliveryInfo deliveryInfo;
 
     /**
      * 상품 주문 목록
@@ -64,25 +69,30 @@ public class CreateOrder extends SelfValidation<CreateOrder> {
     }
 
     @Override
-    public void valid(Validator validator) {
-        super.valid(validator);
+    public void valid() {
+        super.valid();
         if (paymentMethod != PaymentMethod.CARD) {
             throw new InvalidValueRequestException("결제 수단은 카드만 가능합니다.");
         }
         if (cardInfo == null) {
             throw new InvalidValueRequestException("카드 정보를 입력해주세요.");
         }
-        this.cardInfo.valid(validator);
-        this.validItems(validator);
+        this.cardInfo.valid();
+        this.validItems();
+        this.deliveryInfo.valid();
     }
 
     public void createNewCardInfo(String cardNumber, String expirationDate, String cvc, String cardOwnerName) {
         this.cardInfo = CardInfo.createNewCardInfo(cardNumber, expirationDate, cvc, cardOwnerName);
     }
 
-    public void validItems(Validator validator) {
+    public void createDeliveryInfo(String name, String phone, String zoneCode, String address, String detailAddress, String deliveryMemo) {
+        this.deliveryInfo = DeliveryInfo.createDeliveryInfo(name, phone, zoneCode, address, detailAddress, deliveryMemo);
+    }
+
+    public void validItems() {
         for (CreateOrderItem orderItem : orderItems) {
-            orderItem.valid(validator);
+            orderItem.valid();
         }
     }
 
