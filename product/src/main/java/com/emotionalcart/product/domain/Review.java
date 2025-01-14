@@ -21,7 +21,7 @@ public class Review extends BaseEntity {
     private String userId;
 
     @NotNull
-    private String productId;
+    private Long productId;
 
     private String productName;
 
@@ -37,7 +37,7 @@ public class Review extends BaseEntity {
 
     private Review(
             String userId,
-            String productId,
+            Long productId,
             String productName,
             String productOptionId,
             String productOptionName,
@@ -55,7 +55,7 @@ public class Review extends BaseEntity {
 
     public static Review of(
             String userId,
-            String productId,
+            Long productId,
             String productName,
             String productOptionId,
             String productOptionName,
