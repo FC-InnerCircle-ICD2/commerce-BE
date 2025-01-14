@@ -1,4 +1,4 @@
-package com.emotionalcart.product.infrastructure;
+package com.emotionalcart.product.domain.repository;
 
 import com.emotionalcart.product.domain.Product;
 import jakarta.validation.constraints.NotNull;

@@ -5,9 +5,9 @@ import com.emotionalcart.product.application.dto.response.GetProductReviewsRespo
 import com.emotionalcart.product.application.dto.response.ReviewImageResponse;
 import com.emotionalcart.product.domain.Review;
 import com.emotionalcart.product.domain.ReviewImage;
-import com.emotionalcart.product.infrastructure.ProductRepository;
-import com.emotionalcart.product.infrastructure.ReviewImageRepository;
-import com.emotionalcart.product.infrastructure.ReviewRepository;
+import com.emotionalcart.product.domain.repository.ProductRepository;
+import com.emotionalcart.product.domain.repository.ReviewImageRepository;
+import com.emotionalcart.product.domain.repository.ReviewRepository;
 import com.emotionalcart.product.presentation.exception.ErrorCode;
 import com.emotionalcart.product.presentation.exception.ProductException;
 import jakarta.validation.constraints.NotNull;
