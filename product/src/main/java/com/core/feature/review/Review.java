@@ -1,5 +1,6 @@
-package com.emotionalcart.product.domain;
+package com.core.feature.review;
 
+import com.core.base.BaseEntity;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;

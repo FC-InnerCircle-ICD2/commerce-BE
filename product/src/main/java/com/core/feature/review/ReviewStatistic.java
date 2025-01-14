@@ -1,5 +1,6 @@
-package com.emotionalcart.product.domain;
+package com.core.feature.review;
 
+import com.core.base.BaseEntity;
 import jakarta.persistence.Entity;
 import jakarta.persistence.Id;
 import jakarta.persistence.Table;

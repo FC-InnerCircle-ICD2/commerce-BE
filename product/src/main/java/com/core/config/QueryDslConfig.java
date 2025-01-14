@@ -1,4 +1,4 @@
-package com.emotionalcart.product.infrastructure.config;
+package com.core.config;
 
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import jakarta.persistence.EntityManager;
