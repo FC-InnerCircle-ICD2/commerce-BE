@@ -1,4 +1,4 @@
-package com.core.config;
+package com.emotionalcart.core.config;
 
 import org.springframework.context.annotation.Configuration;
 import org.springframework.data.jpa.repository.config.EnableJpaAuditing;

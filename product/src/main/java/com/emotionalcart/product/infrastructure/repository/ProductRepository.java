@@ -1,6 +1,6 @@
 package com.emotionalcart.product.infrastructure.repository;
 
-import com.core.feature.product.Product;
+import com.emotionalcart.core.feature.product.Product;
 import jakarta.validation.constraints.NotNull;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;

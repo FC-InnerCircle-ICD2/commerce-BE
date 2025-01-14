@@ -1,6 +1,6 @@
 package com.emotionalcart.product.infrastructure.repository;
 
-import com.core.feature.review.ReviewImage;
+import com.emotionalcart.core.feature.review.ReviewImage;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
