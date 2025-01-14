@@ -11,11 +11,11 @@ repositories {
 }
 
 dependencies {
-    // Spring Context
-    implementation("org.springframework:spring-context:6.2.0")
-    
-    compileOnly("org.projectlombok:lombok:1.18.24")
-    annotationProcessor("org.projectlombok:lombok:1.18.24")
+    implementation("org.springframework.boot:spring-boot-starter-web")
+    implementation("software.amazon.awssdk:s3:2.20.40")
+
+    compileOnly("org.projectlombok:lombok")
+    annotationProcessor("org.projectlombok:lombok")
     testImplementation(platform("org.junit:junit-bom:5.10.0"))
     testImplementation("org.junit.jupiter:junit-jupiter")
 }
