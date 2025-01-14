@@ -1,11 +1,13 @@
-package com.emotionalcart.product.domain.repository;
+package com.emotionalcart.product.infrastructure.repository;
 
-import com.emotionalcart.product.domain.Product;
+import com.core.feature.product.Product;
 import jakarta.validation.constraints.NotNull;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
+import java.util.Optional;
+
 @Repository
 public interface ProductRepository extends JpaRepository<Product, Long> {
-    Boolean existsByIdAndIsDeletedIsFalse(@NotNull Long productId);
+    Optional<Product> findByIdAndIsDeletedIsFalse(@NotNull Long productId);
 }

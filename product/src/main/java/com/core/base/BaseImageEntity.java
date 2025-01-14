@@ -1,4 +1,4 @@
-package com.emotionalcart.product.domain;
+package com.core.base;
 
 import jakarta.persistence.MappedSuperclass;
 import jakarta.validation.constraints.NotNull;

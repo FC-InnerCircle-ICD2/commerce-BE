@@ -1,8 +1,7 @@
 package com.emotionalcart.product.presentation;
 
 import com.emotionalcart.product.application.ProductService;
-import com.emotionalcart.product.application.dto.request.GetProductReviewsRequest;
-import com.emotionalcart.product.application.dto.response.GetProductReviewsResponse;
+import com.emotionalcart.product.application.dto.GetProductReviews;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.http.ResponseEntity;
@@ -18,9 +17,9 @@ public class ProductController {
     private final ProductService productService;
 
     @GetMapping("/{productId}/reviews")
-    public ResponseEntity<Page<GetProductReviewsResponse>> getProductReviews(
+    public ResponseEntity<Page<GetProductReviews.Response>> getProductReviews(
             @PathVariable Long productId,
-            GetProductReviewsRequest request
+            GetProductReviews.Request request
     ) {
         return ResponseEntity.ok(productService.getProductReviews(productId, request));
     }

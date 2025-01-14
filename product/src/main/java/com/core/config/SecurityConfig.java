@@ -1,4 +1,4 @@
-package com.emotionalcart.product.infrastructure.config;
+package com.core.config;
 
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;

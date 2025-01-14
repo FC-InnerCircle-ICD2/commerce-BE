@@ -1,6 +1,6 @@
-package com.emotionalcart.product.domain.repository;
+package com.emotionalcart.product.infrastructure.repository;
 
-import com.emotionalcart.product.domain.Review;
+import com.core.feature.review.Review;
 import jakarta.validation.constraints.NotNull;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;

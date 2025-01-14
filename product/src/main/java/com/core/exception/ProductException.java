@@ -1,4 +1,4 @@
-package com.emotionalcart.product.presentation.exception;
+package com.core.exception;
 
 import lombok.Getter;
 import org.springframework.http.HttpStatus;

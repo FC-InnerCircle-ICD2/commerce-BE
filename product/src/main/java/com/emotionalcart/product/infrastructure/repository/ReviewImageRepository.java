@@ -1,6 +1,6 @@
-package com.emotionalcart.product.domain.repository;
+package com.emotionalcart.product.infrastructure.repository;
 
-import com.emotionalcart.product.domain.ReviewImage;
+import com.core.feature.review.ReviewImage;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
