@@ -13,6 +13,7 @@ public enum ErrorCode {
 //    , BASEURL_BAD_REQUEST(600, "기본 주소 오류입니다.")
 //    , BAD_PARSING(700,"JSON 파일 파싱 에러입니다.")
     ;
+    ;
 
     private final String errorCode;
     private final String message;
