@@ -8,6 +8,7 @@ import com.emotionalcart.core.feature.review.ReviewImage;
 import com.emotionalcart.product.infrastructure.repository.ProductRepository;
 import com.emotionalcart.product.infrastructure.repository.ReviewImageRepository;
 import com.emotionalcart.product.infrastructure.repository.ReviewRepository;
+import com.emotionalcart.product.presentation.dto.ReadProductStock;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -34,5 +35,10 @@ public class ProductDataProvider {
 
     public List<ReviewImage> findAllReviewImages(List<Long> reviewIds) {
         return reviewImageRepository.findAllByReviewIdInAndIsDeletedIsFalse(reviewIds);
+    }
+
+    public ReadProductStock.Response findProductStock(ReadProductStock.Request request) {
+        return productRepository.findProductsStock(request)
+                .orElseThrow(() -> new ProductException(ErrorCode.NOT_FOUND_PRODUCT_STOCK));
     }
 }

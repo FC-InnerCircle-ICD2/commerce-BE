@@ -1,14 +1,15 @@
 package com.emotionalcart.product.presentation;
 
 import com.emotionalcart.product.application.ProductService;
+import jakarta.validation.Valid;
 import com.emotionalcart.product.application.dto.GetProductReviews;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
+import com.emotionalcart.product.presentation.dto.ReadProductStock;
+
+import java.util.List;
 
 @RestController
 @RequestMapping("/v1/products")
@@ -22,5 +23,12 @@ public class ProductController {
             GetProductReviews.Request request
     ) {
         return ResponseEntity.ok(productService.getProductReviews(productId, request));
+    }
+
+    @PostMapping("/stock")
+    public ResponseEntity<List<ReadProductStock.Response>> readProductStock(
+            @RequestBody @Valid List<ReadProductStock.Request> request
+    ) {
+        return ResponseEntity.ok(productService.readProductStock(request));
     }
 }
