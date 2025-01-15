@@ -1,4 +1,4 @@
-package com.core.base;
+package com.emotionalcart.core.base;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.EntityListeners;

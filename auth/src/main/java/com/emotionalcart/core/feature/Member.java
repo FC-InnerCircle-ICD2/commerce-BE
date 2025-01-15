@@ -1,8 +1,8 @@
-package com.core.feature;
+package com.emotionalcart.core.feature;
 
-import com.core.base.BaseEntity;
-import com.core.feature.enums.MemberState;
-import com.core.feature.enums.SocialType;
+import com.emotionalcart.core.base.BaseEntity;
+import com.emotionalcart.core.feature.enums.MemberState;
+import com.emotionalcart.core.feature.enums.SocialType;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotNull;
 import lombok.AccessLevel;

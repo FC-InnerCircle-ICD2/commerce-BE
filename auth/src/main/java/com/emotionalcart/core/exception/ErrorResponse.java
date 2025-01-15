@@ -1,4 +1,4 @@
-package com.core.exception;
+package com.emotionalcart.core.exception;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;

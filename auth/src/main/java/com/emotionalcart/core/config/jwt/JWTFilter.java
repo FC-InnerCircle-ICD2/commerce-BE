@@ -1,4 +1,4 @@
-package com.core.config.jwt;
+package com.emotionalcart.core.config.jwt;
 
 import com.emotionalcart.auth.application.dto.CustomOAuth2User;
 import com.emotionalcart.auth.application.dto.MemberDTO;

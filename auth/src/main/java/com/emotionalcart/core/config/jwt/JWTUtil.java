@@ -1,4 +1,4 @@
-package com.core.config.jwt;
+package com.emotionalcart.core.config.jwt;
 
 import io.jsonwebtoken.Jwts;
 import org.springframework.stereotype.Component;
