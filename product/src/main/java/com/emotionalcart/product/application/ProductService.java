@@ -1,7 +1,6 @@
 package com.emotionalcart.product.application;
 
-import com.core.feature.review.Review;
-import com.core.feature.review.ReviewImage;
+import com.emotionalcart.core.feature.review.Review;
 import com.emotionalcart.product.application.dto.GetProductReviews;
 import com.emotionalcart.product.domain.ProductDataProvider;
 import jakarta.validation.constraints.NotNull;
@@ -10,7 +9,6 @@ import org.springframework.data.domain.Page;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
-import java.util.Map;
 
 @Service
 @RequiredArgsConstructor
@@ -21,8 +19,13 @@ public class ProductService {
         productDataProvider.findProduct(productId);
 
         Page<Review> reviews = productDataProvider.findAllReviews(productId, request.getPageable());
-//        List<GetProductReviews.ReviewImageResponse> reviewImages = fetchReviewImages(reviews);
+        ReviewImages reviewImages = findAllReviewImages(reviews.getContent());
 
-        return GetProductReviews.Response.toResponse(reviews, Map.of());
+        return GetProductReviews.Response.toResponse(reviews, reviewImages);
+    }
+
+    private ReviewImages findAllReviewImages(List<Review> reviews) {
+        Reviews from = Reviews.from(reviews);
+        return ReviewImages.from(productDataProvider.findAllReviewImages(from.ids()));
     }
 }

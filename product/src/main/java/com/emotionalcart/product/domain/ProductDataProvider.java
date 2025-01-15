@@ -1,10 +1,10 @@
 package com.emotionalcart.product.domain;
 
-import com.core.exception.ErrorCode;
-import com.core.exception.ProductException;
-import com.core.feature.product.Product;
-import com.core.feature.review.Review;
-import com.core.feature.review.ReviewImage;
+import com.emotionalcart.core.exception.ErrorCode;
+import com.emotionalcart.core.exception.ProductException;
+import com.emotionalcart.core.feature.product.Product;
+import com.emotionalcart.core.feature.review.Review;
+import com.emotionalcart.core.feature.review.ReviewImage;
 import com.emotionalcart.product.infrastructure.repository.ProductRepository;
 import com.emotionalcart.product.infrastructure.repository.ReviewImageRepository;
 import com.emotionalcart.product.infrastructure.repository.ReviewRepository;

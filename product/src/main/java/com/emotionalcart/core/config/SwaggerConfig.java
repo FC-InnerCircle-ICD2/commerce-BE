@@ -1,4 +1,4 @@
-package com.core.config;
+package com.emotionalcart.core.config;
 
 import io.swagger.v3.oas.models.Components;
 import io.swagger.v3.oas.models.OpenAPI;

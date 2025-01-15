@@ -1,8 +1,9 @@
 package com.emotionalcart.product.application.dto;
 
-import com.core.base.BasePageRequest;
-import com.core.feature.review.Review;
-import com.core.feature.review.ReviewImage;
+import com.emotionalcart.core.base.BasePageRequest;
+import com.emotionalcart.core.feature.review.Review;
+import com.emotionalcart.core.feature.review.ReviewImage;
+import com.emotionalcart.product.application.ReviewImages;
 import lombok.Data;
 import lombok.Getter;
 import lombok.Setter;
@@ -41,16 +42,18 @@ public class GetProductReviews {
             this.reviewImages = reviewImages;
         }
 
-        public static Page<Response> toResponse(Page<Review> reviews, Map<Long, List<ReviewImageResponse>> reviewImages) {
+        public static Page<Response> toResponse(Page<Review> reviews, ReviewImages reviewImages) {
+            Map<Long, List<ReviewImageResponse>> reviewImagesMap = reviewImages.groupByReviewId();
+
             return reviews.map(review -> {
-                List<ReviewImageResponse> images = reviewImages.getOrDefault(review.getId(), List.of());
+                List<ReviewImageResponse> images = reviewImagesMap.getOrDefault(review.getId(), List.of());
                 return new Response(review, images);
             });
         }
     }
 
     @Data
-    public class ReviewImageResponse {
+    public static class ReviewImageResponse {
         private Long id;
         private String url;
         private Integer fileOrder;
