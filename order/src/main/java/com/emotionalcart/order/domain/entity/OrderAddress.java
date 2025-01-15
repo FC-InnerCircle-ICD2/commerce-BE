@@ -2,6 +2,7 @@ package com.emotionalcart.order.domain.entity;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Embeddable;
+import jakarta.validation.constraints.NotNull;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -34,5 +35,15 @@ public class OrderAddress {
      */
     @Column(nullable = false, length = 100)
     private String detailAddress;
+
+    public static OrderAddress createNewOrderAddress(@NotNull(message = "우편번호를 입력해주세요.") String zonecode,
+                                                     @NotNull(message = "주소를 입력해주세요.") String address,
+                                                     @NotNull(message = "상세주소를 입력해주세요.") String detailAddress) {
+        OrderAddress orderAddress = new OrderAddress();
+        orderAddress.postalCode = zonecode;
+        orderAddress.defaultAddress = address;
+        orderAddress.detailAddress = detailAddress;
+        return orderAddress;
+    }
 
 }

@@ -16,6 +16,10 @@ public class Money {
      */
     private BigDecimal amount;
 
+    public double getAmount() {
+        return amount.doubleValue();
+    }
+
     /**
      * 파라미터로 전달된 수량과 합을 곱한뒤 전부 더해서 반환한다.
      *

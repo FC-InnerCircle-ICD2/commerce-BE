@@ -1,5 +1,6 @@
 package com.emotionalcart.order.domain.entity;
 
+import com.emotionalcart.order.domain.dto.DeliveryInfo;
 import com.emotionalcart.order.domain.generator.IdGenerator;
 import jakarta.persistence.*;
 import lombok.AccessLevel;
@@ -57,5 +58,20 @@ public class OrderRecipient {
      */
     @Column(length = 50)
     private String deliveryRequirement;
+
+    public static OrderRecipient createOrderRecipient(Orders orders, DeliveryInfo deliveryInfo) {
+        OrderRecipient orderRecipient = new OrderRecipient();
+        orderRecipient.orders = orders;
+        orderRecipient.recipientName = deliveryInfo.getName();
+        orderRecipient.recipientPhone = deliveryInfo.getPhoneNumber();
+        orderRecipient.address =
+            OrderAddress.createNewOrderAddress(deliveryInfo.getZonecode(), deliveryInfo.getAddress(), deliveryInfo.getDetailAddress());
+        orderRecipient.deliveryRequirement = deliveryInfo.getDeliveryMemo();
+        return orderRecipient;
+    }
+
+    public String getMappedAddressInfo() {
+        return address.getDefaultAddress().concat(" ").concat(address.getDetailAddress());
+    }
 
 }

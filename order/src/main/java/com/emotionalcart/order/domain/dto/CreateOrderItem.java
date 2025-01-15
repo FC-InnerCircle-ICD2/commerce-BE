@@ -3,13 +3,17 @@ package com.emotionalcart.order.domain.dto;
 import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.NotNull;
 import lombok.Builder;
+import lombok.EqualsAndHashCode;
 import lombok.Getter;
+import lombok.ToString;
 
 /**
  * <h2>주문 상품 생성 DTO</h2>
  */
 @Getter
 @Builder
+@ToString
+@EqualsAndHashCode(callSuper = false)
 public class CreateOrderItem extends SelfValidation<CreateOrderItem> {
 
     /**

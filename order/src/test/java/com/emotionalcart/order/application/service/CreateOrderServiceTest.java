@@ -16,6 +16,8 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
+import java.time.LocalDate;
+
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.mockito.ArgumentMatchers.any;
@@ -39,14 +41,14 @@ class CreateOrderServiceTest {
         // given
         CreateOrder createOrder = CreateOrder.builder().paymentMethod(PaymentMethod.CARD).build();
         createOrder.addItem(1L, 1L, "상품명", 1000L, 1);
-        createOrder.createNewCardInfo("1234567890123456", "12/24", "123", "ddd");
+        createOrder.createNewCardInfo("1234567890123456", getValidExpirationDate(), "123", "ddd");
         createOrder.createDeliveryInfo("이름", "010-1234-5678", "12345", "서울시 강남구", "상세주소", "비고");
         // when
         when(orderRepository.save(any())).thenReturn(Orders.defaultOrder());
         CreatedOrder order = createOrderService.createOrder(createOrder);
         // then
         assertThat(order).isNotNull();
-        assertThat(order.getId()).isNotNull();
+        assertThat(order.getOrderId()).isNotNull();
     }
 
     @Test
@@ -92,7 +94,7 @@ class CreateOrderServiceTest {
         // given
         CreateOrder createOrder = CreateOrder.builder().paymentMethod(PaymentMethod.CARD).build();
         createOrder.addItem(null, 1L, "상품명", 1000L, 1);
-        createOrder.createNewCardInfo("1234567890123456", "12/21", "123", "ddd");
+        createOrder.createNewCardInfo("1234567890123456", getValidExpirationDate(), "123", "ddd");
         createOrder.createDeliveryInfo(null, null, null, null, null, null);
 
         // when & then
@@ -108,7 +110,7 @@ class CreateOrderServiceTest {
         // given
         CreateOrder createOrder = CreateOrder.builder().paymentMethod(PaymentMethod.CARD).build();
         createOrder.addItem(1L, null, "상품명", 1000L, 1);
-        createOrder.createNewCardInfo("1234567890123456", "12/21", "123", "ddd");
+        createOrder.createNewCardInfo("1234567890123456", getValidExpirationDate(), "123", "ddd");
         createOrder.createDeliveryInfo(null, null, null, null, null, null);
         // when & then
         assertThatThrownBy(() -> createOrderService.createOrder(createOrder))
@@ -122,7 +124,7 @@ class CreateOrderServiceTest {
         // given
         CreateOrder createOrder = CreateOrder.builder().paymentMethod(PaymentMethod.CARD).build();
         createOrder.addItem(1L, null, null, 1000L, 1);
-        createOrder.createNewCardInfo("1234567890123456", "12/21", "123", "ddd");
+        createOrder.createNewCardInfo("1234567890123456", getValidExpirationDate(), "123", "ddd");
         createOrder.createDeliveryInfo(null, null, null, null, null, null);
         // when & then
         assertThatThrownBy(() -> createOrderService.createOrder(createOrder))
@@ -136,7 +138,7 @@ class CreateOrderServiceTest {
         // given
         CreateOrder createOrder = CreateOrder.builder().paymentMethod(PaymentMethod.CARD).build();
         createOrder.addItem(1L, null, null, 99L, 1);
-        createOrder.createNewCardInfo("1234567890123456", "12/21", "123", "ddd");
+        createOrder.createNewCardInfo("1234567890123456", getValidExpirationDate(), "123", "ddd");
         createOrder.createDeliveryInfo(null, null, null, null, null, null);
         // when & then
         assertThatThrownBy(() -> createOrderService.createOrder(createOrder))
@@ -150,7 +152,7 @@ class CreateOrderServiceTest {
         // given
         CreateOrder createOrder = CreateOrder.builder().paymentMethod(PaymentMethod.CARD).build();
         createOrder.addItem(1L, null, null, 1000L, 0);
-        createOrder.createNewCardInfo("1234567890123456", "12/21", "123", "ddd");
+        createOrder.createNewCardInfo("1234567890123456", getValidExpirationDate(), "123", "ddd");
         createOrder.createDeliveryInfo(null, null, null, null, null, null);
         // when & then
         assertThatThrownBy(() -> createOrderService.createOrder(createOrder))
@@ -222,18 +224,27 @@ class CreateOrderServiceTest {
         // given
         CreateOrder createOrder = CreateOrder.builder().paymentMethod(PaymentMethod.CARD).build();
         createOrder.addItem(1L, 1L, "상품명", 1000L, 1);
-        createOrder.createNewCardInfo("1234567890123456", "12/21", "abc", "ddd");
+        createOrder.createNewCardInfo("1234567890123456", getValidExpirationDate(), "abc", "ddd");
         createOrder.createDeliveryInfo(null, null, null, null, null, null);
         // when & then
         assertThatThrownBy(() -> createOrderService.createOrder(createOrder))
             .isInstanceOfAny(InvalidValueRequestException.class)
             .hasMessageContaining("CVC는 숫자로만 입력해주세요.");
         // given
-        createOrder.createNewCardInfo("1234567890123456", "12/21", "1234", "ddd");
+        createOrder.createNewCardInfo("1234567890123456", getValidExpirationDate(), "1234", "ddd");
         // when & then
         assertThatThrownBy(() -> createOrderService.createOrder(createOrder))
             .isInstanceOfAny(InvalidValueRequestException.class)
             .hasMessageContaining("CVC는 3자리여야 합니다.");
+    }
+
+    private String getValidExpirationDate() {
+        LocalDate now = LocalDate.now();
+        int month = now.getMonth().getValue() + 1;
+        String monthStr = month < 10 ? "0" + month : String.valueOf(month);
+        int year = now.getYear();
+        String yearStr = String.valueOf(year).substring(2);
+        return monthStr.concat("/").concat(yearStr);
     }
 
 }

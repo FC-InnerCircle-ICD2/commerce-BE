@@ -4,7 +4,8 @@ plugins {
     id("io.spring.dependency-management") version "1.1.5"
 }
 val springCloudVersion by extra("2024.0.0")
-
+var archunitVersion by extra("1.3.0")
+val redissonVersion by extra("3.42.0")
 group = "com.emotionalcart"
 version = "0.0.1-SNAPSHOT"
 
@@ -18,6 +19,7 @@ repositories {
     mavenCentral()
 }
 dependencies {
+    implementation(project(":common"))
     implementation("org.springframework.boot:spring-boot-starter")
     // https://mvnrepository.com/artifact/org.springframework.boot/spring-boot-starter-web
     implementation("org.springframework.boot:spring-boot-starter-web")
@@ -34,7 +36,7 @@ dependencies {
     implementation("org.thymeleaf.extras:thymeleaf-extras-springsecurity6")
 
     // https://mvnrepository.com/artifact/org.redisson/redisson-spring-boot-starter
-    implementation("org.redisson:redisson-spring-boot-starter:3.42.0")
+    implementation("org.redisson:redisson-spring-boot-starter:$redissonVersion")
 
 
     annotationProcessor("org.projectlombok:lombok")
@@ -49,10 +51,10 @@ dependencies {
 
     // https://mvnrepository.com/artifact/org.springframework.boot/spring-boot-starter-test
     testImplementation("org.springframework.boot:spring-boot-starter-test")
+
     testRuntimeOnly("org.junit.platform:junit-platform-launcher")
     // https://mvnrepository.com/artifact/com.tngtech.archunit/archunit-junit5
-    testImplementation("com.tngtech.archunit:archunit-junit5:1.3.0")
-
+    testImplementation("com.tngtech.archunit:archunit-junit5:$archunitVersion")
 
 }
 

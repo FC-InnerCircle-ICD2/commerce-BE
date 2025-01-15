@@ -6,6 +6,10 @@ import jakarta.persistence.*;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import org.springframework.util.CollectionUtils;
+
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * 주문 항목
@@ -51,6 +55,9 @@ public class OrderItem extends BaseEntity {
     @Column(nullable = false)
     private int quantity;
 
+    @OneToMany(mappedBy = "orderItem", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+    private List<OrderItemHistory> orderItemHistories;
+
     public static OrderItem createOrderItem(Orders orders, CreateOrderItem orderItem) {
         OrderItem item = new OrderItem();
         item.orders = orders;
@@ -59,6 +66,20 @@ public class OrderItem extends BaseEntity {
         item.orderItemPrice = Money.of(orderItem.getPrice());
         item.quantity = orderItem.getQuantity();
         return item;
+    }
+
+    /**
+     * 주문 항목 내역 추가
+     */
+    public void addHistory() {
+        if (CollectionUtils.isEmpty(this.orderItemHistories)) {
+            this.orderItemHistories = new ArrayList<>();
+        }
+        this.orderItemHistories.add(OrderItemHistory.createOrderItemHistory(this));
+    }
+
+    public double getOrderItemPriceDouble() {
+        return orderItemPrice.getAmount();
     }
 
 }
