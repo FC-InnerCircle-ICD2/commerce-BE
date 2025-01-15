@@ -4,7 +4,9 @@ import com.emotionalcart.order.domain.enums.PaymentMethod;
 import com.emotionalcart.order.infra.advice.exceptions.InvalidValueRequestException;
 import jakarta.validation.constraints.NotNull;
 import lombok.Builder;
+import lombok.EqualsAndHashCode;
 import lombok.Getter;
+import lombok.ToString;
 import org.springframework.util.CollectionUtils;
 
 import java.util.ArrayList;
@@ -15,6 +17,8 @@ import java.util.List;
  */
 @Getter
 @Builder
+@ToString
+@EqualsAndHashCode(callSuper = false)
 public class CreateOrder extends SelfValidation<CreateOrder> {
 
     /**
@@ -68,6 +72,22 @@ public class CreateOrder extends SelfValidation<CreateOrder> {
                            .build());
     }
 
+    /**
+     * 카드 정보 생성
+     *
+     * @param cardNumber     카드 번호
+     * @param expirationDate 만료일
+     * @param cvc            cvc
+     * @param cardOwnerName  카드 소유자 이름
+     */
+    public void createNewCardInfo(String cardNumber, String expirationDate, String cvc, String cardOwnerName) {
+        this.cardInfo = CardInfo.createNewCardInfo(cardNumber, expirationDate, cvc, cardOwnerName);
+    }
+
+    public void createDeliveryInfo(String name, String phone, String zoneCode, String address, String detailAddress, String deliveryMemo) {
+        this.deliveryInfo = DeliveryInfo.createDeliveryInfo(name, phone, zoneCode, address, detailAddress, deliveryMemo);
+    }
+
     @Override
     public void valid() {
         super.valid();
@@ -80,14 +100,6 @@ public class CreateOrder extends SelfValidation<CreateOrder> {
         this.cardInfo.valid();
         this.validItems();
         this.deliveryInfo.valid();
-    }
-
-    public void createNewCardInfo(String cardNumber, String expirationDate, String cvc, String cardOwnerName) {
-        this.cardInfo = CardInfo.createNewCardInfo(cardNumber, expirationDate, cvc, cardOwnerName);
-    }
-
-    public void createDeliveryInfo(String name, String phone, String zoneCode, String address, String detailAddress, String deliveryMemo) {
-        this.deliveryInfo = DeliveryInfo.createDeliveryInfo(name, phone, zoneCode, address, detailAddress, deliveryMemo);
     }
 
     public void validItems() {

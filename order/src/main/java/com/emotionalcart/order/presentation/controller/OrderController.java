@@ -23,7 +23,7 @@ public class OrderController {
     public ResponseEntity<CreatedOrderResponse> createOrder(@RequestBody @Valid CreateOrderRequest request) {
         CreatedOrder createdOrder = createOrderService.createOrder(request.mapToDomain());
         // 주문 생성
-        return null;
+        return ResponseEntity.ok(CreatedOrderResponse.from(createdOrder));
     }
 
 }

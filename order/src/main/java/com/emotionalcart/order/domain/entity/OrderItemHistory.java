@@ -1,10 +1,7 @@
 package com.emotionalcart.order.domain.entity;
 
 import com.emotionalcart.order.domain.generator.IdGenerator;
-import jakarta.persistence.Column;
-import jakarta.persistence.Embedded;
-import jakarta.persistence.Entity;
-import jakarta.persistence.Id;
+import jakarta.persistence.*;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -45,5 +42,19 @@ public class OrderItemHistory extends AuditableEntity {
      * 수량
      */
     private int quantity;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "order_item_id")
+    private OrderItem orderItem;
+
+    public static OrderItemHistory createOrderItemHistory(OrderItem orderItem) {
+        OrderItemHistory orderItemHistory = new OrderItemHistory();
+        orderItemHistory.productId = orderItem.getProductId();
+        orderItemHistory.productName = orderItem.getProductName();
+        orderItemHistory.orderItemPrice = orderItem.getOrderItemPrice();
+        orderItemHistory.quantity = orderItem.getQuantity();
+        orderItemHistory.orderItem = orderItem;
+        return orderItemHistory;
+    }
 
 }

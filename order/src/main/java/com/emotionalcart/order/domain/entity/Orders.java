@@ -2,10 +2,12 @@ package com.emotionalcart.order.domain.entity;
 
 import com.emotionalcart.order.domain.dto.CreateOrder;
 import com.emotionalcart.order.domain.dto.CreateOrderItem;
+import com.emotionalcart.order.domain.dto.DeliveryInfo;
 import com.emotionalcart.order.domain.enums.OrderStatus;
 import com.emotionalcart.order.domain.enums.PaymentMethod;
 import com.emotionalcart.order.domain.generator.IdGenerator;
 import jakarta.persistence.*;
+import jakarta.validation.constraints.NotNull;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -23,7 +25,7 @@ import java.util.List;
 @Getter
 @Entity
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-public class Orders {
+public class Orders extends BaseEntity {
 
     @Id
     @IdGenerator
@@ -94,11 +96,17 @@ public class Orders {
      */
     public static Orders createOrder(CreateOrder createOrder) {
         Orders orders = new Orders();
+        orders.orderAt = LocalDateTime.now();
         orders.paymentMethod = createOrder.getPaymentMethod();
         orders.totalPrice =
             Money.sum(createOrder.getOrderItems().stream().map(item -> PriceAndQuantity.of(item.getPrice(), item.getQuantity())).toList());
         orders.createOrderItems(createOrder.getOrderItems());
+        orders.createOrderRecipient(createOrder.getDeliveryInfo());
         return orders;
+    }
+
+    private void createOrderRecipient(@NotNull(message = "배송 정보를 입력해주세요.") DeliveryInfo deliveryInfo) {
+        this.orderRecipient = OrderRecipient.createOrderRecipient(this, deliveryInfo);
     }
 
     public static Orders defaultOrder() {
@@ -121,6 +129,16 @@ public class Orders {
      */
     public void requestShipment() {
         this.status = OrderStatus.SHIP_REQUESTED;
+    }
+
+    public void addHistory() {
+        if (this.orderItems != null) {
+            this.orderItems.forEach(OrderItem::addHistory);
+        }
+    }
+
+    public double getTotalPrice() {
+        return totalPrice.getAmount();
     }
 
 }

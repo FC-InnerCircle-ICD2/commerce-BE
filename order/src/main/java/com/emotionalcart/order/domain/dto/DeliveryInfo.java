@@ -3,10 +3,14 @@ package com.emotionalcart.order.domain.dto;
 import com.emotionalcart.order.infra.validator.ValidPhoneNumber;
 import jakarta.validation.constraints.NotNull;
 import lombok.Builder;
+import lombok.EqualsAndHashCode;
 import lombok.Getter;
+import lombok.ToString;
 
 @Getter
 @Builder
+@ToString
+@EqualsAndHashCode(callSuper = false)
 public class DeliveryInfo extends SelfValidation<DeliveryInfo> {
 
     /**

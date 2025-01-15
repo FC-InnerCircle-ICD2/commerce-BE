@@ -1,5 +1,6 @@
 package com.emotionalcart.order.presentation.controller.response;
 
+import com.emotionalcart.order.domain.dto.CreatedOrder;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import com.fasterxml.jackson.databind.ser.std.ToStringSerializer;
 import lombok.AccessLevel;
@@ -23,15 +24,12 @@ public class CreatedOrderResponse {
     @JsonSerialize(using = ToStringSerializer.class)
     private Long orderId;
 
+    private String paymentMethodName;
+
     /**
      * 주문 금액
      */
     private double totalPrice;
-
-    /**
-     * 배송비
-     */
-    private double deliveryFee;
 
     /**
      * 주문 상품 목록
@@ -43,14 +41,48 @@ public class CreatedOrderResponse {
      */
     private DeliveryInfoResponse deliveryInfo;
 
+    public static CreatedOrderResponse from(CreatedOrder createdOrder) {
+        CreatedOrderResponse response = new CreatedOrderResponse();
+        response.orderId = createdOrder.getOrderId();
+        response.paymentMethodName = createdOrder.getPaymentMethodName();
+        response.totalPrice = createdOrder.getTotalPrice();
+        response.orderItems = CreatedOrderItemsResponse.from(createdOrder.getOrderItems());
+        response.deliveryInfo = DeliveryInfoResponse.from(createdOrder.getDeliveryInfo());
+        return response;
+    }
+
+    /**
+     * <h2>주문 상품 목록 응답</h2>
+     * 주문 상품 목록을 반환한다.
+     */
     @Getter
     private static class CreatedOrderItemsResponse {
 
+        @JsonSerialize(using = ToStringSerializer.class)
+        private Long orderItemId;
+
+        @JsonSerialize(using = ToStringSerializer.class)
+        private Long productId;
+
         private String productName;
 
-        private double price;
+        private double orderItemPrice;
 
         private int quantity;
+
+        public static List<CreatedOrderItemsResponse> from(List<CreatedOrder.CreatedOrderItem> orderItems) {
+            return orderItems.stream().map(CreatedOrderItemsResponse::from).toList();
+        }
+
+        private static CreatedOrderItemsResponse from(CreatedOrder.CreatedOrderItem orderItem) {
+            CreatedOrderItemsResponse response = new CreatedOrderItemsResponse();
+            response.orderItemId = orderItem.getOrderItemId();
+            response.productId = orderItem.getProductId();
+            response.productName = orderItem.getProductName();
+            response.orderItemPrice = orderItem.getOrderItemPrice();
+            response.quantity = orderItem.getQuantity();
+            return response;
+        }
 
     }
 
@@ -62,24 +94,25 @@ public class CreatedOrderResponse {
     private static class DeliveryInfoResponse {
 
         /**
-         * 배송지 주소
-         */
-        private String recipientAddress;
-
-        /**
          * 수령인 이름
          */
         private String recipientName;
-
         /**
          * 수령인 전화번호
          */
         private String recipientPhone;
-
         /**
-         * 배송 요청사항
+         * 배송지 주소
          */
-        private String deliveryMemo;
+        private String recipientAddress;
+
+        public static DeliveryInfoResponse from(CreatedOrder.CreatedDeliveryInfo deliveryInfo) {
+            DeliveryInfoResponse response = new DeliveryInfoResponse();
+            response.recipientName = deliveryInfo.getRecipientName();
+            response.recipientPhone = deliveryInfo.getRecipientPhone();
+            response.recipientAddress = deliveryInfo.getRecipientAddress();
+            return response;
+        }
 
     }
 
