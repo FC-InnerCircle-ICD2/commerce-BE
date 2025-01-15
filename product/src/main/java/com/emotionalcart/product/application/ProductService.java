@@ -1,5 +1,8 @@
 package com.emotionalcart.product.application;
 
+import com.emotionalcart.core.feature.review.Review;
+import com.emotionalcart.product.application.dto.GetProductReviews;
+import com.emotionalcart.product.domain.ProductDataProvider;
 import com.emotionalcart.product.domain.entity.ProductCategory;
 import com.emotionalcart.product.domain.repository.ProductCategoryRespository;
 import com.emotionalcart.product.presentation.dto.ReadProductCategoryResponse;
@@ -23,22 +26,22 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
-import java.util.Map;
-import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
 public class ProductService {
-    private final ProductRepository productRepository;
-    private final ReviewRepository reviewRepository;
-    private final ReviewImageRepository reviewImageRepository;
+    private final ProductDataProvider productDataProvider;
 
+    public Page<GetProductReviews.Response> getProductReviews(@NotNull Long productId, GetProductReviews.Request request) {
+        productDataProvider.findProduct(productId);
     private final ProductCategoryRespository productCategoryRespository;
     public Page<GetProductReviewsResponse> getProductReviews(@NotNull Long productId, GetProductReviewsRequest request) {
         if (!productRepository.existsByIdAndIsDeletedIsFalse(productId)) {
             throw new ProductException(ErrorCode.NOT_FOUND_PRODUCT);
         }
 
+        Page<Review> reviews = productDataProvider.findAllReviews(productId, request.getPageable());
+        ReviewImages reviewImages = findAllReviewImages(reviews.getContent());
     public Response<List<ReadProductCategoryResponse>> getAllProductCategories(Pageable pageable){
         Page<Review> reviews = reviewRepository.findAllByProductIdAndIsDeletedIsFalse(
                 productId,
@@ -46,6 +49,7 @@ public class ProductService {
         );
         Map<Long, List<ReviewImageResponse>> reviewImages = fetchReviewImages(reviews);
 
+        return GetProductReviews.Response.toResponse(reviews, reviewImages);
         Page<ProductCategory> productCategoryPage = productCategoryRespository.findAll(pageable);
         return reviews.map(review -> {
             List<ReviewImageResponse> images = reviewImages.getOrDefault(review.getId(), List.of());
@@ -53,6 +57,9 @@ public class ProductService {
         });
     }
 
+    private ReviewImages findAllReviewImages(List<Review> reviews) {
+        Reviews from = Reviews.from(reviews);
+        return ReviewImages.from(productDataProvider.findAllReviewImages(from.ids()));
         List<ReadProductCategoryResponse> productCategories = productCategoryPage.getContent()
                 .stream()
                 .map(ReadProductCategoryResponse::toDto)
