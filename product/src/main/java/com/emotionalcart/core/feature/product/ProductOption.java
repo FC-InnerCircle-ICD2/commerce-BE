@@ -3,7 +3,6 @@ package com.emotionalcart.core.feature.product;
 import com.emotionalcart.core.base.BaseEntity;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotNull;
-import jakarta.validation.constraints.Size;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -25,17 +24,7 @@ public class ProductOption extends BaseEntity {
     private String name;
 
     @NotNull
-    private Integer quantity;
-
-    @Size(min = 1)
-    @NotNull
-    private Integer optionOrder;
-
-    @NotNull
     private Boolean isRequired;
-
-    @NotNull
-    private Integer sellPrice;
 
     @NotNull
     private String status;
@@ -43,18 +32,12 @@ public class ProductOption extends BaseEntity {
     private ProductOption(
             Long productId,
             String name,
-            Integer quantity,
-            Integer optionOrder,
             Boolean isRequired,
-            Integer sellPrice,
             String status
     ) {
         this.productId = productId;
         this.name = name;
-        this.quantity = quantity;
-        this.optionOrder = optionOrder;
         this.isRequired = isRequired;
-        this.sellPrice = sellPrice;
         this.status = status;
     }
 }
