@@ -99,7 +99,7 @@ public class Orders extends BaseEntity {
         orders.orderAt = LocalDateTime.now();
         orders.paymentMethod = createOrder.getPaymentMethod();
         orders.totalPrice =
-            Money.sum(createOrder.getOrderItems().stream().map(item -> PriceAndQuantity.of(item.getPrice(), item.getQuantity())).toList());
+            Money.sum(createOrder.getOrderItemsPriceAndQuantity());
         orders.createOrderItems(createOrder.getOrderItems());
         orders.createOrderRecipient(createOrder.getDeliveryInfo());
         return orders;

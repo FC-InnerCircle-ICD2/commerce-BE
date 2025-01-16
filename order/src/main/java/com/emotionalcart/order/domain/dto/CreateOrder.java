@@ -1,5 +1,6 @@
 package com.emotionalcart.order.domain.dto;
 
+import com.emotionalcart.order.domain.entity.PriceAndQuantity;
 import com.emotionalcart.order.domain.enums.PaymentMethod;
 import com.emotionalcart.order.infra.advice.exceptions.InvalidValueRequestException;
 import jakarta.validation.constraints.NotNull;
@@ -106,6 +107,15 @@ public class CreateOrder extends SelfValidation<CreateOrder> {
         for (CreateOrderItem orderItem : orderItems) {
             orderItem.valid();
         }
+    }
+
+    /**
+     * 주문 상품의 금액과 수량 목록을 반환 한다.
+     *
+     * @return 주문 상품의 금액과 수량 목록
+     */
+    public List<PriceAndQuantity> getOrderItemsPriceAndQuantity() {
+        return this.orderItems.stream().map(item -> PriceAndQuantity.of(item.getPrice(), item.getQuantity())).toList();
     }
 
 }
