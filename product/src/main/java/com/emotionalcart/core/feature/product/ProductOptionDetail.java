@@ -31,20 +31,19 @@ public class ProductOptionDetail extends BaseEntity {
     @NotNull
     private Integer optionDetailOrder;
 
-    @NotNull
-    private Integer sellPrice;
+    private Integer additionalPrice;
 
     private ProductOptionDetail(
             Long productOptionId,
             String value,
             Integer quantity,
             Integer optionDetailOrder,
-            Integer sellPrice
+            Integer additionalPrice
     ) {
         this.productOptionId = productOptionId;
         this.value = value;
         this.quantity = quantity;
         this.optionDetailOrder = optionDetailOrder;
-        this.sellPrice = sellPrice;
+        this.additionalPrice = additionalPrice;
     }
 }
