@@ -39,6 +39,6 @@ public class ProductDataProvider {
     }
 
     public List<Category> findAllCategories() {
-        return categoryRepository.findAllByIsActiveIsTrue();
+        return categoryRepository.findAllByIsActiveIsTrueAndIsDeletedIsFalse();
     }
 }
