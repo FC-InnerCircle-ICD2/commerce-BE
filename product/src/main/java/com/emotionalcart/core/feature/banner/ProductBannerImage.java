@@ -1,4 +1,4 @@
-package com.emotionalcart.core.feature.product;
+package com.emotionalcart.core.feature.banner;
 
 import com.emotionalcart.core.base.BaseImageEntity;
 import jakarta.persistence.*;
@@ -12,20 +12,17 @@ import lombok.NoArgsConstructor;
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class ProductBannerImage extends BaseImageEntity {
-
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
     @NotNull
-    private Long productBannerId;
-
-    @NotNull
-    private Long productId;
+    @OneToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "product_banner_id")
+    private ProductBanner productBanner;
 
     private ProductBannerImage(
-            Long productBannerId,
-            Long productId,
+            ProductBanner productBanner,
             String bucketName,
             String originalFileName,
             String filePath,
@@ -34,7 +31,6 @@ public class ProductBannerImage extends BaseImageEntity {
             Integer fileOrder
     ) {
         super(bucketName, originalFileName, filePath, fileType, fileSize, fileOrder);
-        this.productBannerId = productBannerId;
-        this.productId = productId;
+        this.productBanner = productBanner;
     }
 }
