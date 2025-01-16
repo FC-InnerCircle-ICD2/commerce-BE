@@ -10,6 +10,7 @@ public enum ErrorCode {
     , UNAUTHORIZE_ERROR("PRODUCT-0002","인증에 실패했습니다.",HttpStatus.UNAUTHORIZED)
 //    , FORBIDDEN(403, "허용되지 않은 접근입니다.")
     , DATA_NOT_FOUND("PRODUCT-0003","데이터를 찾을 수 없습니다.",HttpStatus.NOT_FOUND)
+    , NOT_FOUND_PRODUCT("PRODUCT-0004","상품을 찾을 수 없습니다.",HttpStatus.NOT_FOUND)
 //    , BASEURL_BAD_REQUEST(600, "기본 주소 오류입니다.")
 //    , BAD_PARSING(700,"JSON 파일 파싱 에러입니다.")
     ;
