@@ -1,4 +1,4 @@
-package com.emotionalcart.product.application.dto;
+package com.emotionalcart.product.presentation.dto;
 
 import com.emotionalcart.core.base.BasePageRequest;
 import com.emotionalcart.core.feature.review.Review;
@@ -13,7 +13,7 @@ import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Map;
 
-public class GetProductReviews {
+public class ReadProductReviews {
 
     @Getter
     @Setter
