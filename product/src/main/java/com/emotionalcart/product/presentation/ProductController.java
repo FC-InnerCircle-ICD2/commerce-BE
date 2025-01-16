@@ -3,6 +3,7 @@ package com.emotionalcart.product.presentation;
 import com.emotionalcart.product.application.ProductService;
 import jakarta.validation.Valid;
 import com.emotionalcart.product.application.dto.GetProductReviews;
+import com.emotionalcart.product.presentation.dto.ReadProductReviews;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.http.ResponseEntity;
@@ -18,11 +19,11 @@ public class ProductController {
     private final ProductService productService;
 
     @GetMapping("/{productId}/reviews")
-    public ResponseEntity<Page<GetProductReviews.Response>> getProductReviews(
+    public ResponseEntity<Page<ReadProductReviews.Response>> readProductReviews(
             @PathVariable Long productId,
-            GetProductReviews.Request request
+            ReadProductReviews.Request request
     ) {
-        return ResponseEntity.ok(productService.getProductReviews(productId, request));
+        return ResponseEntity.ok(productService.readProductReviews(productId, request));
     }
 
     @PostMapping("/stock")
