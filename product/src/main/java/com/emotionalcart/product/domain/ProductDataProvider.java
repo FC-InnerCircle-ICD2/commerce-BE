@@ -27,7 +27,7 @@ public class ProductDataProvider {
 
     public Product findProduct(Long productId) {
         return productRepository.findByIdAndIsDeletedIsFalse(productId)
-                       .orElseThrow(() -> new ProductException(ErrorCode.NOT_FOUND_PRODUCT));
+                .orElseThrow(() -> new ProductException(ErrorCode.NOT_FOUND_PRODUCT));
     }
 
     public Page<Review> findAllReviews(Long productId, PageRequest pageRequest) {
@@ -39,6 +39,6 @@ public class ProductDataProvider {
     }
 
     public List<Category> findAllCategories() {
-        return categoryRepository.findAll();
+        return categoryRepository.findAllByIsActiveIsTrue();
     }
 }

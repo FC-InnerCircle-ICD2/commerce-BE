@@ -19,13 +19,14 @@ import java.util.stream.Collectors;
 public class ProductService {
     private final ProductDataProvider productDataProvider;
 
-    public List<ReadCategories.Response> getAllProductCategories(){
+    public List<ReadCategories.Response> getAllProductCategories() {
         List<Category> categories = productDataProvider.findAllCategories();
 
-        return ReadCategories.Response.toResponse(categories);
+        return ReadCategories.Response.fromCategories(categories);
     }
 
-    public Page<GetProductReviews.Response> getProductReviews(@NotNull Long productId, GetProductReviews.Request request) {
+    public Page<GetProductReviews.Response> getProductReviews(@NotNull Long productId,
+            GetProductReviews.Request request) {
         productDataProvider.findProduct(productId);
 
         Page<Review> reviews = productDataProvider.findAllReviews(productId, request.getPageable());

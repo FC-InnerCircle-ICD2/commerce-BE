@@ -27,7 +27,7 @@ public class Category extends BaseEntity {
 
     @NotNull
     @Column(nullable = false)
-    private Boolean isActive = true;
+    private Boolean isActive;
 
     @NotNull
     @Column(nullable = false)
@@ -45,16 +45,16 @@ public class Category extends BaseEntity {
     private List<Category> subCategories = new ArrayList<>();
 
     // 카테고리 생성
-    public static Category create(String name, Category parentCategory) {
-        int depth = (parentCategory != null) ? parentCategory.getDepth() + 1 : 1;
-        Category category = new Category(parentCategory, name, true, depth);
-
-        if (parentCategory != null) {
-            parentCategory.getSubCategories().add(category);
-        }
-
-        return category;
-    }
+//    public static Category create(String name, Category parentCategory) {
+//        int depth = (parentCategory != null) ? parentCategory.getDepth() + 1 : 1;
+//        Category category = new Category(parentCategory, name, true, depth);
+//
+//        if (parentCategory != null) {
+//            parentCategory.getSubCategories().add(category);
+//        }
+//
+//        return category;
+//    }
 
     // 생성자
     private Category(

@@ -16,16 +16,24 @@ public class ReadCategories {
         private Long parentCategoryId;
         private List<Response> subCategories;
 
+        // Constructor to map Category to Response
         public Response(Category category) {
             this.id = category.getId();
             this.name = category.getName();
             this.parentCategoryId = category.getParentCategory() != null ? category.getParentCategory().getId() : null;
-            this.subCategories = category.getSubCategories().stream().map(Response::new).collect(Collectors.toList());
+            this.subCategories = category.getSubCategories().stream()
+                    .filter(Category::getIsActive)
+                    .map(Response::new)
+                    .collect(Collectors.toList());
         }
 
-        public static List<Response> toResponse(List<Category> categories) {
-            return categories.stream().map(Response::new).collect(Collectors.toList());
+        // Converts a list of Category objects to a list of Response objects
+        // Only top-level categories (depth == 1) are included
+        public static List<Response> fromCategories(List<Category> categories) {
+            return categories.stream()
+                    .filter(category -> category.getDepth() == 1)
+                    .map(Response::new)
+                    .collect(Collectors.toList());
         }
-
     }
 }
