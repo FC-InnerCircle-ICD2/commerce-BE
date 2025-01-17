@@ -3,7 +3,6 @@ package com.emotionalcart.product.presentation.dto;
 import com.emotionalcart.core.feature.banner.Banner;
 import com.emotionalcart.core.feature.banner.BannerType;
 
-import com.fasterxml.jackson.annotation.JsonInclude;
 import lombok.Data;
 
 import java.util.List;
@@ -12,7 +11,6 @@ import java.util.stream.Collectors;
 public class ReadBanners {
 
     @Data
-    @JsonInclude(JsonInclude.Include.NON_NULL)  // null 필드는 JSON 응답에서 제외
     public static class Response {
         private Long id;
         private BannerType type;
