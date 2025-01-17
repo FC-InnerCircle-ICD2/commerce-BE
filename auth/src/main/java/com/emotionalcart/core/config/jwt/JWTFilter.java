@@ -1,7 +1,7 @@
 package com.emotionalcart.core.config.jwt;
 
-import com.emotionalcart.auth.application.dto.CustomOAuth2User;
-import com.emotionalcart.auth.application.dto.MemberDTO;
+import com.emotionalcart.auth.domain.CustomOAuth2User;
+import com.emotionalcart.auth.application.dto.MemberResponse;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.Cookie;
@@ -51,11 +51,12 @@ public class JWTFilter extends OncePerRequestFilter {
 
         String userName = jwtUtil.getUserName(token);
 
-        MemberDTO memberDTO = new MemberDTO();
-        memberDTO.setUserName(userName);
+        MemberResponse memberResponse = new MemberResponse();
+        memberResponse.setUserName(userName);
+        memberResponse.setRole("COMMERCE_MEMBER");
 
         //UserDetails에 회원 정보 객체 담기
-        CustomOAuth2User customOAuth2User = new CustomOAuth2User(memberDTO);
+        CustomOAuth2User customOAuth2User = new CustomOAuth2User(memberResponse);
 
         //스프링 시큐리티 인증 토큰 생성
         Authentication authToken = new UsernamePasswordAuthenticationToken(customOAuth2User, null, customOAuth2User.getAuthorities());
