@@ -1,5 +1,13 @@
 spring:
   application:
     name: order-service
+  jpa:
+    hibernate:
+      ddl-auto: update
+  datasource:
+    driver-class-name: org.h2.Driver
+    url: jdbc:h2:tcp://localhost/~/ecommerce
+    username: sa
+    password:
 server:
   port: 9999
