@@ -18,6 +18,10 @@ public class Banner extends BaseEntity {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
+    @OneToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "banner_image_id")
+    private BannerImage bannerImage;
+
     @NotNull
     @Enumerated(EnumType.STRING)
     private BannerType type;
@@ -42,6 +46,7 @@ public class Banner extends BaseEntity {
 
     private Banner(
             Long id,
+            BannerImage bannerImage,
             BannerType type,
             String title,
             String description,
@@ -51,6 +56,7 @@ public class Banner extends BaseEntity {
             String iconPath
     ) {
         this.id = id;
+        this.bannerImage = bannerImage;
         this.type = type;
         this.title = title;
         this.description = description;
