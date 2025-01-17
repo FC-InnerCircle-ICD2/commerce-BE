@@ -1,10 +1,11 @@
 package com.emotionalcart.product.presentation.dto;
 
 import jakarta.validation.constraints.NotNull;
-import lombok.Data;
+import lombok.Getter;
+import lombok.Setter;
 
 public class ReadProductStock {
-    @Data
+    @Getter
     public static class Request {
         @NotNull
         private Long productId;
@@ -14,7 +15,8 @@ public class ReadProductStock {
         private Long productOptionDetailId;
     }
 
-    @Data
+    @Getter
+    @Setter
     public static class Response {
         private Long productId;
         private Long productOptionId;
