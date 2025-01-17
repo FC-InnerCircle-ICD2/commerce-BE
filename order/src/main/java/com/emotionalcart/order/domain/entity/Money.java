@@ -35,9 +35,11 @@ public class Money {
     }
 
     public static Money of(double price) {
-        Money money = new Money();
-        money.amount = BigDecimal.valueOf(price);
-        return money;
+        return new Money(price);
+    }
+
+    private Money(double price) {
+        this.amount = BigDecimal.valueOf(price);
     }
 
 }

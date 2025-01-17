@@ -12,6 +12,7 @@ import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import org.springframework.data.annotation.CreatedBy;
+import org.springframework.util.CollectionUtils;
 
 import java.time.LocalDateTime;
 import java.util.List;
@@ -132,7 +133,7 @@ public class Orders extends BaseEntity {
     }
 
     public void addHistory() {
-        if (this.orderItems != null) {
+        if (!CollectionUtils.isEmpty(this.orderItems)) {
             this.orderItems.forEach(OrderItem::addHistory);
         }
     }
