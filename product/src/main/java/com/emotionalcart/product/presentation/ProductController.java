@@ -1,9 +1,9 @@
 package com.emotionalcart.product.presentation;
 
 import com.emotionalcart.product.application.ProductService;
+import com.emotionalcart.product.presentation.dto.ReadCategories;
 import jakarta.validation.Valid;
 import com.emotionalcart.product.presentation.dto.ReadProductReviews;
-import com.emotionalcart.product.application.dto.ReadCategories;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
