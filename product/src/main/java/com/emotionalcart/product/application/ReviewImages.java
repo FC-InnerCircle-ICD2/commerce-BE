@@ -1,7 +1,7 @@
 package com.emotionalcart.product.application;
 
 import com.emotionalcart.core.feature.review.ReviewImage;
-import com.emotionalcart.product.application.dto.GetProductReviews;
+import com.emotionalcart.product.presentation.dto.ReadProductReviews;
 
 import java.util.List;
 import java.util.Map;
@@ -20,11 +20,11 @@ public class ReviewImages {
     }
 
 
-    public Map<Long, List<GetProductReviews.ReviewImageResponse>> groupByReviewId() {
+    public Map<Long, List<ReadProductReviews.ReviewImageResponse>> groupByReviewId() {
         return reviewImages.stream()
                 .collect(Collectors.groupingBy(
                         ReviewImage::getReviewId,
-                        Collectors.mapping(GetProductReviews.ReviewImageResponse::new, Collectors.toList())
+                        Collectors.mapping(ReadProductReviews.ReviewImageResponse::new, Collectors.toList())
                 ));
     }
 

@@ -3,6 +3,7 @@ package com.emotionalcart.product.application;
 import com.emotionalcart.core.feature.review.Review;
 import com.emotionalcart.product.application.dto.GetProductReviews;
 import com.emotionalcart.product.application.dto.ReadCategories;
+import com.emotionalcart.product.presentation.dto.ReadProductReviews;
 import com.emotionalcart.product.domain.ProductDataProvider;
 import com.emotionalcart.core.feature.category.Category;
 import jakarta.validation.constraints.NotNull;
@@ -25,14 +26,13 @@ public class ProductService {
         return ReadCategories.Response.fromCategories(categories);
     }
 
-    public Page<GetProductReviews.Response> getProductReviews(@NotNull Long productId,
-            GetProductReviews.Request request) {
+    public Page<ReadProductReviews.Response> readProductReviews(@NotNull Long productId, ReadProductReviews.Request request) {
         productDataProvider.findProduct(productId);
 
         Page<Review> reviews = productDataProvider.findAllReviews(productId, request.getPageable());
         ReviewImages reviewImages = findAllReviewImages(reviews.getContent());
 
-        return GetProductReviews.Response.toResponse(reviews, reviewImages);
+        return ReadProductReviews.Response.toResponse(reviews, reviewImages);
     }
 
     private ReviewImages findAllReviewImages(List<Review> reviews) {
