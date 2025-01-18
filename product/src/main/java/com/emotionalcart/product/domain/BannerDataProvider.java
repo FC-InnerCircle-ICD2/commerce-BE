@@ -18,7 +18,7 @@ public class BannerDataProvider {
 
     public List<Banner> findAllBanners(){
         LocalDateTime now = LocalDateTime.now();
-        return bannerRepository.findByIsDeletedFalseAndStartDateBeforeAndEndDateAfter(now, now);
+        return bannerRepository.findAllBannersWithImages(now);
     }
 
     public ProductBanner findProductBanner(Long BannerId){

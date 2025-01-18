@@ -35,8 +35,9 @@ public class ReadBanners {
             this.productBannerResponse = productBannerResponse;
         }
 
-        public static Response toResponse(Banner banner, BannerImage bannerImage) {
-            BannerImageResponse imageResponse = (bannerImage != null) ? new BannerImageResponse(bannerImage) : null;
+        public static Response toResponse(Banner banner) {
+            BannerImage image = banner.getBannerImage();
+            BannerImageResponse imageResponse = (image != null) ? new BannerImageResponse(image) : null;
             return new Response(banner, imageResponse);
         }
     }

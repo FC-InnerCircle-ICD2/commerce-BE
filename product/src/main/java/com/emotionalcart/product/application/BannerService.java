@@ -1,6 +1,7 @@
 package com.emotionalcart.product.application;
 
 import com.emotionalcart.core.feature.banner.Banner;
+import com.emotionalcart.core.feature.banner.BannerImage;
 import com.emotionalcart.core.feature.banner.ProductBanner;
 import com.emotionalcart.product.presentation.dto.ReadBanners;
 import com.emotionalcart.product.domain.BannerDataProvider;
@@ -25,7 +26,7 @@ public class BannerService {
 
     private ReadBanners.Response mapBannerToResponse(Banner banner) {
 
-        ReadBanners.Response response = ReadBanners.Response.toResponse(banner, banner.getBannerImage());
+        ReadBanners.Response response = ReadBanners.Response.toResponse(banner);
 
         return switch (banner.getType()) {
             case PRODUCT -> fromProductBanner(response);   // 상품 배너 처리
