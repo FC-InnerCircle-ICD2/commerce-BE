@@ -1,7 +1,6 @@
 package com.emotionalcart.product.application;
 
 import com.emotionalcart.core.feature.review.Review;
-import com.emotionalcart.product.application.dto.GetProductReviews;
 import com.emotionalcart.product.application.dto.ReadCategories;
 import com.emotionalcart.product.presentation.dto.ReadProductReviews;
 import com.emotionalcart.product.domain.ProductDataProvider;
