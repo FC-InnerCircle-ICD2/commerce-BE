@@ -17,7 +17,7 @@ public class BannerController {
     private final BannerService bannerService;
 
     @GetMapping
-    public ResponseEntity<List<ReadBanners.Response>> getBanners() {
-        return ResponseEntity.ok(bannerService.getBanners());
+    public ResponseEntity<List<ReadBanners.Response>> readBanners() {
+        return ResponseEntity.ok(bannerService.readBanners());
     }
 }

@@ -16,7 +16,7 @@ import java.util.List;
 public class BannerService {
     private final BannerDataProvider bannerDataProvider;
 
-    public List<ReadBanners.Response> getBanners(){
+    public List<ReadBanners.Response> readBanners(){
         List<Banner> banners = bannerDataProvider.findAllBanners();
 
         return banners.stream()
