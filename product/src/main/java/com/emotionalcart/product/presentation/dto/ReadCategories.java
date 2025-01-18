@@ -11,17 +11,17 @@ public class ReadCategories {
 
     @Data
     public static class Response {
-        private Long id;
+        private Long productCategoryId;
         private String name;
-        private Long parentCategoryId;
-        private List<Response> subCategories;
+        private Long parentProductCategoryId;
+        private List<Response> subProductCategories;
 
         // Constructor to map Category to Response
         public Response(Category category) {
-            this.id = category.getId();
+            this.productCategoryId = category.getId();
             this.name = category.getName();
-            this.parentCategoryId = category.getParentCategory() != null ? category.getParentCategory().getId() : null;
-            this.subCategories = category.getSubCategories().stream()
+            this.parentProductCategoryId = category.getParentCategory() != null ? category.getParentCategory().getId() : null;
+            this.subProductCategories = category.getSubCategories().stream()
                     .filter(Category::getIsActive)
                     .map(Response::new)
                     .collect(Collectors.toList());
