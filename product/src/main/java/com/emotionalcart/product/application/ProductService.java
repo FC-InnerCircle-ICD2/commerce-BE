@@ -52,61 +52,54 @@ public class ProductService {
                 .collect(Collectors.toSet());
 
         List<ProductDetail> productDetails = productDataProvider.findAllProductData(productIds);
-        Map<Long, List<ProductDetail>> groupedProductDetail = productDetails.stream()
-                .collect(Collectors.groupingBy(ProductDetail::getProductId));
+        ProductDetails groupedProductDetails = ProductDetails.from(productDetails);
 
         for (ReadProductValidate.Request request : requests) {
-            List<ProductDetail> productDetailForProduct = groupedProductDetail.get(request.getProductId());
-
-            if (productDetailForProduct == null || productDetailForProduct.isEmpty()) {
-                throw new ProductException(ErrorCode.NOT_FOUND_PRODUCT);
-            }
-
-            if (!validateOptions(productDetailForProduct, request)) {
-                throw new ProductException(ErrorCode.REQUIRED_OPTION_MISSING);
-            }
-
-            if (!validateQuantity(productDetailForProduct, request)) {
-                throw new ProductException(ErrorCode.OUT_OF_STOCK);
-            }
+            validateProductExists(groupedProductDetails, request.getProductId());
+            validateOptions(groupedProductDetails, request);
+            validateStock(groupedProductDetails, request);
         }
     }
 
-    private boolean validateOptions(List<ProductDetail> productDetails, ReadProductValidate.Request request) {
-        Set<Long> allOptionIds = productDetails.stream()
-                .map(ProductDetail::getProductOptionId)
-                .collect(Collectors.toSet());
+    private void validateProductExists(ProductDetails groupedProductDetails, Long productId) {
+        if (groupedProductDetails.getDetailsByProductId(productId).isEmpty()) {
+            throw new ProductException(ErrorCode.NOT_FOUND_PRODUCT);
+        }
+    }
 
-        Set<Long> requiredOptionIds = productDetails.stream()
-                .filter(ProductDetail::isRequired)
-                .map(ProductDetail::getProductOptionId)
-                .collect(Collectors.toSet());
-
+    private void validateOptions(ProductDetails groupedProductDetails, ReadProductValidate.Request request) {
+        Long productId = request.getProductId();
+        Set<Long> allOptionIds = groupedProductDetails.getAllOptionIds(productId);
+        Set<Long> allOptionDetailIds = groupedProductDetails.getAllOptionDetailIds(productId);
+        Set<Long> requiredOptionIds = groupedProductDetails.getRequiredOptionIds(productId);
         Set<Long> selectedOptionIds = request.getProductOptions().stream()
                 .map(ReadProductValidate.Request.OptionRequest::getProductOptionId)
+                .collect(Collectors.toSet());
+        Set<Long> selectedOptionDetailIds = request.getProductOptions().stream()
+                .map(ReadProductValidate.Request.OptionRequest::getProductOptionDetailId)
                 .collect(Collectors.toSet());
 
         if (!allOptionIds.containsAll(selectedOptionIds)) {
             throw new ProductException(ErrorCode.NOT_FOUND_PRODUCT_OPTION);
         }
-
-        return selectedOptionIds.containsAll(requiredOptionIds);
+        if (!allOptionDetailIds.containsAll(selectedOptionDetailIds)) {
+            throw new ProductException(ErrorCode.NOT_FOUND_PRODUCT_OPTION);
+        }
+        if (!selectedOptionIds.containsAll(requiredOptionIds)) {
+            throw new ProductException(ErrorCode.REQUIRED_OPTION_MISSING);
+        }
     }
 
-    private boolean validateQuantity(List<ProductDetail> productDetails, ReadProductValidate.Request request) {
+    private void validateStock(ProductDetails groupedProductDetails, ReadProductValidate.Request request) {
+        List<ProductDetail> productDetails = groupedProductDetails.getDetailsByProductId(request.getProductId());
         Map<Long, Integer> optionDetailStockMap = productDetails.stream()
                 .collect(Collectors.toMap(ProductDetail::getProductOptionDetailId, ProductDetail::getQuantity));
 
         for (ReadProductValidate.Request.OptionRequest option : request.getProductOptions()) {
-            if (!optionDetailStockMap.containsKey(option.getProductOptionDetailId())) {
-                throw new ProductException(ErrorCode.NOT_FOUND_PRODUCT_OPTION);
-            }
             Integer availableStock = optionDetailStockMap.get(option.getProductOptionDetailId());
             if (availableStock == null || option.getQuantity() > availableStock) {
-                return false;
+                throw new ProductException(ErrorCode.OUT_OF_STOCK);
             }
         }
-
-        return true;
     }
 }
