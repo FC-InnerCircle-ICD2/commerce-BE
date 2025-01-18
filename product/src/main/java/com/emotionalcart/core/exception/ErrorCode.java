@@ -14,9 +14,9 @@ public enum ErrorCode {
     NOT_FOUND_PRODUCT("PRODUCT-0006", "해당 상품을 찾을 수 없습니다.", HttpStatus.NOT_FOUND),
     NOT_FOUND_PRODUCT_OPTION("PRODUCT-0007", "해당 상품 옵션을 찾을 수 없습니다.", HttpStatus.NOT_FOUND),
 
-//    , FORBIDDEN(403, "허용되지 않은 접근입니다.")
-//    , BASEURL_BAD_REQUEST(600, "기본 주소 오류입니다.")
-//    , BAD_PARSING(700,"JSON 파일 파싱 에러입니다.")
+    OUT_OF_STOCK("PRODUCT-0008", "상품의 재고가 부족합니다.", HttpStatus.CONFLICT),
+    REQUIRED_OPTION_MISSING("PRODUCT-0009", "상품의 필수 옵션이 선택되지 않았습니다.", HttpStatus.CONFLICT),
+
     ;
 
     private final String errorCode;

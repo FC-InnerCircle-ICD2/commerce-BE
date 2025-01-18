@@ -1,11 +1,12 @@
 package com.emotionalcart.product.infrastructure.repository;
 
-import com.emotionalcart.product.presentation.dto.ReadProductStock;
+import com.emotionalcart.product.domain.dto.ProductDetail;
 import com.querydsl.core.types.Projections;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import lombok.RequiredArgsConstructor;
 
-import java.util.Optional;
+import java.util.List;
+import java.util.Set;
 
 import static com.emotionalcart.core.feature.product.QProduct.product;
 import static com.emotionalcart.core.feature.product.QProductOption.productOption;
@@ -16,31 +17,28 @@ public class QueryDslProductRepositoryImpl implements QueryDslProductRepository 
     private final JPAQueryFactory queryFactory;
 
     @Override
-    public Optional<ReadProductStock.Response> findProductsStock(ReadProductStock.Request request) {
-        ReadProductStock.Response response = queryFactory
-                .select(Projections.fields(
-                        ReadProductStock.Response.class,
-                        product.id.as("productId"),
-                        productOption.id.as("productOptionId"),
-                        productOptionDetail.id.as("productOptionDetailId"),
-                        productOption.isRequired,
-                        productOptionDetail.quantity
-                ))
+    public List<ProductDetail> findAllProductData(Set<Long> productIds) {
+        return queryFactory.select(
+                        Projections.constructor(
+                                ProductDetail.class,
+                                product.id,
+                                productOption.id,
+                                productOption.isRequired,
+                                productOptionDetail.id,
+                                productOptionDetail.quantity
+                        ))
                 .from(product)
-                .join(productOption)
+                .leftJoin(productOption)
                 .on(product.id.eq(productOption.productId))
-                .join(productOptionDetail)
+                .leftJoin(productOptionDetail)
                 .on(productOption.id.eq(productOptionDetail.productOptionId))
                 .where(
-                        product.id.eq(request.getProductId()),
+                        product.id.in(productIds),
                         product.isDeleted.isFalse(),
-                        productOption.id.eq(request.getProductOptionId()),
                         productOption.isDeleted.isFalse(),
-                        productOptionDetail.id.eq(request.getProductOptionDetailId()),
                         productOptionDetail.isDeleted.isFalse()
                 )
-                .fetchFirst();
-
-        return Optional.ofNullable(response);
+                .fetch();
     }
+
 }

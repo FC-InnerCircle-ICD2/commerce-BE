@@ -1,7 +1,6 @@
 package com.emotionalcart.product.presentation;
 
 import com.emotionalcart.product.application.ProductService;
-import com.emotionalcart.product.presentation.dto.ReadProductStock;
 import jakarta.validation.Valid;
 import com.emotionalcart.product.presentation.dto.ReadProductReviews;
 import com.emotionalcart.product.application.dto.ReadCategories;
@@ -10,6 +9,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import com.emotionalcart.product.presentation.dto.ReadProductValidate;
 
 import java.util.List;
 
@@ -32,10 +32,11 @@ public class ProductController {
         return ResponseEntity.ok(productService.getAllProductCategories());
     }
 
-    @PostMapping("/stock")
-    public ResponseEntity<List<ReadProductStock.Response>> readProductStock(
-            @RequestBody @Valid List<ReadProductStock.Request> request
+    @PostMapping("/validate")
+    public ResponseEntity<Void> readProductValidate(
+            @RequestBody @Valid List<ReadProductValidate.Request> request
     ) {
-        return ResponseEntity.ok(productService.readProductStock(request));
+        productService.readProductValidate(request);
+        return ResponseEntity.ok().build();
     }
 }

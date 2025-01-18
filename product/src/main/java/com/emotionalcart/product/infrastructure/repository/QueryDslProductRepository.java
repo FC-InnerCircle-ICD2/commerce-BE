@@ -1,10 +1,12 @@
 package com.emotionalcart.product.infrastructure.repository;
 
 
-import com.emotionalcart.product.presentation.dto.ReadProductStock;
+import com.emotionalcart.product.domain.dto.ProductDetail;
 
-import java.util.Optional;
+import java.util.List;
+import java.util.Set;
+
 
 public interface QueryDslProductRepository {
-    Optional<ReadProductStock.Response> findProductsStock(ReadProductStock.Request request);
+    List<ProductDetail> findAllProductData(Set<Long> productIds);
 }
