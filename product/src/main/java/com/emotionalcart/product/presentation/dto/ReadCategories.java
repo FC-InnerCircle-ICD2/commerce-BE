@@ -1,4 +1,4 @@
-package com.emotionalcart.product.application.dto;
+package com.emotionalcart.product.presentation.dto;
 
 import java.util.List;
 import java.util.stream.Collectors;
