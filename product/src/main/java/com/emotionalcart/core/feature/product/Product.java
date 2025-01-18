@@ -24,15 +24,20 @@ public class Product extends BaseEntity {
     @NotNull
     private String description;
 
+    @NotNull
+    private Integer price;
+
     private Product(
             Long id,
             Long categoryId,
             String name,
-            String description
+            String description,
+            Integer price
     ) {
         this.id = id;
         this.categoryId = categoryId;
         this.name = name;
         this.description = description;
+        this.price = price;
     }
 }

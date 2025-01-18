@@ -1,6 +1,6 @@
 plugins {
     id("java")
-    id("org.springframework.boot") version "3.4.0"
+    id("org.springframework.boot") version "3.2.5"
     id("io.spring.dependency-management") version "1.1.5"
 }
 
@@ -12,26 +12,24 @@ repositories {
 }
 
 dependencies {
-    implementation(project(":common"))
+    implementation(project(":common")) // 공통 모듈 사용
     implementation("org.springframework.boot:spring-boot-starter-cache")
     implementation("org.springframework.boot:spring-boot-starter-data-jpa")
     implementation("org.springframework.boot:spring-boot-starter-validation")
     implementation("org.springframework.boot:spring-boot-starter-web")
+    implementation("org.springframework.boot:spring-boot-starter-oauth2-client")
     implementation("org.springframework.boot:spring-boot-starter-security")
-    implementation("org.springdoc:springdoc-openapi-starter-webmvc-ui:2.7.0")
-    implementation("com.querydsl:querydsl-jpa:5.1.0:jakarta")
-    annotationProcessor("com.querydsl:querydsl-apt:5.1.0:jakarta")
-    annotationProcessor("jakarta.annotation:jakarta.annotation-api")
-    annotationProcessor("jakarta.persistence:jakarta.persistence-api")
 
-    compileOnly("org.projectlombok:lombok:1.18.36")
-    annotationProcessor("org.projectlombok:lombok:1.18.36")
-    runtimeOnly("com.mysql:mysql-connector-j")
+    implementation ("io.jsonwebtoken:jjwt-api:0.12.3")
+    implementation ("io.jsonwebtoken:jjwt-impl:0.12.3")
+    implementation ("io.jsonwebtoken:jjwt-jackson:0.12.3")
+
+    compileOnly("org.projectlombok:lombok")
+    runtimeOnly("com.mysql:mysql-connector-j")  // MySQL 드라이버
+    annotationProcessor("org.projectlombok:lombok")
     developmentOnly("org.springframework.boot:spring-boot-devtools")
     testImplementation(platform("org.junit:junit-bom"))
     testImplementation("org.junit.jupiter:junit-jupiter")
-    testImplementation("org.springframework.boot:spring-boot-starter-test")
-    testRuntimeOnly("org.junit.platform:junit-platform-launcher")
 }
 
 tasks.test {
