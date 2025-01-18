@@ -1,8 +1,6 @@
 package com.emotionalcart.core.feature.product;
 
 import com.emotionalcart.core.base.BaseEntity;
-import com.emotionalcart.core.feature.category.Category;
-
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotNull;
 import lombok.AccessLevel;
@@ -13,32 +11,25 @@ import lombok.NoArgsConstructor;
 @Table
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-public class ProductOption extends BaseEntity {
+public class Provider extends BaseEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "product_id")
-    private Product product;
-
     @NotNull
+    @Column(nullable = false)
     private String name;
 
-    @NotNull
-    private Boolean isRequired;
+    private String description;
 
-    @NotNull
-    private String status;
-
-    private ProductOption(
+    private Provider(
+            Long id,
             String name,
-            Boolean isRequired,
-            String status
-    ) {
+            String description) {
+        this.id = id;
         this.name = name;
-        this.isRequired = isRequired;
-        this.status = status;
+        this.description = description;
     }
+
 }
