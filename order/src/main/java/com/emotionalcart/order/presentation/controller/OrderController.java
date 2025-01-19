@@ -34,8 +34,8 @@ public class OrderController {
      * @param orderId 주문번호
      * @return
      */
-    @GetMapping
-    public ResponseEntity<OrderDetailResponse> getOrderDetail(@RequestParam Long orderId) {
+    @GetMapping("/{orderId}")
+    public ResponseEntity<OrderDetailResponse> getOrderDetail(@PathVariable Long orderId) {
         OrderDetail orderDetail = orderDetailService.getOrderDetail(orderId);
         return ResponseEntity.ok(OrderDetailResponse.from(orderDetail));
     }
