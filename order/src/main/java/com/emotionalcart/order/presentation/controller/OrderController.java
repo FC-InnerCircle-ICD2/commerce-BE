@@ -1,12 +1,12 @@
 package com.emotionalcart.order.presentation.controller;
 
 import com.emotionalcart.order.application.CreateOrderService;
-import com.emotionalcart.order.application.service.GetOrderService;
+import com.emotionalcart.order.application.service.OrderDetailService;
 import com.emotionalcart.order.domain.dto.CreatedOrder;
-import com.emotionalcart.order.domain.dto.GetOrder;
+import com.emotionalcart.order.domain.dto.OrderDetail;
 import com.emotionalcart.order.presentation.controller.request.CreateOrderRequest;
 import com.emotionalcart.order.presentation.controller.response.CreatedOrderResponse;
-import com.emotionalcart.order.presentation.controller.response.GetOrderResponse;
+import com.emotionalcart.order.presentation.controller.response.OrderDetailResponse;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
@@ -19,7 +19,7 @@ public class OrderController {
 
     private final CreateOrderService createOrderService;
 
-    private final GetOrderService getOrderService;
+    private final OrderDetailService orderDetailService;
 
     @PostMapping
     public ResponseEntity<CreatedOrderResponse> createOrder(@RequestBody @Valid CreateOrderRequest request) {
@@ -35,9 +35,9 @@ public class OrderController {
      * @return
      */
     @GetMapping
-    public ResponseEntity<GetOrderResponse> getOrder(@RequestParam Long orderId) {
-        GetOrder getOrder = getOrderService.getOrder(orderId);
-        return ResponseEntity.ok(GetOrderResponse.from(getOrder));
+    public ResponseEntity<OrderDetailResponse> getOrderDetail(@RequestParam Long orderId) {
+        OrderDetail orderDetail = orderDetailService.getOrderDetail(orderId);
+        return ResponseEntity.ok(OrderDetailResponse.from(orderDetail));
     }
 
 }
