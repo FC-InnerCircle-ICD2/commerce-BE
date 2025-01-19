@@ -11,23 +11,25 @@ import lombok.NoArgsConstructor;
 @Table
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-public class ProductBanner extends BaseEntity {
+public class Provider extends BaseEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
     @NotNull
-    private Long productBannerId;
+    @Column(nullable = false)
+    private String name;
 
-    @NotNull
-    private Long productId;
+    private String description;
 
-    private ProductBanner(
-            Long productBannerId,
-            Long productId
-    ) {
-        this.productBannerId = productBannerId;
-        this.productId = productId;
+    private Provider(
+            Long id,
+            String name,
+            String description) {
+        this.id = id;
+        this.name = name;
+        this.description = description;
     }
+
 }

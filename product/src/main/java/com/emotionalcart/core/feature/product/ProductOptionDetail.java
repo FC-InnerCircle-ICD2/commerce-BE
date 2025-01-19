@@ -18,8 +18,9 @@ public class ProductOptionDetail extends BaseEntity {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @NotNull
-    private Long productOptionId;
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "product_option_id")
+    private ProductOption productOption;
 
     @NotNull
     private String value;
@@ -31,20 +32,17 @@ public class ProductOptionDetail extends BaseEntity {
     @NotNull
     private Integer optionDetailOrder;
 
-    @NotNull
-    private Integer sellPrice;
-
+    private Integer additionalPrice;
+    
     private ProductOptionDetail(
-            Long productOptionId,
             String value,
             Integer quantity,
             Integer optionDetailOrder,
-            Integer sellPrice
+            Integer additionalPrice
     ) {
-        this.productOptionId = productOptionId;
         this.value = value;
         this.quantity = quantity;
         this.optionDetailOrder = optionDetailOrder;
-        this.sellPrice = sellPrice;
+        this.additionalPrice = additionalPrice;
     }
 }
