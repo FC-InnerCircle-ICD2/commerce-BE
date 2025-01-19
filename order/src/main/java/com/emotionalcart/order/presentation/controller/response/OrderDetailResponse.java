@@ -49,7 +49,7 @@ public class OrderDetailResponse {
          */
         private String recipientAddress;
 
-        public static DeliveryInfoResponse from(OrderDetail.GetDeliveryInfo deliveryInfo) {
+        public static DeliveryInfoResponse from(OrderDetail.DeliveryDetailInfo deliveryInfo) {
             DeliveryInfoResponse response = new DeliveryInfoResponse();
             response.recipientName = deliveryInfo.getRecipientName();
             response.recipientPhone = deliveryInfo.getRecipientPhone();

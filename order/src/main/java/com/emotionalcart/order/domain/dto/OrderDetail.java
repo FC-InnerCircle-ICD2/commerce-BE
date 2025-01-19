@@ -24,12 +24,12 @@ public class OrderDetail {
     /**
      * 조회된 배송정보
      */
-    private final GetDeliveryInfo deliveryInfo;
+    private final DeliveryDetailInfo deliveryInfo;
 
     public OrderDetail(Orders orders) {
         this.orderId = orders.getId();
         this.paymentMethod = orders.getPaymentMethod();
-        this.deliveryInfo = GetDeliveryInfo.from(orders.getOrderRecipient());
+        this.deliveryInfo = DeliveryDetailInfo.from(orders.getOrderRecipient());
     }
 
     public static OrderDetail from(Orders orders) {
@@ -37,7 +37,7 @@ public class OrderDetail {
     }
 
     @Getter
-    public static class GetDeliveryInfo {
+    public static class DeliveryDetailInfo {
 
         /**
          * 수령인 이름
@@ -52,13 +52,12 @@ public class OrderDetail {
          */
         private String recipientAddress;
 
-        public static GetDeliveryInfo from(OrderRecipient recipient) {
-            GetDeliveryInfo getDeliveryInfo = new GetDeliveryInfo();
-            getDeliveryInfo.recipientName = recipient.getRecipientName();
-            getDeliveryInfo.recipientPhone = recipient.getRecipientPhone();
-            getDeliveryInfo.recipientAddress = recipient.getMappedAddressInfo();
-
-            return getDeliveryInfo;
+        public static DeliveryDetailInfo from(OrderRecipient recipient) {
+            DeliveryDetailInfo deliveryDetailInfo = new DeliveryDetailInfo();
+            deliveryDetailInfo.recipientName = recipient.getRecipientName();
+            deliveryDetailInfo.recipientPhone = recipient.getRecipientPhone();
+            deliveryDetailInfo.recipientAddress = recipient.getMappedAddressInfo();
+            return deliveryDetailInfo;
         }
 
     }
