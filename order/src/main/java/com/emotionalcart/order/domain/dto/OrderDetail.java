@@ -9,7 +9,7 @@ import lombok.Getter;
  * 조회된 주문
  */
 @Getter
-public class GetOrder {
+public class OrderDetail {
 
     /**
      * 주문번호
@@ -26,14 +26,14 @@ public class GetOrder {
      */
     private final GetDeliveryInfo deliveryInfo;
 
-    public GetOrder(Orders orders) {
+    public OrderDetail(Orders orders) {
         this.orderId = orders.getId();
         this.paymentMethod = orders.getPaymentMethod();
         this.deliveryInfo = GetDeliveryInfo.from(orders.getOrderRecipient());
     }
 
-    public static GetOrder from(Orders orders) {
-        return new GetOrder(orders);
+    public static OrderDetail from(Orders orders) {
+        return new OrderDetail(orders);
     }
 
     @Getter
