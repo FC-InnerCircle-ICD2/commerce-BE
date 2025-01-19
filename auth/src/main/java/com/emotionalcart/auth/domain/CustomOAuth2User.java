@@ -1,6 +1,7 @@
 package com.emotionalcart.auth.domain;
 
 import com.emotionalcart.auth.application.dto.MemberResponse;
+import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.oauth2.core.user.OAuth2User;
 
@@ -8,13 +9,10 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Map;
 
+@RequiredArgsConstructor
 public class CustomOAuth2User implements OAuth2User {
 
     private final MemberResponse memberResponse;
-
-    public CustomOAuth2User(MemberResponse memberResponse) {
-        this.memberResponse = memberResponse;
-    }
 
     @Override
     public Map<String, Object> getAttributes() {

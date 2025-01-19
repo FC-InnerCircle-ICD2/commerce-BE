@@ -7,6 +7,7 @@ import com.emotionalcart.auth.infrasturcture.MemberRepository;
 import com.emotionalcart.core.feature.Member;
 import com.emotionalcart.core.feature.enums.MemberState;
 import com.emotionalcart.core.feature.enums.SocialType;
+import lombok.RequiredArgsConstructor;
 import org.springframework.security.oauth2.client.userinfo.DefaultOAuth2UserService;
 import org.springframework.security.oauth2.client.userinfo.OAuth2UserRequest;
 import org.springframework.security.oauth2.core.OAuth2AuthenticationException;
@@ -14,12 +15,10 @@ import org.springframework.security.oauth2.core.user.OAuth2User;
 import org.springframework.stereotype.Service;
 
 @Service
+@RequiredArgsConstructor
 public class CustomOAuth2UserService extends DefaultOAuth2UserService {
 
     private final MemberRepository memberRepository;
-    public CustomOAuth2UserService(MemberRepository memberRepository) {
-        this.memberRepository = memberRepository;
-    }
 
     @Override
     public OAuth2User loadUser(OAuth2UserRequest userRequest) throws OAuth2AuthenticationException {
@@ -28,10 +27,11 @@ public class CustomOAuth2UserService extends DefaultOAuth2UserService {
 
         // 어떤 소셜 로그인 구분하기 위한 ID
         String registrationId = userRequest.getClientRegistration().getRegistrationId();
+
         OAuth2Response oAuth2Response;
-        if("naver".equals(registrationId)) {
+        if(SocialType.NAVER.name().equalsIgnoreCase(registrationId)) {
             oAuth2Response = new NaverResponse(oAuth2User.getAttributes());
-        }else if("kakao".equals(registrationId)) {
+        }else if(SocialType.KAKAO.name().equalsIgnoreCase(registrationId)) {
             oAuth2Response = new KakaoResponse(oAuth2User.getAttributes());
         }else{
             return null;
@@ -48,7 +48,6 @@ public class CustomOAuth2UserService extends DefaultOAuth2UserService {
             throw new OAuth2AuthenticationException("Unsupported social type: " + oAuth2Response.getProvider());
         }
 
-        System.out.println("oAuth2Response.getProviderId() = " + socialId);
         Member member = memberRepository.findBySocialId(socialId);
 
         if(member == null) {
