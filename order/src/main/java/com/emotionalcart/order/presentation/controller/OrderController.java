@@ -7,11 +7,14 @@ import com.emotionalcart.order.domain.dto.OrderDetail;
 import com.emotionalcart.order.presentation.controller.request.CreateOrderRequest;
 import com.emotionalcart.order.presentation.controller.response.CreatedOrderResponse;
 import com.emotionalcart.order.presentation.controller.response.OrderDetailResponse;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+@Tag(name = "order", description = "order API")
 @RestController
 @RequestMapping("/api/v1/orders")
 @RequiredArgsConstructor
@@ -22,6 +25,7 @@ public class OrderController {
     private final OrderDetailService orderDetailService;
 
     @PostMapping
+    @Operation(summary = "create Order API")
     public ResponseEntity<CreatedOrderResponse> createOrder(@RequestBody @Valid CreateOrderRequest request) {
         CreatedOrder createdOrder = createOrderService.createOrder(request.mapToDomain());
         // 주문 생성
@@ -35,6 +39,7 @@ public class OrderController {
      * @return
      */
     @GetMapping("/{orderId}")
+    @Operation(summary = "get Order API")
     public ResponseEntity<OrderDetailResponse> getOrderDetail(@PathVariable Long orderId) {
         OrderDetail orderDetail = orderDetailService.getOrderDetail(orderId);
         return ResponseEntity.ok(OrderDetailResponse.from(orderDetail));
