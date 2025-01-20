@@ -33,8 +33,7 @@ public class GlobalExceptionHandler {
         log.error("IllegalArgumentException 발생: {}", ex.getMessage());
 
         ErrorResponse errorResponse =
-            new ErrorResponse(HttpStatus.BAD_REQUEST.value(),
-                              OrderErrorCode.BAD_REQUEST.getErrorCode(),
+            new ErrorResponse(OrderErrorCode.BAD_REQUEST.getErrorCode(),
                               OrderErrorCode.BAD_REQUEST.getMessage());
         return ResponseEntity.badRequest().body(errorResponse);
     }
@@ -51,8 +50,7 @@ public class GlobalExceptionHandler {
         log.error("Exception 발생: {}", ex.getMessage(), ex);
 
         ErrorResponse errorResponse =
-            new ErrorResponse(HttpStatus.INTERNAL_SERVER_ERROR.value(),
-                              OrderErrorCode.INTERNAL_SERVER_ERROR.getErrorCode(),
+            new ErrorResponse(OrderErrorCode.INTERNAL_SERVER_ERROR.getErrorCode(),
                               OrderErrorCode.INTERNAL_SERVER_ERROR.getMessage());
         return ResponseEntity.internalServerError().body(errorResponse);
     }
@@ -64,8 +62,7 @@ public class GlobalExceptionHandler {
         log.error("{} 발생: {}", ex.getClass().getName(), ex.getMessage());
 
         ErrorResponse errorResponse =
-            new ErrorResponse(HttpStatus.BAD_REQUEST.value(),
-                              OrderErrorCode.BAD_REQUEST.getErrorCode(),
+            new ErrorResponse(OrderErrorCode.BAD_REQUEST.getErrorCode(),
                               OrderErrorCode.BAD_REQUEST.getMessage());
         return ResponseEntity.badRequest().body(errorResponse);
     }
@@ -83,13 +80,12 @@ public class GlobalExceptionHandler {
         log.error("{} 발생: {}", ex.getClass().getName(), ex.getMessage());
 
         ErrorResponse errorResponse =
-            new ErrorResponse(HttpStatus.BAD_REQUEST.value(),
-                              OrderErrorCode.INVALID_ORDER.getErrorCode(),
+            new ErrorResponse(OrderErrorCode.INVALID_ORDER.getErrorCode(),
                               OrderErrorCode.INVALID_ORDER.getMessage());
         return ResponseEntity.badRequest().body(errorResponse);
     }
 
-    public record ErrorResponse(int status, String errorCode, String errorMessage) {
+    public record ErrorResponse(String errorCode, String errorMessage) {
 
     }
 
