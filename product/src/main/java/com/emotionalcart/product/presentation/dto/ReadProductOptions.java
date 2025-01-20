@@ -23,16 +23,16 @@ public class ReadProductOptions {
             this.name = productOption.getName();
             this.productOptionDetails = productOptionDetails;
         }
-    }
 
-    public static Response toResponse(ProductOption productOption, List<ProductOptionDetail> productOptionDetails,
-            Map<Long, List<ProductImage>> imagesMap) {
-        List<ReadProductOptionDetails.Response> readProductOptionDetails = productOptionDetails.stream()
-                .map(detail -> ReadProductOptionDetails.toResponse(detail,
-                        imagesMap.getOrDefault(detail.getId(), List.of())))
-                .collect(Collectors.toList());
+        public static Response toResponse(ProductOption productOption, List<ProductOptionDetail> productOptionDetails,
+                Map<Long, List<ProductImage>> imagesMap) {
+            List<ReadProductOptionDetails.Response> readProductOptionDetails = productOptionDetails.stream()
+                    .map(detail -> ReadProductOptionDetails.Response.toResponse(detail,
+                            imagesMap.getOrDefault(detail.getId(), List.of())))
+                    .collect(Collectors.toList());
 
-        return new Response(productOption, readProductOptionDetails);
+            return new Response(productOption, readProductOptionDetails);
+        }
     }
 
 }

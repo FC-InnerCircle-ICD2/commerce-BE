@@ -23,10 +23,10 @@ public class ReadProviders {
             this.createdAt = provider.getCreatedAt();
             this.updatedAt = provider.getUpdatedAt();
         }
-    }
 
-    public static Response toResponse(Provider provider) {
-        return new Response(provider);
+        public static Response toResponse(Provider provider) {
+            return new Response(provider);
+        }
     }
 
 }

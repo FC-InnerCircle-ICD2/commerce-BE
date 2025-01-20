@@ -18,7 +18,6 @@ public class ReadProductDetails {
         private ReadProviders.Response providerResponse;
         private List<ReadProductOptions.Response> productOptions;
         // private List<ReadProductReviews.Response> productReviews; // 리뷰는 후에 추가
-        // private List<ReadProductImages.Response> productImages;
 
         public Response(Product product,
                 List<ReadProductOptions.Response> productOptions, ReadCategories.Response categoryResponse,
@@ -30,7 +29,6 @@ public class ReadProductDetails {
             this.categoryResponse = categoryResponse;
             this.providerResponse = providerResponse;
             this.productOptions = productOptions;
-            // this.productImages = productImages;
         }
     }
 

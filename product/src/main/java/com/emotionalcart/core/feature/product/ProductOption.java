@@ -29,16 +29,10 @@ public class ProductOption extends BaseEntity {
     @NotNull
     private Boolean isRequired;
 
-    @NotNull
-    private String status;
-
     private ProductOption(
             String name,
-            Boolean isRequired,
-            String status
-    ) {
+            Boolean isRequired) {
         this.name = name;
         this.isRequired = isRequired;
-        this.status = status;
     }
 }

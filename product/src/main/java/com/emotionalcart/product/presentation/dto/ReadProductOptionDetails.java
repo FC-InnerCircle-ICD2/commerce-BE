@@ -28,14 +28,14 @@ public class ReadProductOptionDetails {
             this.additionalPrice = productOptionDetail.getAdditionalPrice();
             this.images = images;
         }
-    }
 
-    public static Response toResponse(ProductOptionDetail productOptionDetail, List<ProductImage> images) {
-        List<ReadProductImages.Response> readProductImages = images.stream()
-                .map(ReadProductImages::toResponse)
-                .collect(Collectors.toList());
+        public static Response toResponse(ProductOptionDetail productOptionDetail, List<ProductImage> images) {
+            List<ReadProductImages.Response> readProductImages = images.stream()
+                    .map(ReadProductImages.Response::new)
+                    .collect(Collectors.toList());
 
-        return new Response(productOptionDetail, readProductImages);
+            return new Response(productOptionDetail, readProductImages);
+        }
     }
 
 }
