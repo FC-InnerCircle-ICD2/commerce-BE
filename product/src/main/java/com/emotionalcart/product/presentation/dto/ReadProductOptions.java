@@ -24,13 +24,9 @@ public class ReadProductOptions {
             this.productOptionDetails = productOptionDetails;
         }
 
-        public static Response toResponse(ProductOption productOption, List<ProductOptionDetail> productOptionDetails,
-                List<ProductImage> productImages) {
-            List<ReadProductOptionDetails.Response> readProductOptionDetails = productOptionDetails.stream()
-                    .map(detail -> ReadProductOptionDetails.Response.toResponse(detail, productImages))
-                    .collect(Collectors.toList());
-
-            return new Response(productOption, readProductOptionDetails);
+        public static Response toResponse(ProductOption productOption,
+                List<ReadProductOptionDetails.Response> productOptionDetails) {
+            return new Response(productOption, productOptionDetails);
         }
     }
 
