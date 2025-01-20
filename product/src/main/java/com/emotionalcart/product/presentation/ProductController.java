@@ -3,7 +3,7 @@ package com.emotionalcart.product.presentation;
 import com.emotionalcart.product.application.ProductService;
 import com.emotionalcart.product.presentation.dto.ReadCategories;
 import com.emotionalcart.product.presentation.dto.ReadProductReviews;
-import com.emotionalcart.product.presentation.dto.ReadProductDetail;
+//import com.emotionalcart.product.presentation.dto.ReadProductDetail;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
@@ -34,8 +34,8 @@ public class ProductController {
     }
 
     // 상품 상세 조회
-    @GetMapping("/{productId}")
-    public ResponseEntity<ReadProductDetail.Response> getProductDetail(@PathVariable Long productId) {
-        return ResponseEntity.ok(productService.getProductDetail(productId));
-    }
+//    @GetMapping("/{productId}")
+//    public ResponseEntity<ReadProductDetail.Response> getProductDetail(@PathVariable Long productId) {
+//        return ResponseEntity.ok(productService.getProductDetail(productId));
+//    }
 }

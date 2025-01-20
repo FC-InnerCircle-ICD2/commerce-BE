@@ -5,9 +5,9 @@ import com.emotionalcart.product.presentation.dto.ReadCategories;
 import com.emotionalcart.product.presentation.dto.ReadProductReviews;
 import com.emotionalcart.product.domain.ProductDataProvider;
 import com.emotionalcart.core.feature.category.Category;
-import com.emotionalcart.product.presentation.dto.ReadProductDetail;
-import com.emotionalcart.product.domain.Product;
-import com.emotionalcart.product.domain.repository.ProductRepository;
+//import com.emotionalcart.product.presentation.dto.ReadProductDetail;
+//import com.emotionalcart.product.domain.Product;
+//import com.emotionalcart.product.domain.repository.ProductRepository;
 import jakarta.persistence.EntityNotFoundException;
 import jakarta.validation.constraints.NotNull;
 import lombok.RequiredArgsConstructor;
@@ -44,9 +44,9 @@ public class ProductService {
         return ReviewImages.from(productDataProvider.findAllReviewImages(from.ids()));
     }
 
-    public ReadProductDetail.Response getProductDetail(Long productId) {
-        Product product = productRepository.findById(productId)
-                .orElseThrow(() -> new EntityNotFoundException("Product not found"));
-        return new ReadProductDetail.Response(product);
-    }
+//    public ReadProductDetail.Response getProductDetail(Long productId) {
+//        Product product = productRepository.findById(productId)
+//                .orElseThrow(() -> new EntityNotFoundException("Product not found"));
+//        return new ReadProductDetail.Response(product);
+//    }
 }
