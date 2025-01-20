@@ -30,11 +30,11 @@ public class ReadProductDetails {
             this.providerResponse = providerResponse;
             this.productOptions = productOptions;
         }
-    }
 
-    public static Response toResponse(Product product,
-            List<ReadProductOptions.Response> productOptions, ReadCategories.Response categoryResponse,
-            ReadProviders.Response providerResponse) {
-        return new Response(product, productOptions, categoryResponse, providerResponse);
+        public static Response toResponse(Product product,
+                List<ReadProductOptions.Response> productOptions, ReadCategories.Response categoryResponse,
+                ReadProviders.Response providerResponse) {
+            return new Response(product, productOptions, categoryResponse, providerResponse);
+        }
     }
 }
