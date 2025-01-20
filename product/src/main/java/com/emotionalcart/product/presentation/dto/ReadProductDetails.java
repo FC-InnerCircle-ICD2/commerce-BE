@@ -18,9 +18,9 @@ public class ReadProductDetails {
         private ReadProviders.Response providerResponse;
         private List<ReadProductOptions.Response> productOptions;
         // private List<ReadProductReviews.Response> productReviews; // 리뷰는 후에 추가
-        private List<ReadProductImages.Response> productImages;
+        // private List<ReadProductImages.Response> productImages;
 
-        public Response(Product product, List<ReadProductImages.Response> productImages,
+        public Response(Product product,
                 List<ReadProductOptions.Response> productOptions, ReadCategories.Response categoryResponse,
                 ReadProviders.Response providerResponse) {
             this.id = product.getId();
@@ -30,14 +30,13 @@ public class ReadProductDetails {
             this.categoryResponse = categoryResponse;
             this.providerResponse = providerResponse;
             this.productOptions = productOptions;
-            this.productImages = productImages;
+            // this.productImages = productImages;
         }
     }
 
-    public static Response toResponse(Product product, List<ReadProductImages.Response> productImages,
+    public static Response toResponse(Product product,
             List<ReadProductOptions.Response> productOptions, ReadCategories.Response categoryResponse,
-            ReadProviders.Response providerResponse, List<ReadProductOptionDetails.Response> productOptionDetails) {
-        return new Response(product, productImages, productOptions, categoryResponse, providerResponse,
-                productOptionDetails);
+            ReadProviders.Response providerResponse) {
+        return new Response(product, productOptions, categoryResponse, providerResponse);
     }
 }
