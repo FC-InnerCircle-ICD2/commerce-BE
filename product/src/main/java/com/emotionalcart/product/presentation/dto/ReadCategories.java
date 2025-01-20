@@ -20,7 +20,8 @@ public class ReadCategories {
         public Response(Category category) {
             this.productCategoryId = category.getId();
             this.name = category.getName();
-            this.parentProductCategoryId = category.getParentCategory() != null ? category.getParentCategory().getId() : null;
+            this.parentProductCategoryId = category.getParentCategory() != null ? category.getParentCategory().getId()
+                    : null;
             this.subProductCategories = category.getSubCategories().stream()
                     .filter(Category::getIsActive)
                     .map(Response::new)
@@ -29,11 +30,15 @@ public class ReadCategories {
 
         // Converts a list of Category objects to a list of Response objects
         // Only top-level categories (depth == 1) are included
-        public static List<Response> fromCategories(List<Category> categories) {
+        public static List<Response> toResponse(List<Category> categories) {
             return categories.stream()
                     .filter(category -> category.getDepth() == 1)
                     .map(Response::new)
                     .collect(Collectors.toList());
+        }
+
+        public static Response toResponse(Category category) {
+            return new Response(category);
         }
     }
 }

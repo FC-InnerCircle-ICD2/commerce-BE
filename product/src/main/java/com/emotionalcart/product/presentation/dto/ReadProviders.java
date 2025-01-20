@@ -13,15 +13,11 @@ public class ReadProviders {
         private Long providerId;
         private String name;
         private String description;
-        private LocalDateTime createdAt;
-        private LocalDateTime updatedAt;
 
         public Response(Provider provider) {
             this.providerId = provider.getId();
             this.name = provider.getName();
             this.description = provider.getDescription();
-            this.createdAt = provider.getCreatedAt();
-            this.updatedAt = provider.getUpdatedAt();
         }
 
         public static Response toResponse(Provider provider) {
