@@ -2,6 +2,7 @@ package com.emotionalcart.product.presentation;
 
 import com.emotionalcart.product.application.ProductService;
 import com.emotionalcart.product.presentation.dto.ReadCategories;
+import com.emotionalcart.product.presentation.dto.ReadProductDetails;
 import com.emotionalcart.product.presentation.dto.ReadProductReviews;
 //import com.emotionalcart.product.presentation.dto.ReadProductDetail;
 
@@ -34,8 +35,8 @@ public class ProductController {
     }
 
     // 상품 상세 조회
-//    @GetMapping("/{productId}")
-//    public ResponseEntity<ReadProductDetail.Response> getProductDetail(@PathVariable Long productId) {
-//        return ResponseEntity.ok(productService.getProductDetail(productId));
-//    }
+    @GetMapping("/{productId}")
+    public ResponseEntity<ReadProductDetails.Response> getProductDetail(@PathVariable Long productId) {
+        return ResponseEntity.ok(productService.getProductDetail(productId));
+    }
 }
