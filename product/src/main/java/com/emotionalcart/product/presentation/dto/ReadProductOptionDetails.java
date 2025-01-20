@@ -24,7 +24,7 @@ public class ReadProductOptionDetails {
             this.id = productOptionDetail.getId();
             this.value = productOptionDetail.getValue();
             this.quantity = productOptionDetail.getQuantity();
-            this.order = productOptionDetail.getOrder();
+            this.order = productOptionDetail.getOptionOrder();
             this.additionalPrice = productOptionDetail.getAdditionalPrice();
             this.images = images;
         }
