@@ -1,6 +1,7 @@
 package com.emotionalcart.order.domain.entity;
 
 import com.emotionalcart.order.domain.dto.CreateOrderItem;
+import com.emotionalcart.order.domain.dto.DetailOrderItem;
 import com.emotionalcart.order.domain.generator.IdGenerator;
 import jakarta.persistence.*;
 import lombok.AccessLevel;
@@ -80,6 +81,14 @@ public class OrderItem extends BaseEntity {
 
     public double getOrderItemPriceDouble() {
         return orderItemPrice.getAmount();
+    }
+
+    public DetailOrderItem convertToDomain() {
+        return DetailOrderItem.from(this);
+    }
+
+    public double getItemPrice() {
+        return this.getOrderItemPrice().getAmount();
     }
 
 }
