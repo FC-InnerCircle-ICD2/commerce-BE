@@ -29,9 +29,9 @@ public class QueryDslProductRepositoryImpl implements QueryDslProductRepository 
                         ))
                 .from(product)
                 .leftJoin(productOption)
-                .on(product.id.eq(productOption.productId))
+                .on(product.id.eq(productOption.product.id))
                 .leftJoin(productOptionDetail)
-                .on(productOption.id.eq(productOptionDetail.productOptionId))
+                .on(productOption.id.eq(productOptionDetail.productOption.id))
                 .where(
                         product.id.in(productIds),
                         product.isDeleted.isFalse(),
