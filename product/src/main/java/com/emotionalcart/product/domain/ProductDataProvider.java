@@ -7,7 +7,7 @@ import com.emotionalcart.core.feature.product.Product;
 import com.emotionalcart.core.feature.product.ProductImage;
 import com.emotionalcart.core.feature.product.ProductOption;
 import com.emotionalcart.core.feature.product.ProductOptionDetail;
-import com.emotionalcart.core.feature.product.Provider;
+import com.emotionalcart.core.feature.provider.Provider;
 import com.emotionalcart.core.feature.review.Review;
 import com.emotionalcart.core.feature.review.ReviewImage;
 import com.emotionalcart.product.infrastructure.repository.CategoryRepository;

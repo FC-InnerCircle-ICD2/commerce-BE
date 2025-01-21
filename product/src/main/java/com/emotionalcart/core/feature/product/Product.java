@@ -2,6 +2,8 @@ package com.emotionalcart.core.feature.product;
 
 import com.emotionalcart.core.base.BaseEntity;
 import com.emotionalcart.core.feature.category.Category;
+import com.emotionalcart.core.feature.provider.Provider;
+
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotNull;
 import lombok.*;
