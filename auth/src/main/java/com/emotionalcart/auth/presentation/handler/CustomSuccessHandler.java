@@ -1,9 +1,10 @@
 package com.emotionalcart.auth.presentation.handler;
 
+import com.emotionalcart.auth.application.dto.AuthenticationResponse;
 import com.emotionalcart.auth.domain.CustomOAuth2User;
 import com.emotionalcart.core.config.jwt.JWTUtil;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import jakarta.servlet.ServletException;
-import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
@@ -25,9 +26,8 @@ public class CustomSuccessHandler extends SimpleUrlAuthenticationSuccessHandler 
     @Override
     public void onAuthenticationSuccess(HttpServletRequest request, HttpServletResponse response, Authentication authentication) throws IOException, ServletException {
 
-        //OAuth2User
+        // OAuth2User
         CustomOAuth2User customUserDetails = (CustomOAuth2User) authentication.getPrincipal();
-
         String username = customUserDetails.getUserName();
 
         Collection<? extends GrantedAuthority> authorities = authentication.getAuthorities();
@@ -35,19 +35,19 @@ public class CustomSuccessHandler extends SimpleUrlAuthenticationSuccessHandler 
         GrantedAuthority auth = iterator.next();
         String role = auth.getAuthority();
 
-        String token = jwtUtil.createJwt(username, role, 60 * 60L);  // 1시간 유효
+        // JWT 생성 (1시간 유효시간)
+        String token = jwtUtil.createJwt(username, role, 60 * 60L);
 
-        response.addCookie(createCookie("commerce_member", token));
-        response.sendRedirect("http://localhost:8080/");
-    }
+        // 응답 설정
+        response.setContentType("application/json");
+        response.setCharacterEncoding("UTF-8");
 
-    private Cookie createCookie(String key, String value) {
+        // 토큰을 JSON 형식으로 클라이언트에 반환
+        ObjectMapper objectMapper = new ObjectMapper();
+        AuthenticationResponse authResponse = new AuthenticationResponse(token);
+        response.getWriter().write(objectMapper.writeValueAsString(authResponse));
 
-        Cookie cookie = new Cookie(key, value);
-        cookie.setMaxAge(60*60*60);
-        cookie.setPath("/");
-        cookie.setHttpOnly(true);
+        // 클라이언트 쪽에서 토큰을 저장 후 리다이렉션 처리
 
-        return cookie;
     }
 }
