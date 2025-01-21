@@ -6,6 +6,7 @@ import com.emotionalcart.core.feature.category.Category;
 import com.emotionalcart.core.feature.product.Product;
 import com.emotionalcart.core.feature.review.Review;
 import com.emotionalcart.core.feature.review.ReviewImage;
+import com.emotionalcart.product.domain.dto.ProductDetail;
 import com.emotionalcart.product.infrastructure.repository.CategoryRepository;
 import com.emotionalcart.product.infrastructure.repository.ProductRepository;
 import com.emotionalcart.product.infrastructure.repository.ReviewImageRepository;
@@ -16,6 +17,7 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Component;
 
 import java.util.List;
+import java.util.Set;
 
 @Component
 @RequiredArgsConstructor
@@ -40,5 +42,9 @@ public class ProductDataProvider {
 
     public List<Category> findAllCategories() {
         return categoryRepository.findAllByIsActiveIsTrueAndIsDeletedIsFalse();
+    }
+
+    public List<ProductDetail> findAllProductData(Set<Long> productIds) {
+        return productRepository.findAllProductData(productIds);
     }
 }
