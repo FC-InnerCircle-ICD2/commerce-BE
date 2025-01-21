@@ -7,7 +7,7 @@ import org.springframework.stereotype.Service;
  * 로컬 결제 서비스
  */
 @Service
-@Profile({"local", "default"})
+@Profile({"local", "default", "test"})
 public class LocalPaymentService implements PaymentService {
 
     @Override

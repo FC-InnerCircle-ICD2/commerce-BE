@@ -1,18 +1,21 @@
 spring:
   application:
     name: order-service
+  flyway:
+    enabled: false
   jpa:
     hibernate:
-      ddl-auto: update
+      ddl-auto: create-drop
   datasource:
     driver-class-name: org.h2.Driver
     url: jdbc:h2:mem:ecommerce
     username: sa
     password:
-  flyway:
-    enabled: false
-server:
-  port: 9999
 product:
   find:
     feign-endpoint: localhost:8080
+feign:
+  hystrix:
+    enabled: false
+server:
+  port: 9999
