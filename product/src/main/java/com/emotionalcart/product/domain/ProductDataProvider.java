@@ -45,6 +45,6 @@ public class ProductDataProvider {
     }
 
     public List<ProductDetail> findAllProductData(Set<Long> productIds) {
-        return productRepository.findAllProductData(productIds);
+        return productRepository.findAllProductDetail(productIds);
     }
 }

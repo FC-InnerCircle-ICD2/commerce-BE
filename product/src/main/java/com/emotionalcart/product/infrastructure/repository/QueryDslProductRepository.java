@@ -8,5 +8,5 @@ import java.util.Set;
 
 
 public interface QueryDslProductRepository {
-    List<ProductDetail> findAllProductData(Set<Long> productIds);
+    List<ProductDetail> findAllProductDetail(Set<Long> productIds);
 }

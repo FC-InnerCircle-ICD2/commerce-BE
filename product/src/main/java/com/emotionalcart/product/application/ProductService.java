@@ -6,9 +6,13 @@ import com.emotionalcart.core.feature.category.Category;
 import com.emotionalcart.core.feature.review.Review;
 import com.emotionalcart.product.domain.ProductDataProvider;
 import com.emotionalcart.product.domain.dto.ProductDetail;
+import com.emotionalcart.product.domain.support.ProductDetails;
+import com.emotionalcart.product.domain.support.ReviewImages;
+import com.emotionalcart.product.domain.support.Reviews;
 import com.emotionalcart.product.presentation.dto.ReadCategories;
 import com.emotionalcart.product.presentation.dto.ReadProductReviews;
-import com.emotionalcart.product.presentation.dto.ReadProductValidate;
+import com.emotionalcart.product.presentation.dto.ReadProductsPrice;
+import com.emotionalcart.product.presentation.dto.ReadProductsValidate;
 import jakarta.validation.constraints.NotNull;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
@@ -46,15 +50,15 @@ public class ProductService {
         return ReviewImages.from(productDataProvider.findAllReviewImages(from.ids()));
     }
 
-    public void readProductValidate(List<ReadProductValidate.Request> requests) {
+    public void readProductsValidate(List<ReadProductsValidate.Request> requests) {
         Set<Long> productIds = requests.stream()
-                .map(ReadProductValidate.Request::getProductId)
+                .map(ReadProductsValidate.Request::getProductId)
                 .collect(Collectors.toSet());
 
         List<ProductDetail> productDetails = productDataProvider.findAllProductData(productIds);
         ProductDetails groupedProductDetails = ProductDetails.from(productDetails);
 
-        for (ReadProductValidate.Request request : requests) {
+        for (ReadProductsValidate.Request request : requests) {
             validateProductExists(groupedProductDetails, request.getProductId());
             validateOptions(groupedProductDetails, request);
             validateStock(groupedProductDetails, request);
@@ -67,16 +71,16 @@ public class ProductService {
         }
     }
 
-    private void validateOptions(ProductDetails groupedProductDetails, ReadProductValidate.Request request) {
+    private void validateOptions(ProductDetails groupedProductDetails, ReadProductsValidate.Request request) {
         Long productId = request.getProductId();
         Set<Long> allOptionIds = groupedProductDetails.getAllOptionIds(productId);
         Set<Long> allOptionDetailIds = groupedProductDetails.getAllOptionDetailIds(productId);
         Set<Long> requiredOptionIds = groupedProductDetails.getRequiredOptionIds(productId);
         Set<Long> selectedOptionIds = request.getProductOptions().stream()
-                .map(ReadProductValidate.Request.OptionRequest::getProductOptionId)
+                .map(ReadProductsValidate.Request.OptionRequest::getProductOptionId)
                 .collect(Collectors.toSet());
         Set<Long> selectedOptionDetailIds = request.getProductOptions().stream()
-                .map(ReadProductValidate.Request.OptionRequest::getProductOptionDetailId)
+                .map(ReadProductsValidate.Request.OptionRequest::getProductOptionDetailId)
                 .collect(Collectors.toSet());
 
         if (!allOptionIds.containsAll(selectedOptionIds)) {
@@ -90,16 +94,31 @@ public class ProductService {
         }
     }
 
-    private void validateStock(ProductDetails groupedProductDetails, ReadProductValidate.Request request) {
+    private void validateStock(ProductDetails groupedProductDetails, ReadProductsValidate.Request request) {
         List<ProductDetail> productDetails = groupedProductDetails.getDetailsByProductId(request.getProductId());
         Map<Long, Integer> optionDetailStockMap = productDetails.stream()
                 .collect(Collectors.toMap(ProductDetail::getProductOptionDetailId, ProductDetail::getQuantity));
 
-        for (ReadProductValidate.Request.OptionRequest option : request.getProductOptions()) {
+        for (ReadProductsValidate.Request.OptionRequest option : request.getProductOptions()) {
             Integer availableStock = optionDetailStockMap.get(option.getProductOptionDetailId());
             if (availableStock == null || option.getQuantity() > availableStock) {
                 throw new ProductException(ErrorCode.OUT_OF_STOCK);
             }
         }
+    }
+
+    public List<ReadProductsPrice.Response> readProductsPrice(List<ReadProductsPrice.Request> requests) {
+        Set<Long> productIds = requests.stream()
+                .map(ReadProductsPrice.Request::getProductId)
+                .collect(Collectors.toSet());
+
+        List<ProductDetail> productDetails = productDataProvider.findAllProductData(productIds);
+        ProductDetails groupedProductDetails = ProductDetails.from(productDetails);
+
+        for (ReadProductsPrice.Request request : requests) {
+            validateProductExists(groupedProductDetails, request.getProductId());
+        }
+
+        return List.of();
     }
 }
