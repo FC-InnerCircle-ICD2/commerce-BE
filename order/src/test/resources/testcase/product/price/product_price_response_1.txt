@@ -1,0 +1,16 @@
+[
+    {
+        "productId": 1,
+        "price": 25000,
+        "productOptionId": 1,
+        "productOptionDetailId": 1,
+        "additionalPrice": 5000
+    },
+    {
+        "productId": 2,
+        "price": 55000,
+        "productOptionId": 3,
+        "productOptionDetailId": 6,
+        "additionalPrice": null
+    }
+]
