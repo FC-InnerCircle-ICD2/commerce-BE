@@ -118,9 +118,39 @@ public class ProductService {
                 .map(ReadProductsPrice.Request.OptionRequest::getProductOptionDetailId)
                 .collect(Collectors.toSet());
 
-        return productDetails.stream()
-                .filter(detail -> productOptionDetailIds.contains(detail.getProductOptionDetailId()))
-                .map(ReadProductsPrice.Response::new)
+        ProductDetails groupedProductDetails = ProductDetails.from(productDetails);
+        List<ProductDetail> filteredDetails = groupedProductDetails.filterByOptionDetailIds(productOptionDetailIds);
+
+        validateOptions(groupedProductDetails, requests);
+
+        return filteredDetails.stream()
+                .collect(Collectors.groupingBy(ProductDetail::getProductId))
+                .entrySet().stream()
+                .map(entry -> ReadProductsPrice.toResponse(entry.getKey(), entry.getValue()))
                 .collect(Collectors.toList());
+    }
+
+    private void validateOptions(ProductDetails groupedProductDetails, List<ReadProductsPrice.Request> requests) {
+        for (ReadProductsPrice.Request request : requests) {
+            Long productId = request.getProductId();
+            List<ProductDetail> productDetails = groupedProductDetails.getDetailsByProductId(productId);
+
+            if (productDetails.isEmpty()) {
+                throw new ProductException(ErrorCode.NOT_FOUND_PRODUCT);
+            }
+
+            Map<Long, Set<Long>> optionToDetailMap = productDetails.stream()
+                    .collect(Collectors.groupingBy(
+                            ProductDetail::getProductOptionId,
+                            Collectors.mapping(ProductDetail::getProductOptionDetailId, Collectors.toSet())
+                    ));
+
+            for (ReadProductsPrice.Request.OptionRequest option : request.getProductOptions()) {
+                Set<Long> validDetailIds = optionToDetailMap.get(option.getProductOptionId());
+                if (validDetailIds.isEmpty() || !validDetailIds.contains(option.getProductOptionDetailId())) {
+                    throw new ProductException(ErrorCode.NOT_FOUND_PRODUCT_OPTION);
+                }
+            }
+        }
     }
 }

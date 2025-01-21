@@ -29,16 +29,42 @@ public class ReadProductsPrice {
     public static class Response {
         private Long productId;
         private Integer price;
-        private Long productOptionId;
-        private Long productOptionDetailId;
-        private Integer additionalPrice;
+        private List<ProductOption> productOptions;
 
-        public Response(ProductDetail productDetail) {
-            this.productId = productDetail.getProductId();
-            this.price = productDetail.getProductPrice();
-            this.productOptionId = productDetail.getProductOptionId();
-            this.productOptionDetailId = productDetail.getProductOptionDetailId();
-            this.additionalPrice = productDetail.getProductAdditionalPrice();
+        private Response(Long productId, Integer price, List<ProductOption> productOptions) {
+            this.productId = productId;
+            this.price = price;
+            this.productOptions = productOptions;
+        }
+
+        @Getter
+        @Setter
+        public static class ProductOption {
+            private Long productOptionId;
+            private Long productOptionDetailId;
+            private Integer additionalPrice;
+
+            private ProductOption(Long productOptionId, Long productOptionDetailId, Integer additionalPrice) {
+                this.productOptionId = productOptionId;
+                this.productOptionDetailId = productOptionDetailId;
+                this.additionalPrice = additionalPrice;
+            }
+
+            public static ProductOption fromProductDetail(ProductDetail productDetail) {
+                return new ProductOption(
+                        productDetail.getProductOptionId(),
+                        productDetail.getProductOptionDetailId(),
+                        productDetail.getProductAdditionalPrice()
+                );
+            }
         }
     }
+        public static Response toResponse(Long productId, List<ProductDetail> productDetails) {
+            Integer productPrice = productDetails.getFirst().getProductPrice();
+            List<ReadProductsPrice.Response.ProductOption> productOptions = productDetails.stream()
+                    .map(Response.ProductOption::fromProductDetail)
+                    .toList();
+
+            return new Response(productId, productPrice, productOptions);
+        }
 }
