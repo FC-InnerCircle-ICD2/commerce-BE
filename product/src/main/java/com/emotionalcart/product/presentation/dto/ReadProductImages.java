@@ -17,19 +17,19 @@ public class ReadProductImages {
         private Integer fileOrder;
         private String url;
 
-        public Response(ProductImage productImage) {
-            this.id = productImage.getId();
-            this.isRepresentative = productImage.isRepresentative();
-            this.fileOrder = productImage.getFileOrder();
-            this.url = productImage.getFilePath();
+        public Response(ProductImage image) {
+            this.id = image.getId();
+            this.isRepresentative = image.isRepresentative();
+            this.fileOrder = image.getFileOrder();
+            this.url = image.getFilePath();
         }
 
-        public static Response toResponse(ProductImage productImage) {
-            return new Response(productImage);
+        public static Response toResponse(ProductImage image) {
+            return new Response(image);
         }
 
-        public static List<Response> toResponse(List<ProductImage> productImages) {
-            return productImages.stream()
+        public static List<Response> toResponse(List<ProductImage> images) {
+            return images.stream()
                     .map(Response::new)
                     .collect(Collectors.toList());
         }

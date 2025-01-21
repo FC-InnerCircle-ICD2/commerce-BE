@@ -20,22 +20,21 @@ public class ReadProductOptionDetails {
         private Integer additionalPrice;
         private List<ReadProductImages.Response> images;
 
-        private Response(ProductOptionDetail productOptionDetail, List<ReadProductImages.Response> images) {
-            this.id = productOptionDetail.getId();
-            this.value = productOptionDetail.getValue();
-            this.quantity = productOptionDetail.getQuantity();
-            this.order = productOptionDetail.getOptionOrder();
-            this.additionalPrice = productOptionDetail.getAdditionalPrice();
+        private Response(ProductOptionDetail optionDetail, List<ReadProductImages.Response> images) {
+            this.id = optionDetail.getId();
+            this.value = optionDetail.getValue();
+            this.quantity = optionDetail.getQuantity();
+            this.order = optionDetail.getOptionOrder();
+            this.additionalPrice = optionDetail.getAdditionalPrice();
             this.images = images;
         }
 
-        public static Response toResponse(ProductOptionDetail productOptionDetail, List<ProductImage> images) {
-            List<ReadProductImages.Response> readProductImages = images.stream()
+        public static Response toResponse(ProductOptionDetail optionDetail, List<ProductImage> images) {
+            List<ReadProductImages.Response> imagesResponse = images.stream()
                     .map(ReadProductImages.Response::new)
                     .collect(Collectors.toList());
 
-            return new Response(productOptionDetail, readProductImages);
+            return new Response(optionDetail, imagesResponse);
         }
     }
-
 }
