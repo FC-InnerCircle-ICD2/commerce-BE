@@ -2,8 +2,8 @@ package com.emotionalcart.product.application;
 
 import com.emotionalcart.core.feature.review.Review;
 import com.emotionalcart.product.presentation.dto.ReadCategories;
+import com.emotionalcart.product.presentation.dto.ReadProductCategories;
 import com.emotionalcart.product.presentation.dto.ReadProductDetails;
-import com.emotionalcart.product.presentation.dto.ReadProductImages;
 import com.emotionalcart.product.presentation.dto.ReadProductOptionDetails;
 import com.emotionalcart.product.presentation.dto.ReadProductOptions;
 import com.emotionalcart.product.presentation.dto.ReadProductReviews;
@@ -15,30 +15,24 @@ import com.emotionalcart.core.feature.product.ProductImage;
 import com.emotionalcart.core.feature.product.ProductOption;
 import com.emotionalcart.core.feature.product.ProductOptionDetail;
 
-//import com.emotionalcart.product.presentation.dto.ReadProductDetail;
-//import com.emotionalcart.product.domain.Product;
-//import com.emotionalcart.product.domain.repository.ProductRepository;
-import jakarta.persistence.EntityNotFoundException;
 import jakarta.validation.constraints.NotNull;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
-import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
 public class ProductService {
     private final ProductDataProvider productDataProvider;
 
-    public List<ReadCategories.Response> getAllProductCategories() {
-        List<Category> categories = productDataProvider.findAllCategories();
+//     public List<ReadCategories.Response> getAllProductCategories() {
+//         List<Category> categories = productDataProvider.findAllCategories();
 
-        return ReadCategories.Response.toResponse(categories);
-    }
+//         return ReadCategories.Response.toResponse(categories);
+//     }
 
     public Page<ReadProductReviews.Response> readProductReviews(@NotNull Long productId,
             ReadProductReviews.Request request) {
@@ -91,7 +85,7 @@ public class ProductService {
         // 카테고리
         Long categoryId = productDataProvider.findCategoryIdByProductId(productId);
 
-        ReadCategories.Response categoryResponse = ReadCategories.Response
+        ReadProductCategories.Response categoryResponse = ReadProductCategories.Response
                 .toResponse(productDataProvider.findCategoryById(categoryId));
 
         // 공급자

@@ -14,13 +14,13 @@ public class ReadProductDetails {
         private String name;
         private String description;
         private Integer price;
-        private ReadCategories.Response categoryResponse;
+        private ReadProductCategories.Response categoryResponse;
         private ReadProviders.Response providerResponse;
         private List<ReadProductOptions.Response> productOptions;
         // private List<ReadProductReviews.Response> productReviews; // 리뷰는 후에 추가
 
         public Response(Product product,
-                List<ReadProductOptions.Response> productOptions, ReadCategories.Response categoryResponse,
+                List<ReadProductOptions.Response> productOptions, ReadProductCategories.Response categoryResponse,
                 ReadProviders.Response providerResponse) {
             this.id = product.getId();
             this.name = product.getName();
@@ -32,7 +32,7 @@ public class ReadProductDetails {
         }
 
         public static Response toResponse(Product product,
-                List<ReadProductOptions.Response> productOptions, ReadCategories.Response categoryResponse,
+                List<ReadProductOptions.Response> productOptions, ReadProductCategories.Response categoryResponse,
                 ReadProviders.Response providerResponse) {
             return new Response(product, productOptions, categoryResponse, providerResponse);
         }

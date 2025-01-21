@@ -22,16 +22,12 @@ import java.util.List;
 public class ProductController {
     private final ProductService productService;
 
+    // 상품 리뷰 조회
     @GetMapping("/{productId}/reviews")
     public ResponseEntity<Page<ReadProductReviews.Response>> readProductReviews(
             @PathVariable Long productId,
             ReadProductReviews.Request request) {
         return ResponseEntity.ok(productService.readProductReviews(productId, request));
-    }
-
-    @GetMapping("/categories")
-    public ResponseEntity<List<ReadCategories.Response>> getAllCategories() {
-        return ResponseEntity.ok(productService.getAllProductCategories());
     }
 
     // 상품 상세 조회
