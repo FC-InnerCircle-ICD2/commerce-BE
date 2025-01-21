@@ -51,7 +51,7 @@ class ProductServiceTest {
                 new ProductDetail(1L, 10000, 101L, true, 201L, 1000, 10), // 필수 옵션
                 new ProductDetail(1L, 20000, 102L, false, 202L, null, 10) // 선택 옵션
         );
-        Mockito.when(productDataProvider.findAllProductData(Set.of(1L)))
+        Mockito.when(productDataProvider.findAllProductDetail(Set.of(1L)))
                 .thenReturn(productDetails);
 
         ProductException exception = assertThrows(
@@ -70,7 +70,7 @@ class ProductServiceTest {
                 new ProductDetail(1L, 10000, 101L, true, 201L, 1000, 10), // 필수 옵션
                 new ProductDetail(1L, 20000, 102L, false, 202L, null, 10) // 선택 옵션
         );
-        Mockito.when(productDataProvider.findAllProductData(Set.of(1L)))
+        Mockito.when(productDataProvider.findAllProductDetail(Set.of(1L)))
                 .thenReturn(productDetails);
 
         ProductException exception = assertThrows(
@@ -88,7 +88,7 @@ class ProductServiceTest {
         List<ProductDetail> productDetails = List.of(
                 new ProductDetail(1L, 10000, 101L, true, 201L, null, 10)
         );
-        Mockito.when(productDataProvider.findAllProductData(Set.of(1L)))
+        Mockito.when(productDataProvider.findAllProductDetail(Set.of(1L)))
                 .thenReturn(productDetails);
 
         ProductException exception = assertThrows(
@@ -106,7 +106,7 @@ class ProductServiceTest {
         List<ProductDetail> productDetails = List.of(
                 new ProductDetail(1L, 100000, 101L, true, 201L, null, 10)
         );
-        Mockito.when(productDataProvider.findAllProductData(Set.of(1L)))
+        Mockito.when(productDataProvider.findAllProductDetail(Set.of(1L)))
                 .thenReturn(productDetails);
 
         ProductException exception = assertThrows(
@@ -124,7 +124,7 @@ class ProductServiceTest {
         List<ProductDetail> productDetails = List.of(
                 new ProductDetail(1L, 10000, 101L, true, 201L, null, 10)
         );
-        Mockito.when(productDataProvider.findAllProductData(Set.of(1L)))
+        Mockito.when(productDataProvider.findAllProductDetail(Set.of(1L)))
                 .thenReturn(productDetails);
 
         assertDoesNotThrow(() -> productService.readProductsValidate(requests));

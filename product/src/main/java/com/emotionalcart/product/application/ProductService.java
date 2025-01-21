@@ -55,7 +55,7 @@ public class ProductService {
                 .map(ReadProductsValidate.Request::getProductId)
                 .collect(Collectors.toSet());
 
-        List<ProductDetail> productDetails = productDataProvider.findAllProductData(productIds);
+        List<ProductDetail> productDetails = productDataProvider.findAllProductDetail(productIds);
         ProductDetails groupedProductDetails = ProductDetails.from(productDetails);
 
         for (ReadProductsValidate.Request request : requests) {
@@ -112,13 +112,15 @@ public class ProductService {
                 .map(ReadProductsPrice.Request::getProductId)
                 .collect(Collectors.toSet());
 
-        List<ProductDetail> productDetails = productDataProvider.findAllProductData(productIds);
-        ProductDetails groupedProductDetails = ProductDetails.from(productDetails);
+        List<ProductDetail> productDetails = productDataProvider.findAllProductDetail(productIds);
+        Set<Long> productOptionDetailIds = requests.stream()
+                .flatMap(request -> request.getProductOptions().stream())
+                .map(ReadProductsPrice.Request.OptionRequest::getProductOptionDetailId)
+                .collect(Collectors.toSet());
 
-        for (ReadProductsPrice.Request request : requests) {
-            validateProductExists(groupedProductDetails, request.getProductId());
-        }
-
-        return List.of();
+        return productDetails.stream()
+                .filter(detail -> productOptionDetailIds.contains(detail.getProductOptionDetailId()))
+                .map(ReadProductsPrice.Response::new)
+                .collect(Collectors.toList());
     }
 }

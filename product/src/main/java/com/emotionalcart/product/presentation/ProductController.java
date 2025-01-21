@@ -40,4 +40,11 @@ public class ProductController {
         productService.readProductsValidate(requests);
         return ResponseEntity.ok().build();
     }
+
+    @PostMapping("/price")
+    public ResponseEntity<List<ReadProductsPrice.Response>> readProductsPrice(
+            @RequestBody @Valid List<ReadProductsPrice.Request> requests
+    ) {
+        return ResponseEntity.ok(productService.readProductsPrice(requests));
+    }
 }
