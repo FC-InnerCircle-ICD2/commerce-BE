@@ -5,13 +5,11 @@ import com.emotionalcart.product.presentation.dto.ReadCategories;
 import com.emotionalcart.product.presentation.dto.ReadProductReviews;
 //import com.emotionalcart.product.presentation.dto.ReadProductDetail;
 
+import com.emotionalcart.product.presentation.dto.ReadProducts;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
@@ -38,4 +36,14 @@ public class ProductController {
 //    public ResponseEntity<ReadProductDetail.Response> getProductDetail(@PathVariable Long productId) {
 //        return ResponseEntity.ok(productService.getProductDetail(productId));
 //    }
+
+    @PostMapping
+    public ResponseEntity<Page<ReadProducts.Response>> readProducts(
+            @RequestBody ReadProducts.Request request
+    ) {
+        // 정렬 설정
+        request.configureSort();
+
+        return ResponseEntity.ok(productService.readProducts(request));
+    }
 }

@@ -4,18 +4,20 @@ import com.emotionalcart.core.exception.ErrorCode;
 import com.emotionalcart.core.exception.ProductException;
 import com.emotionalcart.core.feature.category.Category;
 import com.emotionalcart.core.feature.product.Product;
+import com.emotionalcart.core.feature.product.ProductOption;
 import com.emotionalcart.core.feature.review.Review;
 import com.emotionalcart.core.feature.review.ReviewImage;
-import com.emotionalcart.product.infrastructure.repository.CategoryRepository;
-import com.emotionalcart.product.infrastructure.repository.ProductRepository;
-import com.emotionalcart.product.infrastructure.repository.ReviewImageRepository;
-import com.emotionalcart.product.infrastructure.repository.ReviewRepository;
+import com.emotionalcart.core.feature.review.ReviewStatistic;
+import com.emotionalcart.product.infrastructure.repository.*;
+import com.emotionalcart.product.presentation.dto.ReadProducts;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Component;
 
 import java.util.List;
+import java.util.Map;
+import java.util.stream.Collectors;
 
 @Component
 @RequiredArgsConstructor
@@ -24,6 +26,7 @@ public class ProductDataProvider {
     private final ReviewRepository reviewRepository;
     private final ReviewImageRepository reviewImageRepository;
     private final CategoryRepository categoryRepository;
+    private final ReviewStatisticRepository reviewStatisticRepository;
 
     public Product findProduct(Long productId) {
         return productRepository.findByIdAndIsDeletedIsFalse(productId)
@@ -40,5 +43,24 @@ public class ProductDataProvider {
 
     public List<Category> findAllCategories() {
         return categoryRepository.findAllByIsActiveIsTrueAndIsDeletedIsFalse();
+    }
+
+    public Page<Product> findAllProducts(ReadProducts.Request request, PageRequest pageRequest) {
+        return productRepository.findAllProducts(request, pageRequest);
+    }
+
+    public List<ProductOption> findProductOptions(List<Long> productIds) {
+        return productRepository.findProductOptions(productIds);
+    }
+
+    public Map<Long, Double> findProductRatings(List<Long> productIds) {
+        List<ReviewStatistic> ratings = reviewStatisticRepository.findAllByProductIdIn(productIds);
+
+        // Map으로 변환
+        return ratings.stream()
+                .collect(Collectors.toMap(
+                        ReviewStatistic::getProductId,
+                        ReviewStatistic::getAverageRating
+                ));
     }
 }
