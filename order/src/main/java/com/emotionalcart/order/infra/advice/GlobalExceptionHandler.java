@@ -1,5 +1,6 @@
 package com.emotionalcart.order.infra.advice;
 
+import com.emotionalcart.order.infra.advice.exceptions.InvalidOrderException;
 import com.emotionalcart.order.infra.advice.exceptions.InvalidValueRequestException;
 import com.emotionalcart.order.infra.advice.exceptions.RequiredValueException;
 import com.emotionalcart.order.infra.enums.OrderErrorCode;
@@ -31,9 +32,9 @@ public class GlobalExceptionHandler {
         // 예외 메시지 로깅
         log.error("IllegalArgumentException 발생: {}", ex.getMessage());
 
-        // 사용자 친화적인 메시지 반환
         ErrorResponse errorResponse =
-            new ErrorResponse(HttpStatus.BAD_REQUEST.value(), OrderErrorCode.BAD_REQUEST.getMessage());
+            new ErrorResponse(OrderErrorCode.BAD_REQUEST.getErrorCode(),
+                              OrderErrorCode.BAD_REQUEST.getMessage());
         return ResponseEntity.badRequest().body(errorResponse);
     }
 
@@ -48,9 +49,9 @@ public class GlobalExceptionHandler {
         // 예외 메시지 로깅
         log.error("Exception 발생: {}", ex.getMessage(), ex);
 
-        // 사용자 친화적인 메시지 반환
         ErrorResponse errorResponse =
-            new ErrorResponse(HttpStatus.INTERNAL_SERVER_ERROR.value(), OrderErrorCode.INTERNAL_SERVER_ERROR.getMessage());
+            new ErrorResponse(OrderErrorCode.INTERNAL_SERVER_ERROR.getErrorCode(),
+                              OrderErrorCode.INTERNAL_SERVER_ERROR.getMessage());
         return ResponseEntity.internalServerError().body(errorResponse);
     }
 
@@ -60,13 +61,31 @@ public class GlobalExceptionHandler {
         // 예외 메시지 로깅
         log.error("{} 발생: {}", ex.getClass().getName(), ex.getMessage());
 
-        // 사용자 친화적인 메시지 반환
         ErrorResponse errorResponse =
-            new ErrorResponse(HttpStatus.BAD_REQUEST.value(), OrderErrorCode.BAD_REQUEST.getMessage());
+            new ErrorResponse(OrderErrorCode.BAD_REQUEST.getErrorCode(),
+                              OrderErrorCode.BAD_REQUEST.getMessage());
         return ResponseEntity.badRequest().body(errorResponse);
     }
 
-    public record ErrorResponse(int errorCode, String errorMessage) {
+    /**
+     * 유효하지 않은 주문에 대한 글로벌 에러 처리
+     *
+     * @param ex
+     * @return
+     */
+    @ExceptionHandler(InvalidOrderException.class)
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
+    public ResponseEntity<ErrorResponse> handleInvalidOrderException(Exception ex) {
+        // 예외 메시지 로깅
+        log.error("{} 발생: {}", ex.getClass().getName(), ex.getMessage());
+
+        ErrorResponse errorResponse =
+            new ErrorResponse(OrderErrorCode.INVALID_ORDER.getErrorCode(),
+                              OrderErrorCode.INVALID_ORDER.getMessage());
+        return ResponseEntity.badRequest().body(errorResponse);
+    }
+
+    public record ErrorResponse(String errorCode, String errorMessage) {
 
     }
 

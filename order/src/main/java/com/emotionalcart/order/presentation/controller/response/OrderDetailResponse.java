@@ -1,11 +1,14 @@
 package com.emotionalcart.order.presentation.controller.response;
 
+import com.emotionalcart.order.domain.dto.DetailOrderItem;
 import com.emotionalcart.order.domain.dto.OrderDetail;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import com.fasterxml.jackson.databind.ser.std.ToStringSerializer;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+
+import java.util.List;
 
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
@@ -18,6 +21,21 @@ public class OrderDetailResponse {
     private Long orderId;
 
     /**
+     * 최종금액
+     */
+    private double totalPrice;
+
+    /**
+     * 결제수단
+     */
+    private String paymentMethod;
+
+    /**
+     * 주문 항목
+     */
+    private List<DetailOrderItem> orderItems;
+
+    /**
      * 배송 정보
      */
     private DeliveryInfoResponse deliveryInfo;
@@ -25,6 +43,9 @@ public class OrderDetailResponse {
     public static OrderDetailResponse from(OrderDetail orderDetail) {
         OrderDetailResponse response = new OrderDetailResponse();
         response.orderId = orderDetail.getOrderId();
+        response.paymentMethod = orderDetail.getPaymentMethod();
+        response.orderItems = orderDetail.getOrderItems();
+        response.totalPrice = orderDetail.getTotalPrice();
         response.deliveryInfo = DeliveryInfoResponse.from(orderDetail.getDeliveryInfo());
         return response;
     }

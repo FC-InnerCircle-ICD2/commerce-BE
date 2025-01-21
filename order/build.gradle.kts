@@ -38,7 +38,6 @@ dependencies {
     // https://mvnrepository.com/artifact/org.redisson/redisson-spring-boot-starter
     implementation("org.redisson:redisson-spring-boot-starter:$redissonVersion")
 
-
     annotationProcessor("org.projectlombok:lombok")
     // https://mvnrepository.com/artifact/org.projectlombok/lombok
     compileOnly("org.projectlombok:lombok")
@@ -48,6 +47,10 @@ dependencies {
     testImplementation("org.springframework.security:spring-security-test")
     testImplementation("org.springframework.boot:spring-boot-testcontainers")
     testImplementation("org.testcontainers:mysql")
+    // H2 Database Driver
+    implementation("com.h2database:h2:2.2.224")
+
+    implementation("org.springdoc:springdoc-openapi-starter-webmvc-ui:2.7.0")
 
     // https://mvnrepository.com/artifact/org.springframework.boot/spring-boot-starter-test
     testImplementation("org.springframework.boot:spring-boot-starter-test")

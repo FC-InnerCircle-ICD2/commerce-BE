@@ -1,9 +1,11 @@
 package com.emotionalcart.order.domain.dto;
 
+import com.emotionalcart.order.domain.entity.OrderItem;
 import com.emotionalcart.order.domain.entity.OrderRecipient;
 import com.emotionalcart.order.domain.entity.Orders;
-import com.emotionalcart.order.domain.enums.PaymentMethod;
 import lombok.Getter;
+
+import java.util.List;
 
 /**
  * 조회된 주문
@@ -19,7 +21,17 @@ public class OrderDetail {
     /**
      * 결제수단
      */
-    private final PaymentMethod paymentMethod;
+    private final String paymentMethod;
+
+    /**
+     * 최종 금액
+     */
+    private final double totalPrice;
+
+    /**
+     * 주문 항목
+     */
+    private final List<DetailOrderItem> orderItems;
 
     /**
      * 조회된 배송정보
@@ -28,7 +40,9 @@ public class OrderDetail {
 
     public OrderDetail(Orders orders) {
         this.orderId = orders.getId();
-        this.paymentMethod = orders.getPaymentMethod();
+        this.paymentMethod = orders.getPaymentMethod().getMethodName();
+        this.orderItems = orders.getOrderItems().stream().map(OrderItem::convertToDomain).toList();
+        this.totalPrice = orders.getTotalPrice();
         this.deliveryInfo = DeliveryDetailInfo.from(orders.getOrderRecipient());
     }
 
