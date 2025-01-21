@@ -28,15 +28,22 @@ public class CustomOAuth2UserService extends DefaultOAuth2UserService {
         // 어떤 소셜 로그인 구분하기 위한 ID
         String registrationId = userRequest.getClientRegistration().getRegistrationId();
 
-        OAuth2Response oAuth2Response;
-        if(SocialType.NAVER.name().equalsIgnoreCase(registrationId)) {
-            oAuth2Response = new NaverResponse(oAuth2User.getAttributes());
-        }else if(SocialType.KAKAO.name().equalsIgnoreCase(registrationId)) {
-            oAuth2Response = new KakaoResponse(oAuth2User.getAttributes());
-        }else{
-            return null;
+        // 조기 리턴으로 조건 분기 처리
+        if (SocialType.NAVER.name().equalsIgnoreCase(registrationId)) {
+            OAuth2Response oAuth2Response = new NaverResponse(oAuth2User.getAttributes());
+            return handleUserResponse(oAuth2Response);
         }
 
+        if (SocialType.KAKAO.name().equalsIgnoreCase(registrationId)) {
+            OAuth2Response oAuth2Response = new KakaoResponse(oAuth2User.getAttributes());
+            return handleUserResponse(oAuth2Response);
+        }
+
+        return null; // 지원하지 않는 소셜 로그인
+    }
+
+    // 공통 처리 부분
+    private OAuth2User handleUserResponse(OAuth2Response oAuth2Response) {
         // 리소스 서버에서 발급 받은 정보로 소셜로그인 특정할 수 있는 아이디값
         String socialId = oAuth2Response.getProviderId();
 
@@ -48,14 +55,16 @@ public class CustomOAuth2UserService extends DefaultOAuth2UserService {
             throw new OAuth2AuthenticationException("Unsupported social type: " + oAuth2Response.getProvider());
         }
 
+        // 존재하는 회원인지 확인
         Member member = memberRepository.findBySocialId(socialId);
 
-        if(member == null) {
+        // 회원이 없으면 추가
+        if (member == null) {
             Member insertMember = Member.of(
                     socialId,
                     oAuth2Response.getEmail(),
                     oAuth2Response.getName(),
-              null,
+                    null,
                     socialType,
                     MemberState.ACTIVE
             );
@@ -63,6 +72,7 @@ public class CustomOAuth2UserService extends DefaultOAuth2UserService {
             memberRepository.save(insertMember);
         }
 
+        // MemberResponse 작성
         MemberResponse memberResponse = new MemberResponse();
         memberResponse.setName(oAuth2Response.getName());
         memberResponse.setUserName(oAuth2Response.getName());
