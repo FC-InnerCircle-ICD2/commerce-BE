@@ -1,4 +1,4 @@
-package com.emotionalcart.product.application;
+package com.emotionalcart.product.domain.support;
 
 import com.emotionalcart.product.domain.dto.ProductDetail;
 
