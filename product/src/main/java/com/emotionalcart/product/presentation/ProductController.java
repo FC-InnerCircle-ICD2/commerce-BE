@@ -16,14 +16,16 @@ import org.springframework.web.bind.annotation.RestController;
 
 import java.util.List;
 
+import io.swagger.v3.oas.annotations.tags.Tag;
+
 @RestController
 @RequestMapping("/v1/products")
 @RequiredArgsConstructor
-public class ProductController {
+public class ProductController implements ProductControllerDocs {
     private final ProductService productService;
 
     // 상품 리뷰 조회
-    @GetMapping("/{productId}/reviews")
+    @Override
     public ResponseEntity<Page<ReadProductReviews.Response>> readProductReviews(
             @PathVariable Long productId,
             ReadProductReviews.Request request) {
@@ -31,7 +33,7 @@ public class ProductController {
     }
 
     // 상품 상세 조회
-    @GetMapping("/{productId}")
+    @Override
     public ResponseEntity<ReadProductDetails.Response> getProductDetail(@PathVariable Long productId) {
         return ResponseEntity.ok(productService.getProductDetail(productId));
     }

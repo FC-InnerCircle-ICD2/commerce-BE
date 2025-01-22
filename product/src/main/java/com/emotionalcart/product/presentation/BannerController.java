@@ -10,13 +10,15 @@ import org.springframework.web.bind.annotation.RestController;
 
 import java.util.List;
 
+import io.swagger.v3.oas.annotations.tags.Tag;
+
 @RestController
 @RequestMapping("/v1/banners")
 @RequiredArgsConstructor
-public class BannerController {
+public class BannerController implements BannerControllerDocs {
     private final BannerService bannerService;
 
-    @GetMapping
+    @Override
     public ResponseEntity<List<ReadBanners.Response>> readBanners() {
         return ResponseEntity.ok(bannerService.readBanners());
     }
