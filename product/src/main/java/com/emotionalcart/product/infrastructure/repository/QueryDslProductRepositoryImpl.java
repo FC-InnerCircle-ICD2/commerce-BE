@@ -17,14 +17,16 @@ public class QueryDslProductRepositoryImpl implements QueryDslProductRepository 
     private final JPAQueryFactory queryFactory;
 
     @Override
-    public List<ProductDetail> findAllProductData(Set<Long> productIds) {
+    public List<ProductDetail> findAllProductDetail(Set<Long> productIds) {
         return queryFactory.select(
                         Projections.constructor(
                                 ProductDetail.class,
                                 product.id,
+                                product.price,
                                 productOption.id,
                                 productOption.isRequired,
                                 productOptionDetail.id,
+                                productOptionDetail.additionalPrice,
                                 productOptionDetail.quantity
                         ))
                 .from(product)

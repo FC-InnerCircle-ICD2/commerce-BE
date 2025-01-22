@@ -1,4 +1,4 @@
-package com.emotionalcart.product.application;
+package com.emotionalcart.product.domain.support;
 
 import com.emotionalcart.product.domain.dto.ProductDetail;
 
@@ -34,6 +34,7 @@ public class ProductDetails {
                 .map(ProductDetail::getProductOptionId)
                 .collect(Collectors.toSet());
     }
+
     public Set<Long> getAllOptionDetailIds(Long productId) {
         return groupedDetails.getOrDefault(productId, Collections.emptyList()).stream()
                 .map(ProductDetail::getProductOptionDetailId)
@@ -49,5 +50,12 @@ public class ProductDetails {
                 .filter(ProductDetail::isRequired)
                 .map(ProductDetail::getProductOptionId)
                 .collect(Collectors.toSet());
+    }
+
+    public List<ProductDetail> filterByOptionDetailIds(Set<Long> optionDetailIds) {
+        return groupedDetails.values().stream()
+                .flatMap(List::stream)
+                .filter(detail -> optionDetailIds.contains(detail.getProductOptionDetailId()))
+                .collect(Collectors.toList());
     }
 }

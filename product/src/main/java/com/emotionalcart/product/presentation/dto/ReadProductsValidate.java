@@ -5,7 +5,7 @@ import lombok.Getter;
 
 import java.util.List;
 
-public class ReadProductValidate {
+public class ReadProductsValidate {
     @Getter
     public static class Request {
         @NotNull

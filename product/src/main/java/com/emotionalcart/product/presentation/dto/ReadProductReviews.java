@@ -3,7 +3,7 @@ package com.emotionalcart.product.presentation.dto;
 import com.emotionalcart.core.base.BasePageRequest;
 import com.emotionalcart.core.feature.review.Review;
 import com.emotionalcart.core.feature.review.ReviewImage;
-import com.emotionalcart.product.application.ReviewImages;
+import com.emotionalcart.product.domain.support.ReviewImages;
 import lombok.Data;
 import lombok.Getter;
 import lombok.Setter;

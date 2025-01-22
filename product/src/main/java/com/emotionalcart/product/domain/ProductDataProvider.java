@@ -44,7 +44,7 @@ public class ProductDataProvider {
         return categoryRepository.findAllByIsActiveIsTrueAndIsDeletedIsFalse();
     }
 
-    public List<ProductDetail> findAllProductData(Set<Long> productIds) {
-        return productRepository.findAllProductData(productIds);
+    public List<ProductDetail> findAllProductDetail(Set<Long> productIds) {
+        return productRepository.findAllProductDetail(productIds);
     }
 }
