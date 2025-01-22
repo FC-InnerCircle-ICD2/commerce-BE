@@ -1,6 +1,7 @@
 package com.emotionalcart.order.infra.product.http;
 
 import com.emotionalcart.order.infra.product.dto.ProductPriceRequest;
+import com.emotionalcart.order.infra.product.dto.ProductPriceResponse;
 import com.emotionalcart.order.infra.product.dto.ProductStockRequest;
 import com.emotionalcart.order.infra.product.dto.ProductValidationRequest;
 import org.springframework.cloud.openfeign.FeignClient;
@@ -17,30 +18,27 @@ public interface ProductFeignClient {
      * 상품 가격 조회
      *
      * @param productPriceRequest
-     * @param <T>
      * @return
      */
     @PostMapping("/price")
-    <T> ResponseEntity<T> getProductPrice(@RequestBody List<ProductPriceRequest> productPriceRequest);
+    ResponseEntity<List<ProductPriceResponse>> getProductPrice(@RequestBody List<ProductPriceRequest> productPriceRequest);
 
     /**
      * 상품 검증
      *
      * @param productValidationRequest
-     * @param <T>
      * @return
      */
     @PostMapping("/validate")
-    <T> ResponseEntity<T> validateProductPrice(@RequestBody List<ProductValidationRequest> productValidationRequest);
+    ResponseEntity<Void> validateProductPrice(@RequestBody List<ProductValidationRequest> productValidationRequest);
 
     /**
      * 상품 재고 변경
      *
      * @param productStockRequest
-     * @param <T>
      * @return
      */
     @PostMapping("/stock")
-    <T> ResponseEntity<T> updateProductStock(@RequestBody List<ProductStockRequest> productStockRequest);
+    ResponseEntity<Void> updateProductStock(@RequestBody List<ProductStockRequest> productStockRequest);
 
 }

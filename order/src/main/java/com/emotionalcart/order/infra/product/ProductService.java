@@ -3,6 +3,7 @@ package com.emotionalcart.order.infra.product;
 import com.emotionalcart.order.infra.advice.exceptions.ProductPriceException;
 import com.emotionalcart.order.infra.advice.exceptions.ProductStockException;
 import com.emotionalcart.order.infra.advice.exceptions.ProductValidationException;
+import com.emotionalcart.order.infra.enums.OrderErrorCode;
 import com.emotionalcart.order.infra.product.dto.*;
 import com.emotionalcart.order.infra.product.http.ProductFeignClient;
 import lombok.RequiredArgsConstructor;
@@ -22,11 +23,11 @@ public class ProductService {
      * 상품 가격 조회
      */
     public List<ProductPrice> getProductPrice(List<ProductPriceRequest> productPriceRequest) {
-        ResponseEntity response = productFeignClient.getProductPrice(productPriceRequest);
+        ResponseEntity<List<ProductPriceResponse>> response = productFeignClient.getProductPrice(productPriceRequest);
         if (!response.getStatusCode().is2xxSuccessful()) {
             throw new ProductPriceException(Objects.requireNonNull(response.getBody()).toString());
         }
-        List<ProductPriceResponse> productPriceResponse = (List<ProductPriceResponse>)response.getBody();
+        List<ProductPriceResponse> productPriceResponse = response.getBody();
         assert productPriceResponse != null;
         return productPriceResponse.stream().map(ProductPrice::convert).toList();
     }
@@ -38,9 +39,10 @@ public class ProductService {
      * @return
      */
     public boolean isValidProduct(List<ProductValidationRequest> productValidationRequest) {
-        ResponseEntity response = productFeignClient.validateProductPrice(productValidationRequest);
+        ResponseEntity<Void> response = productFeignClient.validateProductPrice(productValidationRequest);
         if (!response.getStatusCode().is2xxSuccessful()) {
-            throw new ProductValidationException(Objects.requireNonNull(response.getBody()).toString());
+            throw new ProductValidationException(Objects.requireNonNull(response.getBody(),
+                                                                        OrderErrorCode.NULL_VALUE_ERROR.getMessage()).toString());
         }
         return true;
     }
@@ -52,9 +54,10 @@ public class ProductService {
      * @return
      */
     public boolean updateProductStock(List<ProductStockRequest> productStockRequest) {
-        ResponseEntity response = productFeignClient.updateProductStock(productStockRequest);
+        ResponseEntity<Void> response = productFeignClient.updateProductStock(productStockRequest);
         if (!response.getStatusCode().is2xxSuccessful()) {
-            throw new ProductStockException(Objects.requireNonNull(response.getBody()).toString());
+            throw new ProductStockException(Objects.requireNonNull(response.getBody(),
+                                                                   OrderErrorCode.NULL_VALUE_ERROR.getMessage()).toString());
         }
         return true;
     }
