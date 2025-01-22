@@ -47,7 +47,7 @@ public class ReadProductsPrice {
             private ProductOption(Long productOptionId, Long productOptionDetailId, Integer additionalPrice) {
                 this.productOptionId = productOptionId;
                 this.productOptionDetailId = productOptionDetailId;
-                this.additionalPrice = additionalPrice;
+                this.additionalPrice = (additionalPrice != null) ? additionalPrice : 0;
             }
 
             public static ProductOption fromProductDetail(ProductDetail productDetail) {
@@ -59,12 +59,13 @@ public class ReadProductsPrice {
             }
         }
     }
-        public static Response toResponse(Long productId, List<ProductDetail> productDetails) {
-            Integer productPrice = productDetails.getFirst().getProductPrice();
-            List<ReadProductsPrice.Response.ProductOption> productOptions = productDetails.stream()
-                    .map(Response.ProductOption::fromProductDetail)
-                    .toList();
 
-            return new Response(productId, productPrice, productOptions);
-        }
+    public static Response toResponse(Long productId, List<ProductDetail> productDetails) {
+        Integer productPrice = productDetails.getFirst().getProductPrice();
+        List<ReadProductsPrice.Response.ProductOption> productOptions = productDetails.stream()
+                .map(Response.ProductOption::fromProductDetail)
+                .toList();
+
+        return new Response(productId, productPrice, productOptions);
+    }
 }
