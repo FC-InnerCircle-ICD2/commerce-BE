@@ -41,6 +41,7 @@ public class CustomSuccessHandler extends SimpleUrlAuthenticationSuccessHandler 
         // 응답 설정
         response.setContentType("application/json");
         response.setCharacterEncoding("UTF-8");
+        response.setHeader("Authorization", "Bearer " + token);
 
         // 토큰을 JSON 형식으로 클라이언트에 반환
         ObjectMapper objectMapper = new ObjectMapper();
