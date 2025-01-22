@@ -21,6 +21,7 @@ public class ProductPriceRequest {
     private List<ProductOption> productOptions;
 
     @Getter
+    @NoArgsConstructor(access = AccessLevel.PROTECTED)
     public static class ProductOption {
 
         /**

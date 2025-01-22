@@ -18,27 +18,43 @@ public class ProductPrice {
      */
     private double price;
 
-    /**
-     * 상품 옵션 아이디
-     */
-    private Long productOptionId;
+    private ProductOption productOptions;
 
-    /**
-     * 상품 옵션 상세 아이디
-     */
-    private Long productOptionDetailId;
+    @Getter
+    @NoArgsConstructor(access = AccessLevel.PROTECTED)
+    public static class ProductOption {
 
-    /**
-     * 추가 금액
-     */
-    private double additionalPrice;
+        /**
+         * 상품 옵션 아이디
+         */
+        private Long productOptionId;
+
+        /**
+         * 상품 옵션 상세 아이디
+         */
+        private Long productOptionDetailId;
+
+        /**
+         * 추가 금액
+         */
+        private double additionalPrice;
+
+        private ProductOption(ProductPriceResponse.ProductOption productOption) {
+            this.productOptionId = productOption.getProductOptionId();
+            this.productOptionDetailId = productOption.getProductOptionDetailId();
+            this.additionalPrice = productOption.getAdditionalPrice();
+        }
+
+        public static ProductOption from(ProductPriceResponse.ProductOption productOption) {
+            return new ProductOption(productOption);
+        }
+
+    }
 
     public ProductPrice(ProductPriceResponse productPriceResponse) {
         this.productId = productPriceResponse.getProductId();
         this.price = productPriceResponse.getPrice();
-        this.productOptionId = productPriceResponse.getProductOptionId();
-        this.productOptionDetailId = productPriceResponse.getProductOptionDetailId();
-        this.additionalPrice = productPriceResponse.getAdditionalPrice();
+        this.productOptions = ProductOption.from(productPriceResponse.getProductOptions());
     }
 
     public static ProductPrice convert(ProductPriceResponse productPriceResponse) {

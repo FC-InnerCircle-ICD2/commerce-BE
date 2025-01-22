@@ -1,5 +1,6 @@
 package com.emotionalcart.order.infra.product.dto;
 
+import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
@@ -7,7 +8,8 @@ import lombok.NoArgsConstructor;
  * 상품 가격 응답값
  */
 @Getter
-@NoArgsConstructor
+@NoArgsConstructor(access = AccessLevel.PROTECTED)
+
 public class ProductPriceResponse {
 
     /**
@@ -21,18 +23,29 @@ public class ProductPriceResponse {
     private double price;
 
     /**
-     * 상품 옵션 아이디
+     * 상품옵션
      */
-    private Long productOptionId;
+    private ProductOption productOptions;
 
-    /**
-     * 상품 옵션 상세 아이디
-     */
-    private Long productOptionDetailId;
+    @Getter
+    @NoArgsConstructor(access = AccessLevel.PROTECTED)
+    public static class ProductOption {
 
-    /**
-     * 추가 금액
-     */
-    private double additionalPrice;
+        /**
+         * 상품 옵션 아이디
+         */
+        private Long productOptionId;
+
+        /**
+         * 상품 옵션 상세 아이디
+         */
+        private Long productOptionDetailId;
+
+        /**
+         * 추가 금액
+         */
+        private double additionalPrice;
+
+    }
 
 }
