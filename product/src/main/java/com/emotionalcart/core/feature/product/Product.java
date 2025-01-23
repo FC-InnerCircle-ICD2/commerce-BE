@@ -27,22 +27,22 @@ public class Product extends BaseEntity {
     @NotNull
     private Integer price;
 
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "provider_id", insertable = false, updatable = false)
-    private Provider provider;
+    private Long providerId;
 
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "category_id", insertable = false, updatable = false)
-    private Category category;
+    private Long categoryId;
 
     private Product(
             Long id,
             String name,
             String description,
-            Integer price) {
+            Integer price,
+            Long providerId,
+            Long categoryId) {
         this.id = id;
         this.name = name;
         this.description = description;
         this.price = price;
+        this.providerId = providerId;
+        this.categoryId = categoryId;
     }
 }

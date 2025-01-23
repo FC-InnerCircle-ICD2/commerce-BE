@@ -16,7 +16,8 @@ public enum ErrorCode {
     NOT_FOUND_PROVIDER("PRODUCT-0009", "해당 공급자를 찾을 수 없습니다.", HttpStatus.NOT_FOUND),
     NOT_FOUND_PRODUCT_IMAGE("PRODUCT-0010", "해당 상품 이미지를 찾을 수 없습니다.", HttpStatus.NOT_FOUND),
     NOT_FOUND_PRODUCT_OPTION_DETAIL("PRODUCT-0011", "해당 상품 옵션 상세를 찾을 수 없습니다.", HttpStatus.NOT_FOUND),
-    NOT_FOUND_BANNER("PRODUCT-0012", "배너를 찾을 수 없습니다.", HttpStatus.NOT_FOUND);
+    NOT_FOUND_BANNER("PRODUCT-0012", "배너를 찾을 수 없습니다.", HttpStatus.NOT_FOUND)
+    ;
 
     private final String errorCode;
     private final String message;

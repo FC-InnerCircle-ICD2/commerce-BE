@@ -21,4 +21,5 @@ private final CategoryDataProvider categoryDataProvider;
 
         return ReadCategories.Response.toResponse(categories);
     }
+    
 }

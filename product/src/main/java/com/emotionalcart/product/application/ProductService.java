@@ -8,7 +8,9 @@ import com.emotionalcart.product.presentation.dto.ReadProductOptionDetails;
 import com.emotionalcart.product.presentation.dto.ReadProductOptions;
 import com.emotionalcart.product.presentation.dto.ReadProductReviews;
 import com.emotionalcart.product.presentation.dto.ReadProviders;
+import com.emotionalcart.product.domain.CategoryDataProvider;
 import com.emotionalcart.product.domain.ProductDataProvider;
+import com.emotionalcart.product.domain.ProviderDataProvider;
 import com.emotionalcart.core.feature.category.Category;
 import com.emotionalcart.core.feature.product.Product;
 import com.emotionalcart.core.feature.product.ProductImage;
@@ -26,75 +28,68 @@ import java.util.List;
 @Service
 @RequiredArgsConstructor
 public class ProductService {
-    private final ProductDataProvider productDataProvider;
+        private final ProductDataProvider productDataProvider;
+        private final CategoryDataProvider categoryDataProvider;
+        private final ProviderDataProvider providerDataProvider;
 
-//     public List<ReadCategories.Response> getAllProductCategories() {
-//         List<Category> categories = productDataProvider.findAllCategories();
+        public Page<ReadProductReviews.Response> readProductReviews(@NotNull Long productId,
+                        ReadProductReviews.Request request) {
+                productDataProvider.findProduct(productId);
 
-//         return ReadCategories.Response.toResponse(categories);
-//     }
+                Page<Review> reviews = productDataProvider.findAllReviews(productId, request.getPageable());
+                ReviewImages reviewImages = findAllReviewImages(reviews.getContent());
 
-    public Page<ReadProductReviews.Response> readProductReviews(@NotNull Long productId,
-            ReadProductReviews.Request request) {
-        productDataProvider.findProduct(productId);
-
-        Page<Review> reviews = productDataProvider.findAllReviews(productId, request.getPageable());
-        ReviewImages reviewImages = findAllReviewImages(reviews.getContent());
-
-        return ReadProductReviews.Response.toResponse(reviews, reviewImages);
-    }
-
-    private ReviewImages findAllReviewImages(List<Review> reviews) {
-        Reviews from = Reviews.from(reviews);
-        return ReviewImages.from(productDataProvider.findAllReviewImages(from.ids()));
-    }
-
-    public ReadProductDetails.Response getProductDetail(Long productId) {
-        // 상품
-        Product product = productDataProvider.findProduct(productId);
-
-        // 상품 옵션
-        List<ReadProductOptions.Response> productOptionsResponses = new ArrayList<>();
-
-        List<ProductOption> productOptions = productDataProvider.findAllProductOptionsByProductId(productId);
-
-        for (ProductOption productOption : productOptions) {
-            // 상품 옵션 상세
-            List<ProductOptionDetail> productOptionDetails = productDataProvider
-                    .findAllProductOptionDetailsByProductOptionId(productOption.getId());
-
-            List<ReadProductOptionDetails.Response> productOptionDetailResponses = new ArrayList<>();
-
-            for (ProductOptionDetail productOptionDetail : productOptionDetails) {
-                // 상품 옵션 상세 이미지 조회
-                List<ProductImage> productImages = productDataProvider
-                        .findAllProductImagesByProductOptionDetailId(productOptionDetail.getId());
-
-                ReadProductOptionDetails.Response productOptionDetailResponse = ReadProductOptionDetails.Response
-                        .toResponse(productOptionDetail, productImages);
-
-                productOptionDetailResponses.add(productOptionDetailResponse);
-            }
-
-            ReadProductOptions.Response productOptionResponse = ReadProductOptions.Response
-                    .toResponse(productOption, productOptionDetailResponses);
-
-            productOptionsResponses.add(productOptionResponse);
+                return ReadProductReviews.Response.toResponse(reviews, reviewImages);
         }
 
-        // 카테고리
-        Long categoryId = productDataProvider.findCategoryIdByProductId(productId);
+        private ReviewImages findAllReviewImages(List<Review> reviews) {
+                Reviews from = Reviews.from(reviews);
+                return ReviewImages.from(productDataProvider.findAllReviewImages(from.ids()));
+        }
 
-        ReadProductCategories.Response categoryResponse = ReadProductCategories.Response
-                .toResponse(productDataProvider.findCategoryById(categoryId));
+        public ReadProductDetails.Response getProductDetail(Long productId) {
+                // 상품
+                Product product = productDataProvider.findProduct(productId);
 
-        // 공급자
-        Long providerId = productDataProvider.findProviderIdByProductId(productId);
+                // 상품 옵션
+                List<ReadProductOptions.Response> productOptionsResponses = new ArrayList<>();
 
-        ReadProviders.Response providerResponse = ReadProviders.Response
-                .toResponse(productDataProvider.findProviderById(providerId));
+                List<ProductOption> productOptions = productDataProvider.findAllProductOptionsByProductId(productId);
 
-        return ReadProductDetails.Response.toResponse(product, productOptionsResponses, categoryResponse,
-                providerResponse);
-    }
+                for (ProductOption productOption : productOptions) {
+                        // 상품 옵션 상세
+                        List<ProductOptionDetail> productOptionDetails = productDataProvider
+                                        .findAllProductOptionDetailsByProductOptionId(productOption.getId());
+
+                        List<ReadProductOptionDetails.Response> productOptionDetailResponses = new ArrayList<>();
+
+                        for (ProductOptionDetail productOptionDetail : productOptionDetails) {
+                                // 상품 옵션 상세 이미지 조회
+                                List<ProductImage> productImages = productDataProvider
+                                                .findAllProductImagesByProductOptionDetailId(
+                                                                productOptionDetail.getId());
+
+                                ReadProductOptionDetails.Response productOptionDetailResponse = ReadProductOptionDetails.Response
+                                                .toResponse(productOptionDetail, productImages);
+
+                                productOptionDetailResponses.add(productOptionDetailResponse);
+                        }
+
+                        ReadProductOptions.Response productOptionResponse = ReadProductOptions.Response
+                                        .toResponse(productOption, productOptionDetailResponses);
+
+                        productOptionsResponses.add(productOptionResponse);
+                }
+
+                // 카테고리
+                ReadProductCategories.Response categoryResponse = ReadProductCategories.Response
+                                .toResponse(categoryDataProvider.findCategoryById(product.getCategoryId()));
+
+                // 공급자
+                ReadProviders.Response providerResponse = ReadProviders.Response
+                                .toResponse(providerDataProvider.findProviderById(product.getProviderId()));
+
+                return ReadProductDetails.Response.toResponse(product, productOptionsResponses, categoryResponse,
+                                providerResponse);
+        }
 }

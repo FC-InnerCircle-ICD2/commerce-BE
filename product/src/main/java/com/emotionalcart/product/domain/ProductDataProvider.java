@@ -31,36 +31,14 @@ public class ProductDataProvider {
     private final ProductRepository productRepository;
     private final ReviewRepository reviewRepository;
     private final ReviewImageRepository reviewImageRepository;
-    private final CategoryRepository categoryRepository;
     private final ProductImageRepository productImageRepository;
     private final ProductOptionRepository productOptionRepository;
     private final ProductOptionDetailRepository productOptionDetailRepository;
-    private final ProviderRepository providerRepository;
 
     // 상품 관련 메서드
     public Product findProduct(Long productId) {
         return productRepository.findByIdAndIsDeletedIsFalse(productId)
                 .orElseThrow(() -> new ProductException(ErrorCode.NOT_FOUND_PRODUCT));
-    }
-
-    public Long findCategoryIdByProductId(Long productId) {
-        return productRepository.findCategoryIdByIdAndIsDeletedIsFalse(productId)
-                .orElseThrow(() -> new ProductException(ErrorCode.NOT_FOUND_PRODUCT));
-    }
-
-    public Long findProviderIdByProductId(Long productId) {
-        return productRepository.findProviderIdByIdAndIsDeletedIsFalse(productId)
-                .orElseThrow(() -> new ProductException(ErrorCode.NOT_FOUND_PROVIDER));
-    }
-
-    // 카테고리 관련 메서드
-    public Category findCategoryById(Long categoryId) {
-        return categoryRepository.findByIdAndIsDeletedIsFalse(categoryId)
-                .orElseThrow(() -> new ProductException(ErrorCode.NOT_FOUND_CATEGORY));
-    }
-
-    public List<Category> findAllCategories() {
-        return categoryRepository.findAllByIsActiveIsTrueAndIsDeletedIsFalse();
     }
 
     // 리뷰 관련 메서드
@@ -89,11 +67,5 @@ public class ProductDataProvider {
     public List<ProductOptionDetail> findAllProductOptionDetailsByProductOptionId(Long productOptionId) {
         return productOptionDetailRepository.findAllByProductOptionIdAndIsDeletedIsFalse(productOptionId)
                 .orElseThrow(() -> new ProductException(ErrorCode.NOT_FOUND_PRODUCT_OPTION_DETAIL));
-    }
-
-    // 공급자 관련 메서드
-    public Provider findProviderById(Long providerId) {
-        return providerRepository.findByIdAndIsDeletedIsFalse(providerId)
-                .orElseThrow(() -> new ProductException(ErrorCode.NOT_FOUND_PROVIDER));
     }
 }
