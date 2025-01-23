@@ -10,7 +10,21 @@ import com.emotionalcart.product.domain.support.ProductDetails;
 import com.emotionalcart.product.domain.support.ReviewImages;
 import com.emotionalcart.product.domain.support.Reviews;
 import com.emotionalcart.product.presentation.dto.ReadCategories;
+import com.emotionalcart.product.presentation.dto.ReadProductCategories;
+import com.emotionalcart.product.presentation.dto.ReadProductDetails;
+import com.emotionalcart.product.presentation.dto.ReadProductOptionDetails;
+import com.emotionalcart.product.presentation.dto.ReadProductOptions;
 import com.emotionalcart.product.presentation.dto.ReadProductReviews;
+import com.emotionalcart.product.presentation.dto.ReadProviders;
+import com.emotionalcart.product.domain.CategoryDataProvider;
+import com.emotionalcart.product.domain.ProductDataProvider;
+import com.emotionalcart.product.domain.ProviderDataProvider;
+import com.emotionalcart.core.feature.category.Category;
+import com.emotionalcart.core.feature.product.Product;
+import com.emotionalcart.core.feature.product.ProductImage;
+import com.emotionalcart.core.feature.product.ProductOption;
+import com.emotionalcart.core.feature.product.ProductOptionDetail;
+
 import com.emotionalcart.product.presentation.dto.ReadProductsPrice;
 import com.emotionalcart.product.presentation.dto.ReadProductsValidate;
 import jakarta.validation.constraints.NotNull;
@@ -19,6 +33,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -28,27 +43,70 @@ import java.util.stream.Collectors;
 @RequiredArgsConstructor
 @Transactional(readOnly = true)
 public class ProductService {
-    private final ProductDataProvider productDataProvider;
+        private final ProductDataProvider productDataProvider;
+        private final CategoryDataProvider categoryDataProvider;
+        private final ProviderDataProvider providerDataProvider;
 
-    public List<ReadCategories.Response> getAllProductCategories() {
-        List<Category> categories = productDataProvider.findAllCategories();
+        public Page<ReadProductReviews.Response> readProductReviews(@NotNull Long productId,
+                        ReadProductReviews.Request request) {
+                productDataProvider.findProduct(productId);
 
-        return ReadCategories.Response.fromCategories(categories);
-    }
+                Page<Review> reviews = productDataProvider.findAllReviews(productId, request.getPageable());
+                ReviewImages reviewImages = findAllReviewImages(reviews.getContent());
 
-    public Page<ReadProductReviews.Response> readProductReviews(@NotNull Long productId, ReadProductReviews.Request request) {
-        productDataProvider.findProduct(productId);
+                return ReadProductReviews.Response.toResponse(reviews, reviewImages);
+        }
 
-        Page<Review> reviews = productDataProvider.findAllReviews(productId, request.getPageable());
-        ReviewImages reviewImages = findAllReviewImages(reviews.getContent());
+        private ReviewImages findAllReviewImages(List<Review> reviews) {
+                Reviews from = Reviews.from(reviews);
+                return ReviewImages.from(productDataProvider.findAllReviewImages(from.ids()));
+        }
 
-        return ReadProductReviews.Response.toResponse(reviews, reviewImages);
-    }
+        public ReadProductDetails.Response getProductDetail(Long productId) {
+                // 상품
+                Product product = productDataProvider.findProduct(productId);
 
-    private ReviewImages findAllReviewImages(List<Review> reviews) {
-        Reviews from = Reviews.from(reviews);
-        return ReviewImages.from(productDataProvider.findAllReviewImages(from.ids()));
-    }
+                // 상품 옵션
+                List<ReadProductOptions.Response> productOptionsResponses = new ArrayList<>();
+
+                List<ProductOption> productOptions = productDataProvider.findAllProductOptionsByProductId(productId);
+
+                for (ProductOption productOption : productOptions) {
+                        // 상품 옵션 상세
+                        List<ProductOptionDetail> productOptionDetails = productDataProvider
+                                        .findAllProductOptionDetailsByProductOptionId(productOption.getId());
+
+                        List<ReadProductOptionDetails.Response> productOptionDetailResponses = new ArrayList<>();
+
+                        for (ProductOptionDetail productOptionDetail : productOptionDetails) {
+                                // 상품 옵션 상세 이미지 조회
+                                List<ProductImage> productImages = productDataProvider
+                                                .findAllProductImagesByProductOptionDetailId(
+                                                                productOptionDetail.getId());
+
+                                ReadProductOptionDetails.Response productOptionDetailResponse = ReadProductOptionDetails.Response
+                                                .toResponse(productOptionDetail, productImages);
+
+                                productOptionDetailResponses.add(productOptionDetailResponse);
+                        }
+
+                        ReadProductOptions.Response productOptionResponse = ReadProductOptions.Response
+                                        .toResponse(productOption, productOptionDetailResponses);
+
+                        productOptionsResponses.add(productOptionResponse);
+                }
+
+                // 카테고리
+                ReadProductCategories.Response categoryResponse = ReadProductCategories.Response
+                                .toResponse(categoryDataProvider.findCategoryById(product.getCategoryId()));
+
+                // 공급자
+                ReadProviders.Response providerResponse = ReadProviders.Response
+                                .toResponse(providerDataProvider.findProviderById(product.getProviderId()));
+
+                return ReadProductDetails.Response.toResponse(product, productOptionsResponses, categoryResponse,
+                                providerResponse);
+        }
 
     public void readProductsValidate(List<ReadProductsValidate.Request> requests) {
         Set<Long> productIds = requests.stream()

@@ -20,9 +20,6 @@ public class ProductImage extends BaseImageEntity {
     @JoinColumn(name = "product_option_detail_id")
     private ProductOptionDetail productOptionDetail;
 
-    // @NotNull
-    // private Long productId;
-
     @NotNull
     private boolean isRepresentative;
 
@@ -33,8 +30,7 @@ public class ProductImage extends BaseImageEntity {
             String filePath,
             String fileType,
             Long fileSize,
-            Integer fileOrder
-    ) {
+            Integer fileOrder) {
         super(bucketName, originalFileName, filePath, fileType, fileSize, fileOrder);
         this.isRepresentative = isRepresentative;
     }
