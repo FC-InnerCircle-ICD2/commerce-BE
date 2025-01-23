@@ -10,6 +10,7 @@ import com.emotionalcart.core.feature.product.ProductOptionDetail;
 import com.emotionalcart.core.feature.provider.Provider;
 import com.emotionalcart.core.feature.review.Review;
 import com.emotionalcart.core.feature.review.ReviewImage;
+import com.emotionalcart.product.domain.dto.ProductDetail;
 import com.emotionalcart.product.infrastructure.repository.CategoryRepository;
 import com.emotionalcart.product.infrastructure.repository.ProductImageRepository;
 import com.emotionalcart.product.infrastructure.repository.ProductOptionDetailRepository;
@@ -24,6 +25,7 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Component;
 
 import java.util.List;
+import java.util.Set;
 
 @Component
 @RequiredArgsConstructor
@@ -67,5 +69,9 @@ public class ProductDataProvider {
     public List<ProductOptionDetail> findAllProductOptionDetailsByProductOptionId(Long productOptionId) {
         return productOptionDetailRepository.findAllByProductOptionIdAndIsDeletedIsFalse(productOptionId)
                 .orElseThrow(() -> new ProductException(ErrorCode.NOT_FOUND_PRODUCT_OPTION_DETAIL));
+    }
+
+    public List<ProductDetail> findAllProductDetail(Set<Long> productIds) {
+        return productRepository.findAllProductDetail(productIds);
     }
 }
