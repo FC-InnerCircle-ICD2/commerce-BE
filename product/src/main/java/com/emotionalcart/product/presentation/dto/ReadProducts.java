@@ -1,17 +1,18 @@
 package com.emotionalcart.product.presentation.dto;
 
 import com.emotionalcart.core.base.BasePageRequest;
-import com.emotionalcart.product.application.ProductOptions;
+import com.emotionalcart.product.domain.dto.ProductOptionDetailWithImages;
+import com.emotionalcart.product.domain.support.ProductOptionDetails;
+import com.emotionalcart.product.domain.support.ProductOptions;
 import jakarta.persistence.EnumType;
 import jakarta.persistence.Enumerated;
 import lombok.Data;
 import lombok.Getter;
 import com.emotionalcart.core.feature.product.ProductOption;
-import com.emotionalcart.core.feature.product.ProductOptionDetail;
 import com.emotionalcart.core.feature.product.Product;
-import com.emotionalcart.core.feature.product.ProductImage;
 import org.springframework.data.domain.Page;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
@@ -80,41 +81,55 @@ public class ReadProducts {
             this.rating = rating;
         }
 
-        public static Page<Response> toResponse(Page<Product> products, ProductOptions productOptions, Map<Long, Double> ratings) {
-            Map<Long, List<ProductOptionResponse>> productOptionsMap = productOptions.groupByProductId();
+        public static Page<Response> toResponse(Page<Product> products, ProductOptions productOptions, ProductOptionDetails optionDetails, Map<Long, Double> ratings) {
+            // ProductOptions를 Product ID 기준으로 그룹화
+            Map<Long, List<ProductOptionResponse>> groupedOptions = productOptions.groupByProductId();
+
+            // ProductOptionDetails를 Option ID 기준으로 그룹화
+            Map<Long, List<ProductOptionDetailResponse>> groupedDetails = optionDetails.groupByOptionId();
 
             return products.map(product -> {
-                List<ProductOptionResponse> productOptionResponses = productOptionsMap.getOrDefault(product.getId(), List.of());
-                Double rating = ratings.getOrDefault(product.getId(), null);
-                return new Response(product, productOptionResponses, rating);
+                Long productId = product.getId();
+                List<ProductOptionResponse> productOptionResponses = groupedOptions.getOrDefault(productId, List.of());
+
+                // 각 ProductOptionResponse에 맞는 세부 정보 매핑
+                List<ProductOptionResponse> mergedResponses = ProductOptionResponse.mergeOptionsWithDetails(productOptionResponses, groupedDetails);
+
+                Double rating = ratings.getOrDefault(productId, null);
+
+                return new Response(product, mergedResponses, rating);
             });
         }
     }
 
     @Data
     public static class ProductOptionResponse {
+        @Getter
         private Long id;
         private String name;
-        private List<ProductOptionDetailResponse> productOptionDetails;
+        private List<ProductOptionDetailResponse> productOptionDetails = new ArrayList<>();
 
         public ProductOptionResponse(ProductOption productOption) {
             this.id = productOption.getId();
             this.name = productOption.getName();
         }
 
-        public ProductOptionResponse(ProductOption productOption, List<ProductOptionDetailResponse> productOptionDetails) {
-            this.id = productOption.getId();
-            this.name = productOption.getName();
-            this.productOptionDetails = productOptionDetails;
+        public void addDetails(List<ProductOptionDetailResponse> details) {
+            if (details != null && !details.isEmpty()) {
+                this.productOptionDetails.addAll(details);
+            }
         }
 
-        public static ProductOptionResponse toResponse(ProductOption productOption, List<ProductOptionDetail> productOptionDetails,
-                                                             List<ProductImage> productImages) {
-            List<ProductOptionDetailResponse> readProductOptionDetails = productOptionDetails.stream()
-                    .map(detail -> ProductOptionDetailResponse.toResponse(detail, productImages))
+        public static List<ProductOptionResponse> mergeOptionsWithDetails(
+                List<ProductOptionResponse> productOptions,
+                Map<Long, List<ProductOptionDetailResponse>> groupedDetails
+        ) {
+            return productOptions.stream()
+                    .peek(option -> {
+                        List<ProductOptionDetailResponse> details = groupedDetails.getOrDefault(option.getId(), List.of());
+                        option.addDetails(details);
+                    })
                     .collect(Collectors.toList());
-
-            return new ProductOptionResponse(productOption, readProductOptionDetails);
         }
     }
 
@@ -123,34 +138,19 @@ public class ReadProducts {
         private String value;
         private int quantity;
         private int additional_price;
-        private List<ProductImageResponse> productImage;
-
-        public ProductOptionDetailResponse(ProductOptionDetail productOptionDetail, List<ProductImageResponse> productImages) {
-            this.value = productOptionDetail.getValue();
-            this.quantity = productOptionDetail.getQuantity();
-            this.additional_price = productOptionDetail.getAdditionalPrice();
-            this.productImage = productImages;
-        }
-
-        public static ProductOptionDetailResponse toResponse(ProductOptionDetail productOptionDetail, List<ProductImage> images) {
-            List<ProductImageResponse> readProductImages = images.stream()
-                    .map(ProductImageResponse::new)
-                    .collect(Collectors.toList());
-
-            return new ProductOptionDetailResponse(productOptionDetail, readProductImages);
-        }
-    }
-
-    @Data
-    public static class ProductImageResponse {
-        private Long id;
-        private String url;
         private Integer fileOrder;
+        private String url;
 
-        public ProductImageResponse(ProductImage productImage) {
-            this.id = productImage.getId();
-            this.url = productImage.getFilePath();
-            this.fileOrder = productImage.getFileOrder();
+        public ProductOptionDetailResponse (ProductOptionDetailWithImages detailWithImages) {
+            this.value = detailWithImages.getValue();
+            this.quantity = detailWithImages.getQuantity();
+            this.additional_price = detailWithImages.getAdditionalPrice();
+            this.fileOrder = detailWithImages.getFileOrder();
+            this.url = detailWithImages.getUrl();
+        }
+
+        public static ProductOptionDetailResponse toResponse(ProductOptionDetailWithImages detailWithImages) {
+            return new ProductOptionDetailResponse(detailWithImages);
         }
     }
 }
