@@ -4,10 +4,13 @@ import com.emotionalcart.core.exception.ErrorCode;
 import com.emotionalcart.core.exception.ProductException;
 import com.emotionalcart.core.feature.category.Category;
 import com.emotionalcart.core.feature.product.Product;
+import com.emotionalcart.core.feature.product.ProductImage;
 import com.emotionalcart.core.feature.product.ProductOption;
+import com.emotionalcart.core.feature.product.ProductOptionDetail;
 import com.emotionalcart.core.feature.review.Review;
 import com.emotionalcart.core.feature.review.ReviewImage;
 import com.emotionalcart.core.feature.review.ReviewStatistic;
+import com.emotionalcart.product.domain.dto.ProductOptionDetailWithImages;
 import com.emotionalcart.product.infrastructure.repository.*;
 import com.emotionalcart.product.presentation.dto.ReadProducts;
 import lombok.RequiredArgsConstructor;
@@ -17,6 +20,7 @@ import org.springframework.stereotype.Component;
 
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 @Component
@@ -49,7 +53,7 @@ public class ProductDataProvider {
         return productRepository.findAllProducts(request, pageRequest);
     }
 
-    public List<ProductOption> findProductOptions(List<Long> productIds) {
+    public List<ProductOption> findProductOptions(Set<Long> productIds) {
         return productRepository.findProductOptions(productIds);
     }
 

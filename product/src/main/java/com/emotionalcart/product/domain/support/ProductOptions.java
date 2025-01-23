@@ -1,10 +1,9 @@
-package com.emotionalcart.product.application;
+package com.emotionalcart.product.domain.support;
 
 import com.emotionalcart.core.feature.product.ProductOption;
 import com.emotionalcart.product.presentation.dto.ReadProducts;
 
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.stream.Collectors;
 
 public class ProductOptions {
@@ -26,5 +25,11 @@ public class ProductOptions {
                         ProductOption::getProduct,
                         Collectors.mapping(ReadProducts.ProductOptionResponse::new, Collectors.toList())
                 ));
+    }
+
+    public Set<Long> ids(){
+        return this.options.stream()
+                .map(ProductOption::getId)
+                .collect(Collectors.toSet());
     }
 }

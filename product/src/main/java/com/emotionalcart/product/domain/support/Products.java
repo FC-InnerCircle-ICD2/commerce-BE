@@ -1,8 +1,10 @@
-package com.emotionalcart.product.application;
+package com.emotionalcart.product.domain.support;
 
 import com.emotionalcart.core.feature.product.Product;
 
 import java.util.List;
+import java.util.Set;
+import java.util.stream.Collectors;
 
 public class Products {
     private final List<Product> products;
@@ -14,9 +16,9 @@ public class Products {
         return new Products(products);
     }
 
-    public List<Long> ids(){
+    public Set<Long> ids(){
         return this.products.stream()
                 .map(Product::getId)
-                .toList();
+                .collect(Collectors.toSet());
     }
 }
