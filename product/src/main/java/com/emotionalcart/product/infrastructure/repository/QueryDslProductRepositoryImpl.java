@@ -3,10 +3,12 @@ package com.emotionalcart.product.infrastructure.repository;
 import com.emotionalcart.core.feature.category.QCategory;
 import com.emotionalcart.core.feature.product.*;
 import com.emotionalcart.core.feature.review.QReviewStatistic;
+import com.emotionalcart.product.domain.dto.ProductOptionDetailWithImages;
 import com.emotionalcart.product.presentation.dto.ReadProducts;
 import com.querydsl.core.BooleanBuilder;
 import com.querydsl.core.types.Order;
 import com.querydsl.core.types.OrderSpecifier;
+import com.querydsl.core.types.Projections;
 import com.querydsl.core.types.dsl.BooleanExpression;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import lombok.RequiredArgsConstructor;
@@ -54,6 +56,34 @@ public class QueryDslProductRepositoryImpl implements QueryDslProductRepository 
                 .where(
                         productOption.product.id.in(productIds), // productIds 조건
                         productOption.isDeleted.eq(false)   // ProductOption 삭제 여부
+                )
+                .fetch();
+    }
+
+    @Override
+    public List<ProductOptionDetailWithImages> findProductOptionDetailsWithImages(Set<Long> optionIds) {
+        QProductOptionDetail productOptionDetail = QProductOptionDetail.productOptionDetail;
+        QProductImage productImage = QProductImage.productImage;
+
+        return queryFactory
+                .select(Projections.constructor(
+                        ProductOptionDetailWithImages.class, // DTO 클래스
+                        productOptionDetail.id,
+                        productOptionDetail.productOption.id,
+                        productOptionDetail.value,
+                        productOptionDetail.quantity,
+                        productOptionDetail.additionalPrice,
+                        productImage.id,
+                        productImage.fileOrder,
+                        productImage.filePath
+                ))
+                .from(productOptionDetail)
+                .leftJoin(productImage).on(productOptionDetail.id.eq(productImage.productOptionDetail.id)) // 이미지와 조인
+                .where(
+                        productOptionDetail.productOption.id.in(optionIds),
+                        productOptionDetail.isDeleted.eq(false),
+                        productImage.isDeleted.isNull().or(productImage.isDeleted.eq(false)),
+                        productImage.isRepresentative.isNull().or(productImage.isRepresentative.eq(true))
                 )
                 .fetch();
     }

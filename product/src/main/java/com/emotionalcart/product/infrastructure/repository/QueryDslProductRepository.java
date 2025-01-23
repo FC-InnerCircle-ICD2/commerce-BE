@@ -12,4 +12,5 @@ public interface QueryDslProductRepository {
     Page<Product> findAllProducts(ReadProducts.Request request, PageRequest pageRequest);
 
     List<ProductOption> findProductOptions(List<Long> productIds);
+    List<ProductOptionDetailWithImages> findProductOptionDetailsWithImages(Set<Long> optionIds);
 }

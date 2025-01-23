@@ -53,6 +53,10 @@ public class ProductDataProvider {
         return productRepository.findProductOptions(productIds);
     }
 
+    public List<ProductOptionDetailWithImages> findProductOptionDetails(Set<Long> optionIds) {
+        return productRepository.findProductOptionDetailsWithImages(optionIds);
+    }
+
     public Map<Long, Double> findProductRatings(List<Long> productIds) {
         List<ReviewStatistic> ratings = reviewStatisticRepository.findAllByProductIdIn(productIds);
 
