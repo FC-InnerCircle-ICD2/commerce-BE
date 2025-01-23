@@ -16,7 +16,8 @@ public enum OrderErrorCode {
     INVALID_ORDER(OrderHttpStatus.INVALID_ORDER, "유효하지 않은 주문입니다."),
     PRICE_NOT_FOUND(OrderHttpStatus.PRICE_NOT_FOUND, "상품 가격 정보를 조회하는 중 오류가 발생했습니다."),
     STOCK_NOT_FOUND(OrderHttpStatus.STOCK_NOT_FOUND, "상품 재고 변경하는 과정에서 오류가 발생했습니다."),
-    INVALID_PRODUCT(OrderHttpStatus.INVALID_PRODUCT, "상품 조회 과정에서 오류가 발생했습니다.");
+    INVALID_PRODUCT(OrderHttpStatus.INVALID_PRODUCT, "상품 조회 과정에서 오류가 발생했습니다."),
+    INVALID_FEIGN_RESPONSE(OrderHttpStatus.INVALID_FEIGN_RESPONSE, "응답 값을 처리하는 과정에서 오류가 발생했습니다.");
 
     private final OrderHttpStatus code;
     private final String message;

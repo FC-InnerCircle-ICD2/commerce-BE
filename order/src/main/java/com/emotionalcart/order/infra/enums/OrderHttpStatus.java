@@ -16,7 +16,7 @@ public enum OrderHttpStatus {
     PRICE_NOT_FOUND("ORDER-0006"),
     STOCK_NOT_FOUND("ORDER-0007"),
     INVALID_PRODUCT("ORDER-0008"),
-    ;
+    INVALID_FEIGN_RESPONSE("ORDER-9999");
 
     private final String code;
 

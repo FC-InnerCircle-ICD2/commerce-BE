@@ -142,6 +142,12 @@ public class GlobalExceptionHandler {
         return buildErrorResponse(ex, OrderErrorCode.INVALID_PRODUCT, HttpStatus.BAD_REQUEST);
     }
 
+    @ExceptionHandler(FeignClientDecodingException.class)
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
+    public ResponseEntity<ErrorResponse> invalidApiException(Exception ex) {
+        return buildErrorResponse(ex, OrderErrorCode.INVALID_FEIGN_RESPONSE, HttpStatus.BAD_REQUEST);
+    }
+
     /**
      * 에러 응답 모델
      * <p>
