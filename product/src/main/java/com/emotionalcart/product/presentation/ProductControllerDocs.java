@@ -1,11 +1,19 @@
 package com.emotionalcart.product.presentation;
 
+import java.util.List;
+
 import org.springframework.data.domain.Page;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+
 import com.emotionalcart.product.presentation.dto.ReadProductDetails;
 import com.emotionalcart.product.presentation.dto.ReadProductReviews;
+import com.emotionalcart.product.presentation.dto.ReadProductsPrice;
+import com.emotionalcart.product.presentation.dto.ReadProductsValidate;
+
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
@@ -13,6 +21,7 @@ import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.ExampleObject;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import jakarta.validation.Valid;
 
 @Tag(name = "상품 API", description = "상품 관련 API")
 public interface ProductControllerDocs {
@@ -104,4 +113,16 @@ public interface ProductControllerDocs {
                     """)))
     })
     ResponseEntity<ReadProductDetails.Response> getProductDetail(@PathVariable Long productId);
+
+    // 상품 검증
+    @PostMapping("/validate")
+    ResponseEntity<Void> readProductsValidate(
+            @RequestBody @Valid List<ReadProductsValidate.Request> requests
+    );
+
+    // 상품 가격 조회
+    @PostMapping("/price")
+    ResponseEntity<List<ReadProductsPrice.Response>> readProductsPrice(
+            @RequestBody @Valid List<ReadProductsPrice.Request> requests
+    );
 }

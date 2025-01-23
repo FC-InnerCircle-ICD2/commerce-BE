@@ -1,12 +1,10 @@
 package com.emotionalcart.product.presentation;
 
 import com.emotionalcart.product.application.ProductService;
-import com.emotionalcart.product.presentation.dto.ReadCategories;
 import com.emotionalcart.product.presentation.dto.ReadProductDetails;
 import com.emotionalcart.product.presentation.dto.ReadProductsPrice;
 import jakarta.validation.Valid;
 import com.emotionalcart.product.presentation.dto.ReadProductReviews;
-//import com.emotionalcart.product.presentation.dto.ReadProductDetail;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
@@ -15,8 +13,6 @@ import org.springframework.web.bind.annotation.*;
 import com.emotionalcart.product.presentation.dto.ReadProductsValidate;
 
 import java.util.List;
-
-import io.swagger.v3.oas.annotations.tags.Tag;
 
 @RestController
 @RequestMapping("/v1/products")
@@ -38,18 +34,16 @@ public class ProductController implements ProductControllerDocs {
         return ResponseEntity.ok(productService.getProductDetail(productId));
     }
 
-    @PostMapping("/validate")
+    @Override
     public ResponseEntity<Void> readProductsValidate(
-            @RequestBody @Valid List<ReadProductsValidate.Request> requests
-    ) {
+            @RequestBody @Valid List<ReadProductsValidate.Request> requests) {
         productService.readProductsValidate(requests);
         return ResponseEntity.ok().build();
     }
 
-    @PostMapping("/price")
+    @Override
     public ResponseEntity<List<ReadProductsPrice.Response>> readProductsPrice(
-            @RequestBody @Valid List<ReadProductsPrice.Request> requests
-    ) {
+            @RequestBody @Valid List<ReadProductsPrice.Request> requests) {
         return ResponseEntity.ok(productService.readProductsPrice(requests));
     }
 }
