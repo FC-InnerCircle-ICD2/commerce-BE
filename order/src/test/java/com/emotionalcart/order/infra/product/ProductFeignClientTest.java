@@ -1,5 +1,8 @@
 package com.emotionalcart.order.infra.product;
 
+import com.emotionalcart.order.infra.advice.exceptions.ProductPriceException;
+import com.emotionalcart.order.infra.advice.exceptions.ProductStockException;
+import com.emotionalcart.order.infra.advice.exceptions.ProductValidationException;
 import com.emotionalcart.order.infra.config.TestContainerConfiguration;
 import com.emotionalcart.order.infra.utils.FileUtils;
 import com.github.tomakehurst.wiremock.http.ResponseDefinition;
@@ -72,7 +75,7 @@ class ProductFeignClientTest {
                                     .withBody(expect)
                     )).getResponse();
         // then
-        Exception exception = assertThrows(RuntimeException.class, () -> {
+        Exception exception = assertThrows(ProductPriceException.class, () -> {
             productService.getProductPrice(objectMapper.readValue(request, List.class)); // 예시
         });
 
@@ -95,7 +98,7 @@ class ProductFeignClientTest {
                                     .withBody(expect)
                     )).getResponse();
         // then
-        Exception exception = assertThrows(RuntimeException.class, () -> {
+        Exception exception = assertThrows(ProductStockException.class, () -> {
             productService.updateProductStock(objectMapper.readValue(request, List.class)); // 예시
         });
 
@@ -118,7 +121,7 @@ class ProductFeignClientTest {
                                     .withBody(expect)
                     )).getResponse();
         // then
-        Exception exception = assertThrows(RuntimeException.class, () -> {
+        Exception exception = assertThrows(ProductValidationException.class, () -> {
             productService.isValidProduct(objectMapper.readValue(request, List.class)); // 예시
         });
 

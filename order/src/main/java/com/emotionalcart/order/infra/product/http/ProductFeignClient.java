@@ -1,5 +1,6 @@
 package com.emotionalcart.order.infra.product.http;
 
+import com.emotionalcart.order.infra.config.FeignClientConfig;
 import com.emotionalcart.order.infra.product.dto.ProductPriceRequest;
 import com.emotionalcart.order.infra.product.dto.ProductPriceResponse;
 import com.emotionalcart.order.infra.product.dto.ProductStockRequest;
@@ -11,7 +12,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 
 import java.util.List;
 
-@FeignClient(name = "product-service", url = "${product.find.feign-endpoint}", path = "/api/v1/products")
+@FeignClient(name = "product-service", url = "${product.find.feign-endpoint}", path = "/api/v1/products", configuration = FeignClientConfig.class)
 public interface ProductFeignClient {
 
     /**
