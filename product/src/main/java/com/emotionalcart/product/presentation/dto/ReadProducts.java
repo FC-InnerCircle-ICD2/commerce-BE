@@ -64,10 +64,10 @@ public class ReadProducts {
         private Integer price;
         private ReadCategories.Response category;
         private ReadProviders.Response provider;
-        private List<ProductOptionResponse> productOptions;
+        private List<ProductOptionResponse> options;
         private Double rating;
 
-        public Response(Product product, List<ProductOptionResponse> productOptions, Double rating) {
+        public Response(Product product, List<ProductOptionResponse> options, Double rating) {
             this.productId = product.getId();
             this.name = product.getName();
             this.description = product.getDescription();
@@ -77,27 +77,17 @@ public class ReadProducts {
             this.category = product.getCategory() != null ? new ReadCategories.Response(product.getCategory()) : null;
             this.provider = product.getProvider() != null ? new ReadProviders.Response(product.getProvider()) : null;
 
-            this.productOptions = productOptions;
+            this.options = options;
             this.rating = rating;
         }
 
-        public static Page<Response> toResponse(Page<Product> products, ProductOptions productOptions, ProductOptionDetails optionDetails, Map<Long, Double> ratings) {
-            // ProductOptions를 Product ID 기준으로 그룹화
-            Map<Long, List<ProductOptionResponse>> groupedOptions = productOptions.groupByProductId();
-
-            // ProductOptionDetails를 Option ID 기준으로 그룹화
-            Map<Long, List<ProductOptionDetailResponse>> groupedDetails = optionDetails.groupByOptionId();
-
+        public static Page<Response> toResponse(Page<Product> products, Map<Long, List<ProductOptionResponse>> groupedOptions, Map<Long, Double> ratings) {
             return products.map(product -> {
                 Long productId = product.getId();
                 List<ProductOptionResponse> productOptionResponses = groupedOptions.getOrDefault(productId, List.of());
-
-                // 각 ProductOptionResponse에 맞는 세부 정보 매핑
-                List<ProductOptionResponse> mergedResponses = ProductOptionResponse.mergeOptionsWithDetails(productOptionResponses, groupedDetails);
-
                 Double rating = ratings.getOrDefault(productId, null);
 
-                return new Response(product, mergedResponses, rating);
+                return new Response(product, productOptionResponses, rating);
             });
         }
     }
@@ -107,7 +97,7 @@ public class ReadProducts {
         @Getter
         private Long id;
         private String name;
-        private List<ProductOptionDetailResponse> productOptionDetails = new ArrayList<>();
+        private List<ProductOptionDetailResponse> optionDetails = new ArrayList<>();
 
         public ProductOptionResponse(ProductOption productOption) {
             this.id = productOption.getId();
@@ -116,20 +106,8 @@ public class ReadProducts {
 
         public void addDetails(List<ProductOptionDetailResponse> details) {
             if (details != null && !details.isEmpty()) {
-                this.productOptionDetails.addAll(details);
+                this.optionDetails.addAll(details);
             }
-        }
-
-        public static List<ProductOptionResponse> mergeOptionsWithDetails(
-                List<ProductOptionResponse> productOptions,
-                Map<Long, List<ProductOptionDetailResponse>> groupedDetails
-        ) {
-            return productOptions.stream()
-                    .peek(option -> {
-                        List<ProductOptionDetailResponse> details = groupedDetails.getOrDefault(option.getId(), List.of());
-                        option.addDetails(details);
-                    })
-                    .collect(Collectors.toList());
         }
     }
 

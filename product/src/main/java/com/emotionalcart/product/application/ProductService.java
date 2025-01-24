@@ -64,12 +64,17 @@ public class ProductService {
         Page<Product> products = productDataProvider.findAllProducts(request, request.getPageable());
 
         ProductOptions productOptions = findProductOptions(products.getContent());
-
         ProductOptionDetails optionDetails = findProductOptionDetails(productOptions.ids());
-
         Map<Long, Double> ratings = findProductRatings(products.getContent());
 
-        return ReadProducts.Response.toResponse(products, productOptions, optionDetails, ratings);
+        // ProductOptionResponse와 Details 병합 처리
+        Map<Long, List<ReadProducts.ProductOptionResponse>> groupedOptions = productOptions.groupByProductId();
+        Map<Long, List<ReadProducts.ProductOptionDetailResponse>> groupedDetails = optionDetails.groupByOptionId();
+
+        Map<Long, List<ReadProducts.ProductOptionResponse>> mergedOptions = mergeOptionsWithDetails(groupedOptions, groupedDetails);
+
+        // DTO 변환
+        return ReadProducts.Response.toResponse(products, mergedOptions, ratings);
     }
 
     private ProductOptions findProductOptions(List<Product> products) {
@@ -87,5 +92,18 @@ public class ProductService {
         return productDataProvider.findProductRatings(products.stream()
                 .map(Product::getId)
                 .toList());
+    }
+
+    private Map<Long, List<ReadProducts.ProductOptionResponse>> mergeOptionsWithDetails(
+            Map<Long, List<ReadProducts.ProductOptionResponse>> groupedOptions,
+            Map<Long, List<ReadProducts.ProductOptionDetailResponse>> groupedDetails
+    ) {
+        groupedOptions.forEach((productId, productOptionResponses) ->
+                productOptionResponses.forEach(option -> {
+                    List<ReadProducts.ProductOptionDetailResponse> details = groupedDetails.getOrDefault(option.getId(), List.of());
+                    option.addDetails(details);
+                })
+        );
+        return groupedOptions;
     }
 }
