@@ -3,7 +3,9 @@ package com.emotionalcart.product.application;
 import com.emotionalcart.core.exception.ErrorCode;
 import com.emotionalcart.core.exception.ProductException;
 import com.emotionalcart.product.application.fixture.ProductFixture;
+import com.emotionalcart.product.domain.CategoryDataProvider;
 import com.emotionalcart.product.domain.ProductDataProvider;
+import com.emotionalcart.product.domain.ProviderDataProvider;
 import com.emotionalcart.product.domain.dto.ProductDetail;
 import com.emotionalcart.product.presentation.dto.ReadProductsValidate;
 import org.junit.jupiter.api.BeforeEach;
@@ -23,11 +25,17 @@ class ProductServiceTest {
     @Mock
     private ProductDataProvider productDataProvider;
 
+    @Mock
+    private CategoryDataProvider categoryDataProvider;
+
+    @Mock
+    private ProviderDataProvider providerDataProvider;
+
     private ProductService productService;
 
     @BeforeEach
     void setUp() {
-        productService = new ProductService(productDataProvider);
+        productService = new ProductService(productDataProvider, categoryDataProvider, providerDataProvider);
     }
 
     @Test
