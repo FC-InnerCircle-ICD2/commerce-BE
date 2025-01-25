@@ -17,9 +17,11 @@ import com.emotionalcart.core.feature.category.Category;
 //import com.emotionalcart.product.domain.Product;
 //import com.emotionalcart.product.domain.repository.ProductRepository;
 import com.emotionalcart.product.presentation.dto.ReadProducts;
+import com.querydsl.core.BooleanBuilder;
 import jakarta.validation.constraints.NotNull;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 
 import java.util.HashSet;
@@ -61,7 +63,9 @@ public class ProductService {
 //    }
 
     public Page<ReadProducts.Response> readProducts(ReadProducts.Request request) {
-        Page<Product> products = productDataProvider.findAllProducts(request, request.getPageable());
+        PageRequest pageable = request.toPageRequest();
+
+        Page<Product> products = productDataProvider.findAllProducts(request, pageable);
 
         ProductOptions productOptions = findProductOptions(products.getContent());
         ProductOptionDetails optionDetails = findProductOptionDetails(productOptions.ids());

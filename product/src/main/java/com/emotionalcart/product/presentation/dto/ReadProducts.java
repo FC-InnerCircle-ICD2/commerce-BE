@@ -1,29 +1,24 @@
 package com.emotionalcart.product.presentation.dto;
 
-import com.emotionalcart.core.base.BasePageRequest;
+import com.emotionalcart.core.feature.product.SortOption;
 import com.emotionalcart.product.domain.dto.ProductOptionDetailWithImages;
-import com.emotionalcart.product.domain.support.ProductOptionDetails;
-import com.emotionalcart.product.domain.support.ProductOptions;
-import jakarta.persistence.EnumType;
-import jakarta.persistence.Enumerated;
 import lombok.Data;
 import lombok.Getter;
 import com.emotionalcart.core.feature.product.ProductOption;
 import com.emotionalcart.core.feature.product.Product;
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Sort;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
-import java.util.stream.Collectors;
 
 public class ReadProducts {
     @Getter
-    public static class Request extends BasePageRequest {
-        int pageSize = 10;
-        int pageNumber = 0;
-
-        @Enumerated(EnumType.STRING)
+    public static class Request {
+        private Integer pageNumber;
+        private Integer pageSize;
         private SortOption sortOption;
         private Long productId;
         private Long categoryId;
@@ -32,27 +27,17 @@ public class ReadProducts {
         private Float priceMax;
         private Double rating;
 
-        // 정렬 필드 및 방향 설정
-        public void configureSort() {
+        // PageRequest로 변환하는 메서드
+        public PageRequest toPageRequest() {
+            // 기본 정렬: createdAt DESC
+            Sort sort = Sort.by(Sort.Direction.DESC, "createdAt");
             if (sortOption != null) {
-                setSort(this.sortOption);
+                sort = Sort.by(Sort.Direction.fromString(sortOption.getDirection()), sortOption.getField());
             }
-        }
-    }
 
-    @Getter
-    public enum SortOption {
-        PRICE_ASC("price", "ASC"),
-        PRICE_DESC("price", "DESC"),
-        SALES_DESC("sales", "DESC"),
-        CREATE_DESC("createdAt","DESC");
-
-        private final String field;
-        private final String direction;
-
-        SortOption(String field, String direction) {
-            this.field = field;
-            this.direction = direction;
+            int page = (pageNumber != null) ? pageNumber : 0;
+            int size = (pageSize != null) ? pageSize : 10;
+            return PageRequest.of(page, size, sort);
         }
     }
 

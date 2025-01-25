@@ -138,12 +138,14 @@ class ProductSortConditions {
     public static OrderSpecifier<?>[] getSortOrders(PageRequest pageRequest, QProduct product) {
         return pageRequest.getSort().stream()
                 .map(order -> {
-                    switch (order.getProperty()) {
-                        case "price":
+                    SortOption sortOption = SortOption.from(order);
+                    switch (sortOption) {
+                        case PRICE_ASC:
+                        case PRICE_DESC:
                             return new OrderSpecifier<>(getDirection(order), product.price);
-                        case "createdAt":
+                        case CREATE_DESC:
                             return new OrderSpecifier<>(getDirection(order), product.createdAt);
-//                        case "salesCount":
+//                        case SALES_DESC:
 //                            return new OrderSpecifier<>(getDirection(order), product.salesCount);
                         default:
                             throw new IllegalArgumentException("Unknown sorting property: " + order.getProperty());

@@ -37,13 +37,9 @@ public class ProductController {
 //        return ResponseEntity.ok(productService.getProductDetail(productId));
 //    }
 
-    @PostMapping
+    @GetMapping("/search")
     public ResponseEntity<Page<ReadProducts.Response>> readProducts(
-            @RequestBody ReadProducts.Request request
-    ) {
-        // 정렬 설정
-        request.configureSort();
-
+            @RequestBody ReadProducts.Request request) {
         return ResponseEntity.ok(productService.readProducts(request));
     }
 }
