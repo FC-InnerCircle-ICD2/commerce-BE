@@ -13,9 +13,7 @@ public class ProductQueryHelper {
                                                      String keyword,
                                                      Float priceMin,
                                                      Float priceMax,
-                                                     Double rating,
-                                                     QProduct product,
-                                                     QReviewStatistic reviewStatistic) {
+                                                     QProduct product) {
         BooleanBuilder filterBuilder = new BooleanBuilder();
 
         // 상품 ID 필터링
@@ -28,9 +26,6 @@ public class ProductQueryHelper {
 
         // 가격 범위 필터링
         addPriceFilter(priceMin, priceMax, product, filterBuilder);
-
-        // 별점 필터링
-        addRatingFilter(rating, reviewStatistic, filterBuilder);
 
         return filterBuilder;
     }
@@ -65,12 +60,6 @@ public class ProductQueryHelper {
         }
         if (priceMax != null) {
             filterBuilder.and(product.price.loe(priceMax));
-        }
-    }
-
-    private static void addRatingFilter(Double rating, QReviewStatistic reviewStatistic, BooleanBuilder filterBuilder) {
-        if (rating != null) {
-            filterBuilder.and(reviewStatistic.averageRating.goe(rating));
         }
     }
 

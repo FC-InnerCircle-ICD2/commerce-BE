@@ -35,15 +35,17 @@ public class QueryDslProductRepositoryImpl implements QueryDslProductRepository 
 
         // 필터 조건 생성
         BooleanBuilder filterBuilder = ProductQueryHelper.createFilterBuilder(
-                productId, categoryId, keyword, priceMin, priceMax, rating, product, reviewStatistic
+                productId, categoryId, keyword, priceMin, priceMax, product
         );
 
         List<Product> products  = queryFactory
-                .selectFrom(product)
+                .selectDistinct(product)
+                .from(product)
                 .leftJoin(category).on(product.category.id.eq(category.id)).fetchJoin()
                 .leftJoin(provider).on(product.provider.id.eq(provider.id)).fetchJoin()
                 .leftJoin(reviewStatistic).on(product.id.eq(reviewStatistic.productId)).fetchJoin()
-                .where(filterBuilder)
+                .where(filterBuilder,
+                        eqRating(rating, reviewStatistic))
                 .offset(pageRequest.getOffset())
                 .limit(pageRequest.getPageSize())
                 .orderBy(orderSpecifier)
@@ -55,6 +57,11 @@ public class QueryDslProductRepositoryImpl implements QueryDslProductRepository 
                 .fetchCount();
 
         return new PageImpl<>(products, pageRequest, totalCount);
+    }
+
+    // 별점 검색
+    private BooleanExpression eqRating(Double rating, QReviewStatistic reviewStatistic) {
+        return rating == null ? null : reviewStatistic.averageRating.goe(rating);
     }
 
     @Override
