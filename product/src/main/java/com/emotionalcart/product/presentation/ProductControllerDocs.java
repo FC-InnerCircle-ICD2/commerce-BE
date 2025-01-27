@@ -102,6 +102,10 @@ public interface ProductControllerDocs {
                             "id": 10,
                             "name": "ABC 전자",
                             "description": "전자제품 전문 업체입니다."
+                        },
+                        "reviewStatistic": {
+                            "averageRating": 4.5,
+                            "reviewCount": 120
                         }
                     }
                     """))),
@@ -117,12 +121,10 @@ public interface ProductControllerDocs {
     // 상품 검증
     @PostMapping("/validate")
     ResponseEntity<Void> readProductsValidate(
-            @RequestBody @Valid List<ReadProductsValidate.Request> requests
-    );
+            @RequestBody @Valid List<ReadProductsValidate.Request> requests);
 
     // 상품 가격 조회
     @PostMapping("/price")
     ResponseEntity<List<ReadProductsPrice.Response>> readProductsPrice(
-            @RequestBody @Valid List<ReadProductsPrice.Request> requests
-    );
+            @RequestBody @Valid List<ReadProductsPrice.Request> requests);
 }

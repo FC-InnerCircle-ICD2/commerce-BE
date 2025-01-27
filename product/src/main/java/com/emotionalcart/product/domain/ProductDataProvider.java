@@ -10,6 +10,7 @@ import com.emotionalcart.core.feature.product.ProductOptionDetail;
 import com.emotionalcart.core.feature.provider.Provider;
 import com.emotionalcart.core.feature.review.Review;
 import com.emotionalcart.core.feature.review.ReviewImage;
+import com.emotionalcart.core.feature.review.ReviewStatistic;
 import com.emotionalcart.product.domain.dto.ProductDetail;
 import com.emotionalcart.product.infrastructure.repository.CategoryRepository;
 import com.emotionalcart.product.infrastructure.repository.ProductImageRepository;
@@ -19,6 +20,9 @@ import com.emotionalcart.product.infrastructure.repository.ProductRepository;
 import com.emotionalcart.product.infrastructure.repository.ProviderRepository;
 import com.emotionalcart.product.infrastructure.repository.ReviewImageRepository;
 import com.emotionalcart.product.infrastructure.repository.ReviewRepository;
+import com.emotionalcart.product.infrastructure.repository.ReviewStatisticRepository;
+import com.emotionalcart.product.presentation.dto.ReadProductReviewStatistic;
+
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -36,6 +40,7 @@ public class ProductDataProvider {
     private final ProductImageRepository productImageRepository;
     private final ProductOptionRepository productOptionRepository;
     private final ProductOptionDetailRepository productOptionDetailRepository;
+    private final ReviewStatisticRepository reviewStatisticRepository;
 
     // 상품 관련 메서드
     public Product findProduct(Long productId) {
@@ -73,5 +78,10 @@ public class ProductDataProvider {
 
     public List<ProductDetail> findAllProductDetail(Set<Long> productIds) {
         return productRepository.findAllProductDetail(productIds);
+    }
+
+    public ReviewStatistic findReviewStatistic(Long productId) {
+        return reviewStatisticRepository.findByProductId(productId)
+                .orElseThrow(() -> new ProductException(ErrorCode.NOT_FOUND_REVIEW_STATISTIC));
     }
 }
