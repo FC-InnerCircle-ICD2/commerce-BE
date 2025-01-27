@@ -22,29 +22,39 @@ public class QueryDslProductRepositoryImpl implements QueryDslProductRepository 
     private final JPAQueryFactory queryFactory;
 
     @Override
-    public Page<Product> findAllProducts(ReadProducts.Request request, PageRequest pageRequest) {
+    public Page<Product> findAllProducts(Long productId, Long categoryId, String keyword,
+                                         Float priceMin, Float priceMax, Double rating,
+                                         SortOption sortOption, PageRequest pageRequest) {
         QProduct product = QProduct.product;
         QReviewStatistic reviewStatistic = QReviewStatistic.reviewStatistic;
         QProvider provider = QProvider.provider;
         QCategory category = QCategory.category;
 
-        // 조건 및 정렬 설정
-        BooleanBuilder conditions = buildDynamicWhere(request, reviewStatistic);
-        OrderSpecifier<?>[] sortOrders = ProductSortConditions.getSortOrders(pageRequest, product);
+        // 정렬 조건
+        OrderSpecifier<?> orderSpecifier = ProductQueryHelper.getOrderSpecifier(sortOption, product);
+
+        // 필터 조건 생성
+        BooleanBuilder filterBuilder = ProductQueryHelper.createFilterBuilder(
+                productId, categoryId, keyword, priceMin, priceMax, rating, product, reviewStatistic
+        );
 
         List<Product> products  = queryFactory
-                .selectDistinct(product)
-                .from(product)
+                .selectFrom(product)
                 .leftJoin(category).on(product.category.id.eq(category.id)).fetchJoin()
                 .leftJoin(provider).on(product.provider.id.eq(provider.id)).fetchJoin()
                 .leftJoin(reviewStatistic).on(product.id.eq(reviewStatistic.productId)).fetchJoin()
-                .where(conditions)
+                .where(filterBuilder)
                 .offset(pageRequest.getOffset())
                 .limit(pageRequest.getPageSize())
-                .orderBy(sortOrders)
+                .orderBy(orderSpecifier)
                 .fetch();
 
-        return new PageImpl<>(products);
+        long totalCount = queryFactory
+                .selectFrom(product)
+                .where(filterBuilder)
+                .fetchCount();
+
+        return new PageImpl<>(products, pageRequest, totalCount);
     }
 
     @Override
@@ -86,75 +96,5 @@ public class QueryDslProductRepositoryImpl implements QueryDslProductRepository 
                         productImage.isRepresentative.isNull().or(productImage.isRepresentative.eq(true))
                 )
                 .fetch();
-    }
-
-    private BooleanBuilder buildDynamicWhere(ReadProducts.Request request, QReviewStatistic reviewStatistic) {
-        BooleanBuilder builder = new BooleanBuilder();
-
-        builder.and(eqProduct(request.getProductId()));
-        builder.and(eqCategory(request.getCategoryId()));
-        builder.and(eqKeyword(request.getKeyword()));
-        builder.and(eqRating(request.getRating(), reviewStatistic));
-        builder.and(eqPriceMin(request.getPriceMin()));
-        builder.and(eqPriceMax(request.getPriceMax()));
-
-        return builder;
-    }
-
-    //상품 검색
-    private BooleanExpression eqProduct(Long productId) {
-        return productId == null ? null : QProduct.product.id.eq(productId);
-    }
-
-    //카테고리 검색
-    private BooleanExpression eqCategory(Long categoryId) {
-        return categoryId == null ? null : QProduct.product.category.id.eq(categoryId);
-    }
-
-    //키워드 검색
-    private BooleanExpression eqKeyword(String keyword) {
-        return keyword == null ? null : QProduct.product.name.containsIgnoreCase(keyword);
-    }
-
-    // 별점 검색
-    private BooleanExpression eqRating(Double rating, QReviewStatistic reviewStatistic) {
-        return rating == null ? null : reviewStatistic.averageRating.goe(rating);
-    }
-
-    // 최소 가격 검색
-    private BooleanExpression eqPriceMin(Float priceMin) {
-        return priceMin == null ? null : QProduct.product.price.goe(priceMin);
-    }
-
-    // 최대 가격 검색
-    private BooleanExpression eqPriceMax(Float priceMax) {
-        return priceMax == null ? null : QProduct.product.price.loe(priceMax);
-    }
-}
-
-// 정렬 클래스
-class ProductSortConditions {
-
-    public static OrderSpecifier<?>[] getSortOrders(PageRequest pageRequest, QProduct product) {
-        return pageRequest.getSort().stream()
-                .map(order -> {
-                    SortOption sortOption = SortOption.from(order);
-                    switch (sortOption) {
-                        case PRICE_ASC:
-                        case PRICE_DESC:
-                            return new OrderSpecifier<>(getDirection(order), product.price);
-                        case CREATE_DESC:
-                            return new OrderSpecifier<>(getDirection(order), product.createdAt);
-//                        case SALES_DESC:
-//                            return new OrderSpecifier<>(getDirection(order), product.salesCount);
-                        default:
-                            throw new IllegalArgumentException("Unknown sorting property: " + order.getProperty());
-                    }
-                })
-                .toArray(OrderSpecifier[]::new);
-    }
-
-    private static Order getDirection(Sort.Order order) {
-        return order.isAscending() ? Order.ASC : Order.DESC;
     }
 }

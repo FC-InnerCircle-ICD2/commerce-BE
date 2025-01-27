@@ -3,10 +3,7 @@ package com.emotionalcart.product.domain;
 import com.emotionalcart.core.exception.ErrorCode;
 import com.emotionalcart.core.exception.ProductException;
 import com.emotionalcart.core.feature.category.Category;
-import com.emotionalcart.core.feature.product.Product;
-import com.emotionalcart.core.feature.product.ProductImage;
-import com.emotionalcart.core.feature.product.ProductOption;
-import com.emotionalcart.core.feature.product.ProductOptionDetail;
+import com.emotionalcart.core.feature.product.*;
 import com.emotionalcart.core.feature.review.Review;
 import com.emotionalcart.core.feature.review.ReviewImage;
 import com.emotionalcart.core.feature.review.ReviewStatistic;
@@ -50,7 +47,15 @@ public class ProductDataProvider {
     }
 
     public Page<Product> findAllProducts(ReadProducts.Request request, PageRequest pageRequest) {
-        return productRepository.findAllProducts(request, pageRequest);
+        return productRepository.findAllProducts(
+                request.getProductId(),
+                request.getCategoryId(),
+                request.getKeyword(),
+                request.getPriceMin(),
+                request.getPriceMax(),
+                request.getRating(),
+                request.getSortOption(),
+                pageRequest);
     }
 
     public List<ProductOption> findProductOptions(Set<Long> productIds) {
