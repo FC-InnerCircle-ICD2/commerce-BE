@@ -1,22 +1,23 @@
 package com.emotionalcart.product.presentation.dto;
 
+import com.emotionalcart.core.base.BasePageRequest;
 import com.emotionalcart.core.feature.product.SortOption;
 import com.emotionalcart.product.domain.dto.ProductOptionDetailWithImages;
-import lombok.Data;
-import lombok.Getter;
+import lombok.*;
 import com.emotionalcart.core.feature.product.ProductOption;
 import com.emotionalcart.core.feature.product.Product;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
-import org.springframework.data.domain.Sort;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
 public class ReadProducts {
+
     @Getter
-    public static class Request {
+    @Setter
+    public static class Request extends BasePageRequest {
         private Integer pageNumber;
         private Integer pageSize;
         private SortOption sortOption;
@@ -27,17 +28,10 @@ public class ReadProducts {
         private Float priceMax;
         private Double rating;
 
-        // PageRequest로 변환하는 메서드
         public PageRequest toPageRequest() {
-            // 기본 정렬: createdAt DESC
-            Sort sort = Sort.by(Sort.Direction.DESC, "createdAt");
-            if (sortOption != null) {
-                sort = Sort.by(Sort.Direction.fromString(sortOption.getDirection()), sortOption.getField());
-            }
-
-            int page = (pageNumber != null) ? pageNumber : 0;
-            int size = (pageSize != null) ? pageSize : 10;
-            return PageRequest.of(page, size, sort);
+            int page = (pageNumber != null && pageNumber >= 0) ? pageNumber : getPageable().getPageNumber();
+            int size = (pageSize != null && pageSize > 0 && pageSize <= 100) ? pageSize : getPageable().getPageSize();
+            return PageRequest.of(page, size);
         }
     }
 

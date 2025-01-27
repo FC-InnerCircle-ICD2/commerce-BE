@@ -1,9 +1,6 @@
 package com.emotionalcart.product.application;
 
-import com.emotionalcart.core.feature.product.Product;
-import com.emotionalcart.core.feature.product.ProductImage;
-import com.emotionalcart.core.feature.product.ProductOption;
-import com.emotionalcart.core.feature.product.ProductOptionDetail;
+import com.emotionalcart.core.feature.product.*;
 import com.emotionalcart.core.feature.review.Review;
 import com.emotionalcart.product.domain.dto.ProductOptionDetailWithImages;
 import com.emotionalcart.product.domain.support.ProductOptionDetails;
@@ -17,18 +14,14 @@ import com.emotionalcart.core.feature.category.Category;
 //import com.emotionalcart.product.domain.Product;
 //import com.emotionalcart.product.domain.repository.ProductRepository;
 import com.emotionalcart.product.presentation.dto.ReadProducts;
-import com.querydsl.core.BooleanBuilder;
 import jakarta.validation.constraints.NotNull;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 
-import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
-import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -63,9 +56,7 @@ public class ProductService {
 //    }
 
     public Page<ReadProducts.Response> readProducts(ReadProducts.Request request) {
-        PageRequest pageable = request.toPageRequest();
-
-        Page<Product> products = productDataProvider.findAllProducts(request, pageable);
+        Page<Product> products = productDataProvider.findAllProducts(request, request.toPageRequest());
 
         ProductOptions productOptions = findProductOptions(products.getContent());
         ProductOptionDetails optionDetails = findProductOptionDetails(productOptions.ids());

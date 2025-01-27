@@ -39,7 +39,7 @@ public class ProductController {
 
     @GetMapping("/search")
     public ResponseEntity<Page<ReadProducts.Response>> readProducts(
-            @RequestBody ReadProducts.Request request) {
+            ReadProducts.Request request) {
         return ResponseEntity.ok(productService.readProducts(request));
     }
 }
