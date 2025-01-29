@@ -1,7 +1,6 @@
 package com.emotionalcart.core.feature.product;
 
 import com.emotionalcart.core.base.BaseEntity;
-import com.emotionalcart.core.feature.category.Category;
 
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotNull;
@@ -26,13 +25,7 @@ public class ProductOption extends BaseEntity {
     @NotNull
     private String name;
 
-    @NotNull
-    private Boolean isRequired;
-
-    private ProductOption(
-            String name,
-            Boolean isRequired) {
+    private ProductOption(String name) {
         this.name = name;
-        this.isRequired = isRequired;
     }
 }

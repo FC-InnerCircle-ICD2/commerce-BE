@@ -1,7 +1,6 @@
 package com.emotionalcart.product.presentation.dto;
 
 import java.util.List;
-import java.util.Map;
 import java.util.stream.Collectors;
 
 import com.emotionalcart.core.feature.product.ProductImage;
@@ -23,7 +22,6 @@ public class ReadProductOptionDetails {
         private Response(ProductOptionDetail optionDetail, List<ReadProductImages.Response> images) {
             this.id = optionDetail.getId();
             this.value = optionDetail.getValue();
-            this.quantity = optionDetail.getQuantity();
             this.order = optionDetail.getOptionOrder();
             this.additionalPrice = optionDetail.getAdditionalPrice();
             this.images = images;

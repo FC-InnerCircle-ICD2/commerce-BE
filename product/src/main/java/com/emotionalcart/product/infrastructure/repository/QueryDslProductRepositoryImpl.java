@@ -24,10 +24,8 @@ public class QueryDslProductRepositoryImpl implements QueryDslProductRepository 
                                 product.id,
                                 product.price,
                                 productOption.id,
-                                productOption.isRequired,
                                 productOptionDetail.id,
-                                productOptionDetail.additionalPrice,
-                                productOptionDetail.quantity
+                                productOptionDetail.additionalPrice
                         ))
                 .from(product)
                 .leftJoin(productOption)

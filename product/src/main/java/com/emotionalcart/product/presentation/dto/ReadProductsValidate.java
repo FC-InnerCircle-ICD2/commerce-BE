@@ -11,6 +11,8 @@ public class ReadProductsValidate {
         @NotNull
         private Long productId;
         @NotNull
+        private Integer quantity;
+        @NotNull
         private List<OptionRequest> productOptions;
 
         @Getter
@@ -19,8 +21,6 @@ public class ReadProductsValidate {
             private Long productOptionId;
             @NotNull
             private Long productOptionDetailId;
-            @NotNull
-            private Integer quantity;
         }
     }
 }
