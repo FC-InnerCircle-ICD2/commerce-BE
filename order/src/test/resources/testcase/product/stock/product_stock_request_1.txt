@@ -1,0 +1,22 @@
+[
+    {
+        "productId": 1,
+        "productOptions": [
+            {
+                "productOptionId": 1,
+                "productOptionDetailId": 1,
+                "quantity": -1
+            }
+        ]
+    },
+    {
+        "productId": 2,
+        "productOptions": [
+            {
+                "productOptionId": 3,
+                "productOptionDetailId": 6,
+                "quantity": -3
+            }
+        ]
+    }
+]
