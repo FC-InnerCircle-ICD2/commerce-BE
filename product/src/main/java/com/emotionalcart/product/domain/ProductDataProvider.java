@@ -2,21 +2,17 @@ package com.emotionalcart.product.domain;
 
 import com.emotionalcart.core.exception.ErrorCode;
 import com.emotionalcart.core.exception.ProductException;
-import com.emotionalcart.core.feature.category.Category;
 import com.emotionalcart.core.feature.product.Product;
 import com.emotionalcart.core.feature.product.ProductImage;
 import com.emotionalcart.core.feature.product.ProductOption;
 import com.emotionalcart.core.feature.product.ProductOptionDetail;
-import com.emotionalcart.core.feature.provider.Provider;
 import com.emotionalcart.core.feature.review.Review;
 import com.emotionalcart.core.feature.review.ReviewImage;
 import com.emotionalcart.product.domain.dto.ProductDetail;
-import com.emotionalcart.product.infrastructure.repository.CategoryRepository;
 import com.emotionalcart.product.infrastructure.repository.ProductImageRepository;
 import com.emotionalcart.product.infrastructure.repository.ProductOptionDetailRepository;
 import com.emotionalcart.product.infrastructure.repository.ProductOptionRepository;
 import com.emotionalcart.product.infrastructure.repository.ProductRepository;
-import com.emotionalcart.product.infrastructure.repository.ProviderRepository;
 import com.emotionalcart.product.infrastructure.repository.ReviewImageRepository;
 import com.emotionalcart.product.infrastructure.repository.ReviewRepository;
 import lombok.RequiredArgsConstructor;
@@ -62,7 +58,7 @@ public class ProductDataProvider {
 
     // 상품 옵션 관련 메서드
     public List<ProductOption> findAllProductOptionsByProductId(Long productId) {
-        return productOptionRepository.findAllByProductIdAndIsDeletedIsFalseAndIsRequiredIsTrue(productId)
+        return productOptionRepository.findAllByProductIdAndIsDeletedIsFalse(productId)
                 .orElseThrow(() -> new ProductException(ErrorCode.NOT_FOUND_PRODUCT_OPTION));
     }
 

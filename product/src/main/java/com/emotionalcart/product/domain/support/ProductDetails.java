@@ -25,33 +25,6 @@ public class ProductDetails {
         return groupedDetails.getOrDefault(productId, Collections.emptyList());
     }
 
-    public Set<Long> getAllOptionIds(Long productId) {
-        List<ProductDetail> productDetails = groupedDetails.get(productId);
-        if (productDetails == null) {
-            return Collections.emptySet();
-        }
-        return productDetails.stream()
-                .map(ProductDetail::getProductOptionId)
-                .collect(Collectors.toSet());
-    }
-
-    public Set<Long> getAllOptionDetailIds(Long productId) {
-        return groupedDetails.getOrDefault(productId, Collections.emptyList()).stream()
-                .map(ProductDetail::getProductOptionDetailId)
-                .collect(Collectors.toSet());
-    }
-
-    public Set<Long> getRequiredOptionIds(Long productId) {
-        List<ProductDetail> productDetails = groupedDetails.get(productId);
-        if (productDetails == null) {
-            return Collections.emptySet();
-        }
-        return productDetails.stream()
-                .filter(ProductDetail::isRequired)
-                .map(ProductDetail::getProductOptionId)
-                .collect(Collectors.toSet());
-    }
-
     public List<ProductDetail> filterByOptionDetailIds(Set<Long> optionDetailIds) {
         return groupedDetails.values().stream()
                 .flatMap(List::stream)
