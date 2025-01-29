@@ -45,10 +45,20 @@ public class QueryDslStockRepositoryImpl implements QueryDslStockRepository {
      */
     private BooleanBuilder buildOptionCondition(Map<Long, Long> optionMap) {
         BooleanBuilder builder = new BooleanBuilder();
-        optionMap.forEach((optionId, detailId) -> {
-            builder.and(stockOption.productOptionId.eq(optionId)
-                    .and(stockOption.productOptionDetailId.eq(detailId)));
-        });
+
+        if (optionMap.isEmpty()) {
+            return builder;
+        }
+
+        BooleanBuilder orConditions = new BooleanBuilder();
+        optionMap.forEach((optionId, detailId) ->
+                orConditions.or(
+                        stockOption.productOptionId.eq(optionId)
+                                .and(stockOption.productOptionDetailId.eq(detailId))
+                )
+        );
+
+        builder.and(orConditions);
         return builder;
     }
 }

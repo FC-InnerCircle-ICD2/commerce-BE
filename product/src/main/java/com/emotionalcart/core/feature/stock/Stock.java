@@ -1,7 +1,6 @@
 package com.emotionalcart.core.feature.stock;
 
 import com.emotionalcart.core.base.BaseEntity;
-import com.emotionalcart.core.feature.review.Review;
 import jakarta.persistence.*;
 import lombok.AccessLevel;
 import lombok.Getter;

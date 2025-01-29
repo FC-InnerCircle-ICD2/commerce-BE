@@ -13,7 +13,6 @@ import com.emotionalcart.product.domain.ProductDataProvider;
 import com.emotionalcart.product.domain.ProviderDataProvider;
 import com.emotionalcart.product.domain.StockDataProvider;
 import com.emotionalcart.product.domain.dto.ProductDetail;
-import com.emotionalcart.product.domain.support.ProductDetails;
 import com.emotionalcart.product.domain.support.ReviewImages;
 import com.emotionalcart.product.domain.support.Reviews;
 import com.emotionalcart.product.infrastructure.StockSearchCondition;
@@ -107,44 +106,26 @@ public class ProductService {
                 .collect(Collectors.groupingBy(ProductDetail::getProductId));
 
         for (ReadProductsValidate.Request request : requests) {
+            Long productId = request.getProductId();
+            List<ProductDetail> productDetailList = productDetailMap.getOrDefault(productId, List.of());
             Map<Long, Long> optionMap = request.getProductOptions().stream()
                     .collect(Collectors.toMap(
                             ReadProductsValidate.Request.OptionRequest::getProductOptionId,
                             ReadProductsValidate.Request.OptionRequest::getProductOptionDetailId
                     ));
 
-            // 상품이 존재하는지 검증
-            if (!productDetailMap.containsKey(request.getProductId())) {
-                throw new ProductException(ErrorCode.NOT_FOUND_PRODUCT);
-            }
-            // 옵션 조합이 유효한지 검증
-            validateProductOptionCombination(productDetailMap.get(request.getProductId()), optionMap);
-            // 재고 검증
-            validateStock(request.getProductId(), optionMap, request.getQuantity());
+            validateProductOptions(productDetailList, optionMap);
+            validateStock(productId, optionMap, request.getQuantity());
         }
     }
 
-    private void validateProductOptionCombination(List<ProductDetail> productDetails, Map<Long, Long> optionMap) {
-        for (Map.Entry<Long, Long> entry : optionMap.entrySet()) {
-            Long optionId = entry.getKey();
-            Long optionDetailId = entry.getValue();
-
-            boolean isValid = productDetails.stream()
-                    .anyMatch(detail ->
-                            detail.getProductOptionId().equals(optionId) &&
-                                    detail.getProductOptionDetailId().equals(optionDetailId)
-                    );
-
-            if (!isValid) {
-                throw new ProductException(ErrorCode.NOT_FOUND_PRODUCT_OPTION);
-            }
-        }
-    }
-
+    /**
+     * 상품 재고가 존재하는지 검증
+     */
     private void validateStock(Long productId, Map<Long, Long> option, Integer quantity) {
         StockSearchCondition condition = new StockSearchCondition(productId, option);
         Stock stock = stockDataProvider.findStock(condition);
-        if (stock.getQuantity() < quantity) {
+        if (stock.getQuantity() == null || stock.getQuantity() < quantity) {
             throw new ProductException(ErrorCode.OUT_OF_STOCK);
         }
     }
@@ -155,44 +136,75 @@ public class ProductService {
                 .collect(Collectors.toSet());
 
         List<ProductDetail> productDetails = productDataProvider.findAllProductDetail(productIds);
-        Set<Long> productOptionDetailIds = requests.stream()
-                .flatMap(request -> request.getProductOptions().stream())
-                .map(ReadProductsPrice.Request.OptionRequest::getProductOptionDetailId)
-                .collect(Collectors.toSet());
+        Map<Long, List<ProductDetail>> productDetailMap = productDetails.stream()
+                .collect(Collectors.groupingBy(ProductDetail::getProductId));
 
-        ProductDetails groupedProductDetails = ProductDetails.from(productDetails);
-        List<ProductDetail> filteredDetails = groupedProductDetails.filterByOptionDetailIds(productOptionDetailIds);
+        for (ReadProductsPrice.Request request : requests) {
+            Long productId = request.getProductId();
+            List<ProductDetail> productDetailList = productDetailMap.getOrDefault(productId, List.of());
+            Map<Long, Long> optionMap = convertToOptionMap(request.getProductOptions());
 
-        validateOptions(groupedProductDetails, requests);
+            validateProductOptions(productDetailList, optionMap);
+        }
 
-        return filteredDetails.stream()
-                .collect(Collectors.groupingBy(ProductDetail::getProductId))
-                .entrySet().stream()
-                .map(entry -> ReadProductsPrice.toResponse(entry.getKey(), entry.getValue()))
+        return requests.stream()
+                .map(request -> {
+                    Long productId = request.getProductId();
+                    Map<Long, Long> optionMap = convertToOptionMap(request.getProductOptions());
+
+                    // 선택된 옵션만 필터링하여 가격 반환
+                    List<ProductDetail> selectedDetails = productDetailMap.getOrDefault(productId, List.of()).stream()
+                            .filter(detail -> optionMap.containsValue(detail.getProductOptionDetailId()))
+                            .collect(Collectors.toList());
+
+                    return ReadProductsPrice.toResponse(productId, selectedDetails);
+                })
                 .collect(Collectors.toList());
     }
 
-    private void validateOptions(ProductDetails groupedProductDetails, List<ReadProductsPrice.Request> requests) {
-        for (ReadProductsPrice.Request request : requests) {
-            Long productId = request.getProductId();
-            List<ProductDetail> productDetails = groupedProductDetails.getDetailsByProductId(productId);
+    private Map<Long, Long> convertToOptionMap(List<? extends ReadProductsPrice.Request.OptionRequest> options) {
+        return options.stream()
+                .collect(Collectors.toMap(
+                        ReadProductsPrice.Request.OptionRequest::getProductOptionId,
+                        ReadProductsPrice.Request.OptionRequest::getProductOptionDetailId
+                ));
+    }
 
-            if (productDetails.isEmpty()) {
-                throw new ProductException(ErrorCode.NOT_FOUND_PRODUCT);
-            }
+    private void validateProductOptions(List<ProductDetail> productDetails, Map<Long, Long> optionMap) {
+        if (productDetails.isEmpty()) {
+            throw new ProductException(ErrorCode.NOT_FOUND_PRODUCT);
+        }
+        validateProductOptionCombination(productDetails, optionMap);
+        validateAllProductOptionsSelected(productDetails, optionMap);
+    }
 
-            Map<Long, Set<Long>> optionToDetailMap = productDetails.stream()
-                    .collect(Collectors.groupingBy(
-                            ProductDetail::getProductOptionId,
-                            Collectors.mapping(ProductDetail::getProductOptionDetailId, Collectors.toSet())
-                    ));
+    /**
+     * 요청된 옵션 조합이 상품의 모든 필수 옵션을 포함하는지 검증
+     */
+    private void validateAllProductOptionsSelected(List<ProductDetail> productDetails, Map<Long, Long> optionMap) {
+        Set<Long> requiredOptions = productDetails.stream()
+                .map(ProductDetail::getProductOptionId)
+                .collect(Collectors.toSet());
 
-            for (ReadProductsPrice.Request.OptionRequest option : request.getProductOptions()) {
-                Set<Long> validDetailIds = optionToDetailMap.get(option.getProductOptionId());
-                if (validDetailIds.isEmpty() || !validDetailIds.contains(option.getProductOptionDetailId())) {
-                    throw new ProductException(ErrorCode.NOT_FOUND_PRODUCT_OPTION);
-                }
-            }
+        if (!optionMap.keySet().containsAll(requiredOptions)) {
+            throw new ProductException(ErrorCode.REQUIRED_OPTION_MISSING);
         }
     }
+
+    /**
+     * 특정 상품의 요청된 옵션 조합이 존재하는지 검증
+     */
+    private void validateProductOptionCombination(List<ProductDetail> productDetails, Map<Long, Long> optionMap) {
+        boolean isValid = optionMap.entrySet().stream()
+                .allMatch(entry ->
+                        productDetails.stream().anyMatch(detail ->
+                                detail.getProductOptionId().equals(entry.getKey()) &&
+                                        detail.getProductOptionDetailId().equals(entry.getValue()))
+                );
+
+        if (!isValid) {
+            throw new ProductException(ErrorCode.NOT_FOUND_PRODUCT_OPTION);
+        }
+    }
+
 }
