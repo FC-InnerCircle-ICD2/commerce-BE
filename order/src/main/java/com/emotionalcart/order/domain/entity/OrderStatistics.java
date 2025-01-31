@@ -31,7 +31,8 @@ public class OrderStatistics extends AuditableEntity {
     private Long productId;
 
     /**
-     * 카테고리 아이디
+     * 카테고리 식별자
+     * 카테고리 식별자는 최하위 자식 카테고리만 저장
      */
     @Column(nullable = false)
     private Long categoryId;
