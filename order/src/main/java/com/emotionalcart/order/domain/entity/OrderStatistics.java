@@ -3,8 +3,8 @@ package com.emotionalcart.order.domain.entity;
 import com.emotionalcart.order.domain.dto.CreateOrderItem;
 import com.emotionalcart.order.domain.generator.IdGenerator;
 import jakarta.persistence.Column;
+import jakarta.persistence.Entity;
 import jakarta.persistence.Id;
-import jakarta.persistence.Table;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -16,7 +16,7 @@ import java.time.LocalDateTime;
  * 주문 통계 테이블
  */
 @Getter
-@Table
+@Entity
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class OrderStatistics extends AuditableEntity {
 
