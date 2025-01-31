@@ -1,6 +1,5 @@
-package com.emotionalcart.order.application.service;
+package com.emotionalcart.order.application;
 
-import com.emotionalcart.order.application.CreateOrderService;
 import com.emotionalcart.order.domain.dto.CreateOrder;
 import com.emotionalcart.order.domain.dto.CreatedOrder;
 import com.emotionalcart.order.domain.entity.Orders;
@@ -15,40 +14,67 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.redisson.RedissonMultiLock;
+import org.redisson.api.RLock;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.time.LocalDate;
+import java.util.concurrent.TimeUnit;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.Mockito.when;
+import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
 class CreateOrderServiceTest {
 
+    private static final Logger log = LoggerFactory.getLogger(CreateOrderServiceTest.class);
     @Mock
     private OrderRepository orderRepository;
 
     @Mock
     private PaymentService paymentService;
 
+    @Mock
+    private RedissonMultiLockProvider redissonMultiLockProvider;
+
     @InjectMocks
     private CreateOrderService createOrderService;
 
+    @Mock
+    private RLock mockLock;
+
     @Test
     @DisplayName("주문 만들기 성공")
-    void createOrder_success() {
+    void createOrder_success() throws InterruptedException {
         // given
-        CreateOrder createOrder = CreateOrder.builder().paymentMethod(PaymentMethod.CARD).build();
+        Orders mockOrder = mock(Orders.class);
+
+        CreateOrder createOrder = CreateOrder.builder()
+            .paymentMethod(PaymentMethod.CARD)
+            .build();
         createOrder.addItem(1L, 1L, "상품명", 1000L, 1);
         createOrder.createNewCardInfo("1234567890123456", getValidExpirationDate(), "123", "ddd");
         createOrder.createDeliveryInfo("이름", "010-1234-5678", "12345", "서울시 강남구", "상세주소", "비고");
+
+        when(orderRepository.save(any())).thenReturn(mockOrder);
+
+        // RedissonMultiLock Mocking
+        RedissonMultiLock multiLock = mock(RedissonMultiLock.class);
+        when(redissonMultiLockProvider.getRedissonMultiLock(createOrder)).thenReturn(multiLock);
+        when(multiLock.tryLock(anyLong(), anyLong(), eq(TimeUnit.SECONDS))).thenReturn(true);
+        doNothing().when(multiLock).unlock();
+
         // when
-        when(orderRepository.save(any())).thenReturn(Orders.defaultOrder());
         CreatedOrder order = createOrderService.createOrder(createOrder);
+        assertThat(order.getPaymentMethodName()).isEqualTo(PaymentMethod.CARD.getMethodName());
         // then
-        assertThat(order).isNotNull();
-        assertThat(order.getOrderId()).isNotNull();
+
+        verify(multiLock).tryLock(10, 10, TimeUnit.SECONDS); // MultiLock tryLock 호출 검증
+        verify(multiLock).unlock(); // unlock 호출 검증
+        verify(orderRepository).save(any(Orders.class)); // save 호출 검증
     }
 
     @Test

@@ -3,9 +3,7 @@ package com.emotionalcart.order.presentation.controller.response;
 import com.emotionalcart.order.domain.dto.CreatedOrder;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import com.fasterxml.jackson.databind.ser.std.ToStringSerializer;
-import lombok.AccessLevel;
 import lombok.Getter;
-import lombok.NoArgsConstructor;
 
 import java.util.List;
 
@@ -15,7 +13,6 @@ import java.util.List;
  * 주문 식별자의 경우 Long 타입이므로 클라이언트 중 javascript는 해당 값을 온전히 받지 못해서  {@link ToStringSerializer}를 사용하여 문자열로 변환한다.
  */
 @Getter
-@NoArgsConstructor(access = AccessLevel.PRIVATE)
 public class CreatedOrderResponse {
 
     /**

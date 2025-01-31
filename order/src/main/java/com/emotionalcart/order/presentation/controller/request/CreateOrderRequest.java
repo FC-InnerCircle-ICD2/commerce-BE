@@ -67,6 +67,18 @@ public class CreateOrderRequest {
         return createOrder;
     }
 
+    public String getCardNumber() {
+        return cardInfo.cardNumber;
+    }
+
+    public String getExpirationDate() {
+        return cardInfo.expirationDate;
+    }
+
+    public String getCvc() {
+        return cardInfo.cvc;
+    }
+
     /**
      * <h2>주문 상품 생성 요청</h2>
      * 주문에 포함될 상품을 생성하는 요청 객체. <br/>

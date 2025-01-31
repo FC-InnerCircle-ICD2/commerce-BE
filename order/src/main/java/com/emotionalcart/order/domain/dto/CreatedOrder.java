@@ -4,6 +4,7 @@ import com.emotionalcart.order.domain.entity.OrderItem;
 import com.emotionalcart.order.domain.entity.OrderRecipient;
 import com.emotionalcart.order.domain.entity.Orders;
 import lombok.Getter;
+import lombok.ToString;
 
 import java.time.LocalDateTime;
 import java.util.List;
@@ -12,6 +13,7 @@ import java.util.List;
  * 생성된 주문
  */
 @Getter
+@ToString
 public class CreatedOrder {
 
     private Long orderId;
@@ -38,6 +40,7 @@ public class CreatedOrder {
     }
 
     @Getter
+    @ToString
     public static class CreatedOrderItem {
 
         private Long orderItemId;
@@ -63,6 +66,7 @@ public class CreatedOrder {
     }
 
     @Getter
+    @ToString
     public static class CreatedDeliveryInfo {
 
         /**
