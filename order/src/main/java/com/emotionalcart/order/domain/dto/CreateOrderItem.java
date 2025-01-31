@@ -29,6 +29,12 @@ public class CreateOrderItem extends SelfValidation<CreateOrderItem> {
     private Long productOptionId;
 
     /**
+     * 카테고리 식별자
+     */
+    @NotNull(message = "상품 카테고리를 확인해주세요.")
+    private Long categoryId;
+
+    /**
      * 상품명
      */
     @NotNull(message = "상품명을 입력해주세요.")

@@ -60,7 +60,7 @@ public class CreateOrderRequest {
         }
         createOrder.createDeliveryInfo(delivery.getName(),
                                        delivery.getPhoneNumber(),
-                                       delivery.getZonecode(),
+                                       delivery.getZoneCode(),
                                        delivery.getAddress(),
                                        delivery.getDetailAddress(),
                                        delivery.getDeliveryMemo());
@@ -88,6 +88,12 @@ public class CreateOrderRequest {
          */
         @NotNull(message = "상품 옵션을 선택해주세요.")
         private Long productOptionId;
+
+        /**
+         * 카테고리 식별자
+         */
+        @NotNull(message = "상품 카테고리를 확인해주세요.")
+        private Long categoryId;
 
         /**
          * 상품명
@@ -132,7 +138,7 @@ public class CreateOrderRequest {
          * 우편번호
          */
         @NotNull(message = "우편번호를 입력해주세요.")
-        private String zonecode;
+        private String zoneCode;
         /**
          * 배송지 주소
          */
