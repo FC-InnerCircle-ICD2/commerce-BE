@@ -56,7 +56,12 @@ public class CreateOrderRequest {
                                           cardInfo.getCardOwnerName());
         }
         for (CreateOrderItemRequest orderItem : orderItems) {
-            createOrder.addItem(orderItem.productId, orderItem.productOptionId, orderItem.productName, orderItem.price, orderItem.quantity);
+            createOrder.addItem(orderItem.productId,
+                                orderItem.productOptionId,
+                                orderItem.categoryId,
+                                orderItem.productName,
+                                orderItem.price,
+                                orderItem.quantity);
         }
         createOrder.createDeliveryInfo(delivery.getName(),
                                        delivery.getPhoneNumber(),

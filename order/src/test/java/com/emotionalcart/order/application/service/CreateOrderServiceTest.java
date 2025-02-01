@@ -7,6 +7,7 @@ import com.emotionalcart.order.domain.enums.PaymentMethod;
 import com.emotionalcart.order.infra.advice.exceptions.InvalidValueRequestException;
 import com.emotionalcart.order.infra.advice.exceptions.RequiredValueException;
 import com.emotionalcart.order.infra.order.OrderRepository;
+import com.emotionalcart.order.infra.order.OrderStatisticsRepository;
 import com.emotionalcart.order.infra.payment.PaymentService;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -31,6 +32,9 @@ class CreateOrderServiceTest {
     @Mock
     private PaymentService paymentService;
 
+    @Mock
+    private OrderStatisticsRepository orderStatisticsRepository;
+
     @InjectMocks
     private CreateOrderService createOrderService;
 
@@ -39,7 +43,7 @@ class CreateOrderServiceTest {
     void createOrder_success() {
         // given
         CreateOrder createOrder = CreateOrder.builder().paymentMethod(PaymentMethod.CARD).build();
-        createOrder.addItem(1L, 1L, "상품명", 1000L, 1);
+        createOrder.addItem(1L, 1L, 1L, "상품명", 1000L, 1);
         createOrder.createNewCardInfo("1234567890123456", getValidExpirationDate(), "123", "ddd");
         createOrder.createDeliveryInfo("이름", "010-1234-5678", "12345", "서울시 강남구", "상세주소", "비고");
         // when
@@ -77,7 +81,7 @@ class CreateOrderServiceTest {
     void createOrder_fail_invalid_payment_method() {
         // given
         CreateOrder createOrder = CreateOrder.builder().paymentMethod(PaymentMethod.TOSS).build();
-        createOrder.addItem(1L, 1L, "상품명", 1000L, 1);
+        createOrder.addItem(1L, 1L, 1L, "상품명", 1000L, 1);
         createOrder.createDeliveryInfo(null, null, null, null, null, null);
 
         // when & then
@@ -92,7 +96,7 @@ class CreateOrderServiceTest {
     void createOrder_fail_no_product_id() {
         // given
         CreateOrder createOrder = CreateOrder.builder().paymentMethod(PaymentMethod.CARD).build();
-        createOrder.addItem(null, 1L, "상품명", 1000L, 1);
+        createOrder.addItem(null, 1L, 1L, "상품명", 1000L, 1);
         createOrder.createNewCardInfo("1234567890123456", getValidExpirationDate(), "123", "ddd");
         createOrder.createDeliveryInfo(null, null, null, null, null, null);
 
@@ -108,7 +112,7 @@ class CreateOrderServiceTest {
     void createOrder_fail_product_option_id() {
         // given
         CreateOrder createOrder = CreateOrder.builder().paymentMethod(PaymentMethod.CARD).build();
-        createOrder.addItem(1L, null, "상품명", 1000L, 1);
+        createOrder.addItem(1L, null, 1L, "상품명", 1000L, 1);
         createOrder.createNewCardInfo("1234567890123456", getValidExpirationDate(), "123", "ddd");
         createOrder.createDeliveryInfo(null, null, null, null, null, null);
         // when & then
@@ -122,7 +126,7 @@ class CreateOrderServiceTest {
     void createOrder_fail_no_product_name() {
         // given
         CreateOrder createOrder = CreateOrder.builder().paymentMethod(PaymentMethod.CARD).build();
-        createOrder.addItem(1L, null, null, 1000L, 1);
+        createOrder.addItem(1L, null, 1L, null, 1000L, 1);
         createOrder.createNewCardInfo("1234567890123456", getValidExpirationDate(), "123", "ddd");
         createOrder.createDeliveryInfo(null, null, null, null, null, null);
         // when & then
@@ -136,7 +140,7 @@ class CreateOrderServiceTest {
     void createOrder_fail_no_price_less_then_100() {
         // given
         CreateOrder createOrder = CreateOrder.builder().paymentMethod(PaymentMethod.CARD).build();
-        createOrder.addItem(1L, null, null, 99L, 1);
+        createOrder.addItem(1L, null, 1L, null, 99L, 1);
         createOrder.createNewCardInfo("1234567890123456", getValidExpirationDate(), "123", "ddd");
         createOrder.createDeliveryInfo(null, null, null, null, null, null);
         // when & then
@@ -150,7 +154,7 @@ class CreateOrderServiceTest {
     void createOrder_fail_no_quantity_less_then_1() {
         // given
         CreateOrder createOrder = CreateOrder.builder().paymentMethod(PaymentMethod.CARD).build();
-        createOrder.addItem(1L, null, null, 1000L, 0);
+        createOrder.addItem(1L, null, 1L, null, 1000L, 0);
         createOrder.createNewCardInfo("1234567890123456", getValidExpirationDate(), "123", "ddd");
         createOrder.createDeliveryInfo(null, null, null, null, null, null);
         // when & then
@@ -164,7 +168,7 @@ class CreateOrderServiceTest {
     void createOrder_fail_no_card_payment() {
         // given
         CreateOrder createOrder = CreateOrder.builder().paymentMethod(PaymentMethod.CARD).build();
-        createOrder.addItem(1L, 1L, "상품명", 1000L, 1);
+        createOrder.addItem(1L, 1L, 1L, "상품명", 1000L, 1);
         createOrder.createDeliveryInfo(null, null, null, null, null, null);
         // when & then
         assertThatThrownBy(() -> createOrderService.createOrder(createOrder))
@@ -177,7 +181,7 @@ class CreateOrderServiceTest {
     void createOrder_fail_no_card_payment_validate_card_info() {
         // given
         CreateOrder createOrder = CreateOrder.builder().paymentMethod(PaymentMethod.CARD).build();
-        createOrder.addItem(1L, 1L, "상품명", 1000L, 1);
+        createOrder.addItem(1L, 1L, 1L, "상품명", 1000L, 1);
         createOrder.createNewCardInfo(null, null, null, null);
         createOrder.createDeliveryInfo(null, null, null, null, null, null);
         // when & then
@@ -196,7 +200,7 @@ class CreateOrderServiceTest {
     void createOrder_fail_no_card_payment_validate_card_info_card_no_shorter_then_16() {
         // given
         CreateOrder createOrder = CreateOrder.builder().paymentMethod(PaymentMethod.CARD).build();
-        createOrder.addItem(1L, 1L, "상품명", 1000L, 1);
+        createOrder.addItem(1L, 1L, 1L, "상품명", 1000L, 1);
         createOrder.createNewCardInfo("12345678901234", "1234", "123", "ddd");
         createOrder.createDeliveryInfo(null, null, null, null, null, null);
         // when & then
@@ -222,7 +226,7 @@ class CreateOrderServiceTest {
     void createOrder_fail_cvc_not_numeric_and_len_is_3() {
         // given
         CreateOrder createOrder = CreateOrder.builder().paymentMethod(PaymentMethod.CARD).build();
-        createOrder.addItem(1L, 1L, "상품명", 1000L, 1);
+        createOrder.addItem(1L, 1L, 1L, "상품명", 1000L, 1);
         createOrder.createNewCardInfo("1234567890123456", getValidExpirationDate(), "abc", "ddd");
         createOrder.createDeliveryInfo(null, null, null, null, null, null);
         // when & then
