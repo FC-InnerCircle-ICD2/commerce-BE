@@ -3,10 +3,9 @@ package com.emotionalcart.order.application.service;
 import com.emotionalcart.order.domain.dto.BestSellingProduct;
 import com.emotionalcart.order.infra.order.OrderStatisticsRepository;
 import lombok.RequiredArgsConstructor;
-import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
-
-import java.util.List;
 
 @Service
 @RequiredArgsConstructor
@@ -21,7 +20,7 @@ public class OrderStatisticsService {
      * @param request    페이징
      * @return
      */
-    public List<BestSellingProduct> getProductRankingByCategoryId(Long categoryId, PageRequest request) {
+    public Page<BestSellingProduct> getProductRankingByCategoryId(Long categoryId, Pageable request) {
         return orderStatisticsRepository.getProductRankingsByCategoryId(categoryId, request);
     }
 

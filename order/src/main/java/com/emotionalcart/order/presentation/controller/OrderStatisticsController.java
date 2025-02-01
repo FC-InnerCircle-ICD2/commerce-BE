@@ -4,7 +4,7 @@ import com.emotionalcart.order.application.service.OrderStatisticsService;
 import com.emotionalcart.order.presentation.controller.response.SalesRankingResponse;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
-import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -27,7 +27,7 @@ public class OrderStatisticsController {
      * @return
      */
     @GetMapping("/sales-ranking/{categoryId}")
-    public ResponseEntity<SalesRankingResponse> getProductRanking(@PathVariable Long categoryId, PageRequest request) {
+    public ResponseEntity<SalesRankingResponse> getProductRanking(@PathVariable Long categoryId, Pageable request) {
         return ResponseEntity.ok().body(SalesRankingResponse.from(orderStatisticsService.getProductRankingByCategoryId(categoryId,
                                                                                                                        request)));
     }

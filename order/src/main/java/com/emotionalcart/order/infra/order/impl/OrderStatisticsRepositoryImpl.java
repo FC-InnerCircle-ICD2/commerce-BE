@@ -6,7 +6,9 @@ import com.emotionalcart.order.infra.order.OrderStatisticsQuerydsl;
 import com.querydsl.core.types.Projections;
 import com.querydsl.jpa.JPQLQueryFactory;
 import lombok.RequiredArgsConstructor;
-import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.Pageable;
 
 import java.util.List;
 
@@ -16,9 +18,9 @@ public class OrderStatisticsRepositoryImpl implements OrderStatisticsQuerydsl {
     private final JPQLQueryFactory queryFactory;
 
     @Override
-    public List<BestSellingProduct> getProductRankingsByCategoryId(Long categoryId, PageRequest page) {
+    public Page<BestSellingProduct> getProductRankingsByCategoryId(Long categoryId, Pageable page) {
         QOrderStatistics orderStatistics = QOrderStatistics.orderStatistics;
-        return queryFactory.select(Projections.constructor(
+        List<BestSellingProduct> content = queryFactory.select(Projections.constructor(
                 BestSellingProduct.class,
                 orderStatistics.productId,
                 orderStatistics.categoryId,
@@ -29,6 +31,9 @@ public class OrderStatisticsRepositoryImpl implements OrderStatisticsQuerydsl {
             .orderBy(orderStatistics.totalQuantitySold.desc())
             .offset(page.getOffset())
             .limit(page.getPageSize()).fetch();
+        long count = queryFactory.select(orderStatistics.count()).from(orderStatistics)
+            .where(orderStatistics.categoryId.eq(categoryId)).fetchCount();
+        return new PageImpl<>(content, page, count);
     }
 
 }
