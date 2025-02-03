@@ -1,9 +1,10 @@
 package com.emotionalcart.order.presentation.controller;
 
 import com.emotionalcart.order.application.service.OrderStatisticsService;
-import com.emotionalcart.order.presentation.controller.response.SalesRankingResponse;
+import com.emotionalcart.order.domain.dto.BestSellingProduct;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -27,9 +28,9 @@ public class OrderStatisticsController {
      * @return
      */
     @GetMapping("/sales-ranking/{categoryId}")
-    public ResponseEntity<SalesRankingResponse> getProductRanking(@PathVariable Long categoryId, Pageable request) {
-        return ResponseEntity.ok().body(SalesRankingResponse.from(orderStatisticsService.getProductRankingByCategoryId(categoryId,
-                                                                                                                       request)));
+    public ResponseEntity<Page<BestSellingProduct>> getProductRanking(@PathVariable Long categoryId, Pageable request) {
+        return ResponseEntity.ok().body(orderStatisticsService.getProductRankingByCategoryId(categoryId,
+                                                                                             request));
     }
 
 }
