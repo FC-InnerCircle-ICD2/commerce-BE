@@ -3,9 +3,8 @@ package com.emotionalcart.auth.application;
 
 import com.emotionalcart.auth.application.dto.*;
 import com.emotionalcart.auth.domain.CustomOAuth2User;
-import com.emotionalcart.auth.infrasturcture.MemberRepository;
-import com.emotionalcart.core.feature.Member;
-import com.emotionalcart.core.feature.enums.MemberState;
+
+import com.emotionalcart.auth.infrasturcture.member.http.MemberFeignClient;
 import com.emotionalcart.core.feature.enums.SocialType;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.oauth2.client.userinfo.DefaultOAuth2UserService;
@@ -18,7 +17,7 @@ import org.springframework.stereotype.Service;
 @RequiredArgsConstructor
 public class CustomOAuth2UserService extends DefaultOAuth2UserService {
 
-    private final MemberRepository memberRepository;
+    private final MemberFeignClient memberFeignClient;
 
     @Override
     public OAuth2User loadUser(OAuth2UserRequest userRequest) throws OAuth2AuthenticationException {
@@ -55,25 +54,14 @@ public class CustomOAuth2UserService extends DefaultOAuth2UserService {
             throw new OAuth2AuthenticationException("Unsupported social type: " + oAuth2Response.getProvider());
         }
 
-        // 존재하는 회원인지 확인
-        Member member = memberRepository.findBySocialId(socialId);
-
-        // 회원이 없으면 추가
-        if (member == null) {
-            Member insertMember = Member.of(
-                    socialId,
-                    oAuth2Response.getEmail(),
-                    oAuth2Response.getName(),
-                    null,
-                    socialType,
-                    MemberState.ACTIVE
-            );
-
-            memberRepository.save(insertMember);
-        }
+        MemberRequest memReq = new MemberRequest();
+        memReq.setSocialId(socialId);
+        memReq.setSocialType(socialType);
+        memReq.setName(oAuth2Response.getName());
 
         // MemberResponse 작성
-        MemberResponse memberResponse = new MemberResponse();
+        MemberResponse memberResponse = memberFeignClient.findOrCreateMember(memReq);
+
         memberResponse.setName(oAuth2Response.getName());
         memberResponse.setUserName(oAuth2Response.getName());
         memberResponse.setRole("COMMERCE_MEMBER");

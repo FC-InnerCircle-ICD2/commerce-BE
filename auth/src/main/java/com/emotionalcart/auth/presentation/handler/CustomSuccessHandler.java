@@ -1,9 +1,7 @@
 package com.emotionalcart.auth.presentation.handler;
 
-import com.emotionalcart.auth.application.dto.AuthenticationResponse;
 import com.emotionalcart.auth.domain.CustomOAuth2User;
 import com.emotionalcart.core.config.jwt.JWTUtil;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
@@ -42,13 +40,5 @@ public class CustomSuccessHandler extends SimpleUrlAuthenticationSuccessHandler 
         response.setContentType("application/json");
         response.setCharacterEncoding("UTF-8");
         response.setHeader("Authorization", "Bearer " + token);
-
-        // 토큰을 JSON 형식으로 클라이언트에 반환
-        ObjectMapper objectMapper = new ObjectMapper();
-        AuthenticationResponse authResponse = new AuthenticationResponse(token);
-        response.getWriter().write(objectMapper.writeValueAsString(authResponse));
-
-        // 클라이언트 쪽에서 토큰을 저장 후 리다이렉션 처리
-
     }
 }
