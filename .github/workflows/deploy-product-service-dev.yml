@@ -1,0 +1,36 @@
+name: deploy-product-service-dev
+run-name: product-service-dev deploy by ${{ github.actor }} - ${{ github.run_number }}
+on: 
+  workflow_dispatch:
+    inputs:
+      branch:
+        required: false
+        default: 'develop'
+        type: string
+        description: "빌드할 브랜치명"  
+jobs:
+  deploy:
+    permissions: write-all
+    runs-on: ubuntu-latest
+    steps:
+    - name: checkout master branch
+      uses: actions/checkout@v3
+      with:
+        ref: ${{ github.event.inputs.branch }}
+    - name: install jdk 21
+      uses: actions/setup-java@v3
+      with:
+        java-version: '21'
+        distribution: 'corretto'
+    - name: aws credential configuration
+      #uses: aws-actions/configure-aws-credentials@v1
+      uses: aws-actions/configure-aws-credentials@v4
+      with:
+        aws-region: ap-northeast-2
+        role-to-assume: ${{ secrets.AWS_ROLE }}
+        #aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+        #aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}  
+    - name: deploy product service dev
+      run: |
+        ./deploy-product-service-dev.sh 
+        
