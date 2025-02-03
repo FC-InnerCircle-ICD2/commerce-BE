@@ -26,4 +26,9 @@ public class BestSellingProduct {
      */
     private Long totalQuantitySold;
 
+    public BestSellingProduct(Long productId, Long categoryId) {
+        this.productId = productId;
+        this.categoryId = categoryId;
+    }
+
 }
