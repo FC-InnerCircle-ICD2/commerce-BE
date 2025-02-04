@@ -33,7 +33,7 @@ cd -
 
 sleep 3
 
-aws s3 cp eb-deploy/${DEPLOY_APP}/${DEPLOY_FILENAME} s3://innercircle-ecommerce-releases/product-service/${PROFILE}/${APP}/${DEPLOY_FILENAME} && \
-aws elasticbeanstalk create-application-version --application-name ${APP} --version-label ${DEPLOY_VERSION_LABLE} --source-bundle S3Bucket=innercircle-ecommerce-releases,S3Key=product-service/${PROFILE}/${APP}/${DEPLOY_FILENAME} --no-paginate --no-cli-pager && \
+aws s3 cp eb-deploy/${DEPLOY_APP}/${DEPLOY_FILENAME} s3://innercircle-ecommerce-releases/${APP}/${PROFILE}/${DEPLOY_FILENAME} && \
+aws elasticbeanstalk create-application-version --application-name ${APP} --version-label ${DEPLOY_VERSION_LABLE} --source-bundle S3Bucket=innercircle-ecommerce-releases,S3Key=${APP}/${PROFILE}/${DEPLOY_FILENAME} --no-paginate --no-cli-pager && \
 aws elasticbeanstalk update-environment --application-name ${APP} --environment-name ${DEPLOY_APP} --version-label ${DEPLOY_VERSION_LABLE} --no-paginate --no-cli-pager && \
 echo "done."
