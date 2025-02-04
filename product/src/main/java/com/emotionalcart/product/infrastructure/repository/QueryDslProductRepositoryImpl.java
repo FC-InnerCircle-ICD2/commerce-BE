@@ -4,15 +4,16 @@ import com.emotionalcart.core.feature.category.QCategory;
 import com.emotionalcart.core.feature.product.*;
 import com.emotionalcart.core.feature.review.QReviewStatistic;
 import com.emotionalcart.product.domain.dto.ProductOptionDetailWithImages;
-import com.emotionalcart.product.presentation.dto.ReadProducts;
+import com.emotionalcart.product.domain.dto.ProductSearch;
 import com.querydsl.core.BooleanBuilder;
-import com.querydsl.core.types.Order;
 import com.querydsl.core.types.OrderSpecifier;
 import com.querydsl.core.types.Projections;
 import com.querydsl.core.types.dsl.BooleanExpression;
+import com.querydsl.jpa.impl.JPAQuery;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.*;
+import org.springframework.data.support.PageableExecutionUtils;
 
 import java.util.*;
 
@@ -56,12 +57,11 @@ public class QueryDslProductRepositoryImpl implements QueryDslProductRepository 
                 .orderBy(orderSpecifier)
                 .fetch();
 
-        long totalCount = queryFactory
-                .selectFrom(product)
-                .where(filterBuilder)
-                .fetchCount();
+        JPAQuery<Long> count = queryFactory.select(product.count())
+                .from(product)
+                .where(filterBuilder);
 
-        return new PageImpl<>(products, pageRequest, totalCount);
+        return PageableExecutionUtils.getPage(products,productSearch.getPageRequest(),count::fetchOne);
     }
 
     // 별점 검색
