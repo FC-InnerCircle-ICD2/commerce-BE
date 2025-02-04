@@ -6,6 +6,8 @@ import com.emotionalcart.core.feature.review.QReviewStatistic;
 import com.querydsl.core.BooleanBuilder;
 import com.querydsl.core.types.OrderSpecifier;
 
+import static com.emotionalcart.core.feature.review.QReviewStatistic.reviewStatistic;
+
 public class ProductQueryHelper {
 
     public static BooleanBuilder createFilterBuilder(Long productId,
@@ -13,6 +15,7 @@ public class ProductQueryHelper {
                                                      String keyword,
                                                      Float priceMin,
                                                      Float priceMax,
+                                                     Double rating,
                                                      QProduct product) {
         BooleanBuilder filterBuilder = new BooleanBuilder();
 
@@ -27,6 +30,9 @@ public class ProductQueryHelper {
         // 가격 범위 필터링
         addPriceFilter(priceMin, priceMax, product, filterBuilder);
 
+        // 별점 필터링
+        addRatingFilter(rating, filterBuilder);
+
         return filterBuilder;
     }
 
@@ -39,8 +45,8 @@ public class ProductQueryHelper {
     private static void addCategoryFilter(Long category, QProduct product, BooleanBuilder filterBuilder) {
         if (category != null) {
             filterBuilder.andAnyOf(
-                    product.category.id.eq(category),
-                    product.category.parentCategory.id.eq(category)
+                    product.categoryId.eq(category)
+                    //product.category.parentCategory.id.eq(category)
             );
         }
     }
@@ -60,6 +66,12 @@ public class ProductQueryHelper {
         }
         if (priceMax != null) {
             filterBuilder.and(product.price.loe(priceMax));
+        }
+    }
+
+    private static void addRatingFilter(Double rating, BooleanBuilder filterBuilder) {
+        if (rating != null) {
+            filterBuilder.and(reviewStatistic.averageRating.goe(rating));
         }
     }
 

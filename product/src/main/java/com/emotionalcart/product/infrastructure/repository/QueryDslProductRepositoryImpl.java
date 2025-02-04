@@ -1,8 +1,6 @@
 package com.emotionalcart.product.infrastructure.repository;
 
-import com.emotionalcart.core.feature.category.QCategory;
 import com.emotionalcart.core.feature.product.*;
-import com.emotionalcart.core.feature.review.QReviewStatistic;
 import com.emotionalcart.product.domain.dto.ProductOptionDetailWithImages;
 import com.emotionalcart.product.domain.dto.ProductSearch;
 import com.querydsl.core.BooleanBuilder;
@@ -49,17 +47,15 @@ public class QueryDslProductRepositoryImpl implements QueryDslProductRepository 
                 productSearch.getKeyword(),
                 productSearch.getPriceMin(),
                 productSearch.getPriceMax(),
+                productSearch.getRating(),
                 product
         );
 
         List<Product> products  = queryFactory
                 .selectDistinct(product)
                 .from(product)
-                .leftJoin(category).on(product.category.id.eq(category.id)).fetchJoin()
-                .leftJoin(provider).on(product.provider.id.eq(provider.id)).fetchJoin()
-                .leftJoin(reviewStatistic).on(product.id.eq(reviewStatistic.productId)).fetchJoin()
-                .where(filterBuilder,
-                        goeRating(productSearch.getRating()))
+                .leftJoin(reviewStatistic).on(product.id.eq(reviewStatistic.productId))
+                .where(filterBuilder)
                 .offset(productSearch.getPageRequest().getOffset())
                 .limit(productSearch.getPageRequest().getPageSize())
                 .orderBy(orderSpecifier)
@@ -70,11 +66,6 @@ public class QueryDslProductRepositoryImpl implements QueryDslProductRepository 
                 .where(filterBuilder);
 
         return PageableExecutionUtils.getPage(products,productSearch.getPageRequest(),count::fetchOne);
-    }
-
-    // 별점 검색
-    private BooleanExpression goeRating(Double rating) {
-        return rating == null ? null : reviewStatistic.averageRating.goe(rating);
     }
 
     @Override
