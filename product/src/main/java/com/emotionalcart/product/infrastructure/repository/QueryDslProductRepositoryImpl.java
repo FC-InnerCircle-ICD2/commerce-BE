@@ -21,14 +21,13 @@ public class QueryDslProductRepositoryImpl implements QueryDslProductRepository 
 
     private final JPAQueryFactory queryFactory;
 
+    private static final QProduct product = QProduct.product;
+    private static final QReviewStatistic reviewStatistic = QReviewStatistic.reviewStatistic;
+    private static final QProvider provider = QProvider.provider;
+    private static final QCategory category = QCategory.category;
+    private static final QProductOption productOption = QProductOption.productOption;
+
     @Override
-    public Page<Product> findAllProducts(Long productId, Long categoryId, String keyword,
-                                         Float priceMin, Float priceMax, Double rating,
-                                         SortOption sortOption, PageRequest pageRequest) {
-        QProduct product = QProduct.product;
-        QReviewStatistic reviewStatistic = QReviewStatistic.reviewStatistic;
-        QProvider provider = QProvider.provider;
-        QCategory category = QCategory.category;
     public Page<Product> findAllProducts(ProductSearch productSearch) {
 
         // 정렬 조건
@@ -72,8 +71,6 @@ public class QueryDslProductRepositoryImpl implements QueryDslProductRepository 
 
     @Override
     public List<ProductOption> findProductOptions(Set<Long> productIds) {
-        QProductOption productOption = QProductOption.productOption;
-
         return queryFactory
                 .selectFrom(productOption)
                 .where(
