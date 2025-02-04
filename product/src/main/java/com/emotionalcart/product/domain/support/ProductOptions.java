@@ -22,7 +22,7 @@ public class ProductOptions {
     public Map<Long, List<ReadProducts.ProductOptionResponse>> groupByProductId() {
         return options.stream()
                 .collect(Collectors.groupingBy(
-                        ProductOption::getProduct,
+                        ProductOption::getProductId,
                         Collectors.mapping(ReadProducts.ProductOptionResponse::new, Collectors.toList())
                 ));
     }
