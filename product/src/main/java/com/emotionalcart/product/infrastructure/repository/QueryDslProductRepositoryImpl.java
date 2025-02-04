@@ -60,7 +60,7 @@ public class QueryDslProductRepositoryImpl implements QueryDslProductRepository 
     }
 
     // 별점 검색
-    private BooleanExpression eqRating(Double rating, QReviewStatistic reviewStatistic) {
+    private BooleanExpression goeRating(Double rating) {
         return rating == null ? null : reviewStatistic.averageRating.goe(rating);
     }
 
