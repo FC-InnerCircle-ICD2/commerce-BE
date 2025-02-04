@@ -18,8 +18,6 @@ public class ReadProducts {
     @Getter
     @Setter
     public static class Request extends BasePageRequest {
-        private Integer pageNumber;
-        private Integer pageSize;
         private SortOption sortOption;
         private Long productId;
         private Long categoryId;
@@ -28,10 +26,6 @@ public class ReadProducts {
         private Float priceMax;
         private Double rating;
 
-        public PageRequest toPageRequest() {
-            int page = (pageNumber != null && pageNumber >= 0) ? pageNumber : getPageable().getPageNumber();
-            int size = (pageSize != null && pageSize > 0 && pageSize <= 100) ? pageSize : getPageable().getPageSize();
-            return PageRequest.of(page, size);
         }
     }
 
