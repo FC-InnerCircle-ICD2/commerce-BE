@@ -36,7 +36,7 @@ public class ProductOption extends BaseEntity {
         this.isRequired = isRequired;
     }
 
-    public Long getProduct() {
+    public Long getProductId() {
         return product.getId();
     }
 }
