@@ -69,7 +69,9 @@ public class QueryDslProductRepositoryImpl implements QueryDslProductRepository 
                 .selectFrom(productOption)
                 .where(
                         productOption.product.id.in(productIds), // productIds 조건
-                        productOption.isDeleted.eq(false)   // ProductOption 삭제 여부
+                        productOption.isDeleted.isFalse()) // ProductOption 삭제 여부
+                .fetch();
+    }
           
     @Override
     public List<ProductOptionDetailWithImages> findProductOptionDetailsWithImages(Set<Long> optionIds) {
@@ -92,9 +94,9 @@ public class QueryDslProductRepositoryImpl implements QueryDslProductRepository 
                 .leftJoin(productImage).on(productOptionDetail.id.eq(productImage.productOptionDetail.id)) // 이미지와 조인
                 .where(
                         productOptionDetail.productOption.id.in(optionIds),
-                        productOptionDetail.isDeleted.eq(false),
-                        productImage.isDeleted.isNull().or(productImage.isDeleted.eq(false)),
-                        productImage.isRepresentative.isNull().or(productImage.isRepresentative.eq(true))
+                        productOptionDetail.isDeleted.isFalse(),
+                        productImage.isDeleted.isNull().or(productImage.isDeleted.isFalse()),
+                        productImage.isRepresentative.isNull().or(productImage.isRepresentative.isTrue())
                 )
                 .fetch();
     }
