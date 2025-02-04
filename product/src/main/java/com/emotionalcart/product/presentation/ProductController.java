@@ -16,7 +16,7 @@ import java.util.List;
 @RestController
 @RequestMapping("/v1/products")
 @RequiredArgsConstructor
-public class ProductController {
+public class ProductController implements ProductControllerDocs{
     private final ProductService productService;
 
     @GetMapping("/{productId}/reviews")
@@ -37,7 +37,7 @@ public class ProductController {
 //        return ResponseEntity.ok(productService.getProductDetail(productId));
 //    }
 
-    @GetMapping("/search")
+    @Override
     public ResponseEntity<Page<ReadProducts.Response>> readProducts(
             ReadProducts.Request request) {
         return ResponseEntity.ok(productService.readProducts(request));
