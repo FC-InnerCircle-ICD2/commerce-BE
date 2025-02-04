@@ -39,6 +39,7 @@ public class ProductController implements ProductControllerDocs {
     public ResponseEntity<Page<ReadProducts.Response>> readProducts(
             ReadProducts.Request request) {
         return ResponseEntity.ok(productService.readProducts(request));
+    }
 
     @Override
     public ResponseEntity<Void> readProductsValidate(

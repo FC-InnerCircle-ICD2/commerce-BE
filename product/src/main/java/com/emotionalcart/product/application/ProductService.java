@@ -115,6 +115,7 @@ public class ProductService {
                                 )
                                 .collect(Collectors.toList())
                 ));
+    }
       
     public ReadProductDetails.Response getProductDetail(Long productId) {
 
