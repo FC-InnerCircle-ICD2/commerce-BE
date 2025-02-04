@@ -29,13 +29,19 @@ public class QueryDslProductRepositoryImpl implements QueryDslProductRepository 
         QReviewStatistic reviewStatistic = QReviewStatistic.reviewStatistic;
         QProvider provider = QProvider.provider;
         QCategory category = QCategory.category;
+    public Page<Product> findAllProducts(ProductSearch productSearch) {
 
         // 정렬 조건
-        OrderSpecifier<?> orderSpecifier = ProductQueryHelper.getOrderSpecifier(sortOption, product);
+        OrderSpecifier<?> orderSpecifier = ProductQueryHelper.getOrderSpecifier(productSearch.getSortOption(), product);
 
         // 필터 조건 생성
         BooleanBuilder filterBuilder = ProductQueryHelper.createFilterBuilder(
-                productId, categoryId, keyword, priceMin, priceMax, product
+                productSearch.getProductId(),
+                productSearch.getCategoryId(),
+                productSearch.getKeyword(),
+                productSearch.getPriceMin(),
+                productSearch.getPriceMax(),
+                product
         );
 
         List<Product> products  = queryFactory
@@ -45,9 +51,9 @@ public class QueryDslProductRepositoryImpl implements QueryDslProductRepository 
                 .leftJoin(provider).on(product.provider.id.eq(provider.id)).fetchJoin()
                 .leftJoin(reviewStatistic).on(product.id.eq(reviewStatistic.productId)).fetchJoin()
                 .where(filterBuilder,
-                        eqRating(rating, reviewStatistic))
-                .offset(pageRequest.getOffset())
-                .limit(pageRequest.getPageSize())
+                        goeRating(productSearch.getRating()))
+                .offset(productSearch.getPageRequest().getOffset())
+                .limit(productSearch.getPageRequest().getPageSize())
                 .orderBy(orderSpecifier)
                 .fetch();
 

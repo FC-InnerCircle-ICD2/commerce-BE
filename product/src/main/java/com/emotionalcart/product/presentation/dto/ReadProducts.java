@@ -3,11 +3,11 @@ package com.emotionalcart.product.presentation.dto;
 import com.emotionalcart.core.base.BasePageRequest;
 import com.emotionalcart.core.feature.product.SortOption;
 import com.emotionalcart.product.domain.dto.ProductOptionDetailWithImages;
+import com.emotionalcart.product.domain.dto.ProductSearch;
 import lombok.*;
 import com.emotionalcart.core.feature.product.ProductOption;
 import com.emotionalcart.core.feature.product.Product;
 import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageRequest;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -26,6 +26,15 @@ public class ReadProducts {
         private Float priceMax;
         private Double rating;
 
+        public ProductSearch toProductSearch() {
+            ProductSearch productSearch = new ProductSearch();
+            productSearch.setPageRequest(getPageable());
+            productSearch.setProductId(productId);
+            productSearch.setKeyword(keyword);
+            productSearch.setPriceMin(priceMin);
+            productSearch.setPriceMax(priceMax);
+            productSearch.setRating(rating);
+            return productSearch;
         }
     }
 

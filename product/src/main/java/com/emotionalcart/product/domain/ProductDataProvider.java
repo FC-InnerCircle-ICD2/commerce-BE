@@ -8,8 +8,8 @@ import com.emotionalcart.core.feature.review.Review;
 import com.emotionalcart.core.feature.review.ReviewImage;
 import com.emotionalcart.core.feature.review.ReviewStatistic;
 import com.emotionalcart.product.domain.dto.ProductOptionDetailWithImages;
+import com.emotionalcart.product.domain.dto.ProductSearch;
 import com.emotionalcart.product.infrastructure.repository.*;
-import com.emotionalcart.product.presentation.dto.ReadProducts;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -46,16 +46,8 @@ public class ProductDataProvider {
         return categoryRepository.findAllByIsActiveIsTrueAndIsDeletedIsFalse();
     }
 
-    public Page<Product> findAllProducts(ReadProducts.Request request, PageRequest pageRequest) {
-        return productRepository.findAllProducts(
-                request.getProductId(),
-                request.getCategoryId(),
-                request.getKeyword(),
-                request.getPriceMin(),
-                request.getPriceMax(),
-                request.getRating(),
-                request.getSortOption(),
-                pageRequest);
+    public Page<Product> findAllProducts(ProductSearch productSearch) {
+        return productRepository.findAllProducts(productSearch);
     }
 
     public List<ProductOption> findProductOptions(Set<Long> productIds) {

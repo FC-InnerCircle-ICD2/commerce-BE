@@ -57,7 +57,7 @@ public class ProductService {
 //    }
 
     public Page<ReadProducts.Response> readProducts(ReadProducts.Request request) {
-        Page<Product> products = productDataProvider.findAllProducts(request, request.toPageRequest());
+        Page<Product> products = productDataProvider.findAllProducts(request.toProductSearch());
 
         ProductOptions productOptions = findProductOptions(products.getContent());
         ProductOptionDetails optionDetails = findProductOptionDetails(productOptions.ids());
