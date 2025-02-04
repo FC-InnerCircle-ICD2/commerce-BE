@@ -18,7 +18,7 @@ mkdir -p eb-deploy/${DEPLOY_APP}
 ./gradlew clean :product:build -x test
 
 # 3. copy resources
-cp -f product/build/libs/product-0.0.1.jar eb-deploy/${DEPLOY_APP}/
+cp -f product/build/libs/product-0.0.1-SNAPSHOT.jar eb-deploy/${DEPLOY_APP}/
 cp -f eb-deploy-template/${DEPLOY_APP}/* eb-deploy/${DEPLOY_APP}/
 cp -rf eb-deploy-template/${DEPLOY_APP}/.ebextensions eb-deploy/${DEPLOY_APP}/
 cp -rf eb-deploy-template/${DEPLOY_APP}/.platform eb-deploy/${DEPLOY_APP}/
