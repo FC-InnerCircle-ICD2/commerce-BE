@@ -4,6 +4,7 @@ import com.emotionalcart.core.base.BaseEntity;
 import com.emotionalcart.core.feature.category.Category;
 import com.emotionalcart.core.feature.provider.Provider;
 
+import com.emotionalcart.core.feature.review.ReviewStatistic;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotNull;
 import lombok.*;
@@ -31,18 +32,23 @@ public class Product extends BaseEntity {
 
     private Long categoryId;
 
+    @OneToOne(fetch = FetchType.LAZY)
+    private ReviewStatistic reviewStatistic;
+
     private Product(
             Long id,
             String name,
             String description,
             Integer price,
             Long providerId,
-            Long categoryId) {
+            Long categoryId,
+            ReviewStatistic reviewStatistic) {
         this.id = id;
         this.name = name;
         this.description = description;
         this.price = price;
         this.providerId = providerId;
         this.categoryId = categoryId;
+        this.reviewStatistic = reviewStatistic;
     }
 }
