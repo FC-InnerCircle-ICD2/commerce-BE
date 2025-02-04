@@ -1,5 +1,7 @@
 package com.emotionalcart.core.feature.product;
 
+import java.util.List;
+
 import com.emotionalcart.core.base.BaseEntity;
 import com.emotionalcart.core.feature.category.Category;
 
@@ -19,15 +21,18 @@ public class ProductOption extends BaseEntity {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "product_id")
-    private Product product;
-
     @NotNull
     private String name;
 
     @NotNull
     private Boolean isRequired;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "product_id")
+    private Product product;
+
+    @OneToMany(mappedBy = "productOption", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)
+    private List<ProductOptionDetail> details;
 
     private ProductOption(
             String name,
