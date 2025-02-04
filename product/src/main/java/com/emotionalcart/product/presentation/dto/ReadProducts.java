@@ -76,17 +76,17 @@ public class ReadProducts {
         @Getter
         private Long id;
         private String name;
-        private List<ProductOptionDetailResponse> optionDetails = new ArrayList<>();
+        private List<ProductOptionDetailResponse> optionDetails;
 
         public ProductOptionResponse(ProductOption productOption) {
             this.id = productOption.getId();
             this.name = productOption.getName();
         }
 
-        public void addDetails(List<ProductOptionDetailResponse> details) {
-            if (details != null && !details.isEmpty()) {
-                this.optionDetails.addAll(details);
-            }
+        public ProductOptionResponse(Long id, String name, List<ProductOptionDetailResponse> details) {
+            this.id = id;
+            this.name = name;
+            this.optionDetails = (details != null) ? new ArrayList<>(details) : new ArrayList<>();
         }
     }
 

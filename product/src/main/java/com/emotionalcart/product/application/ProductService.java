@@ -22,6 +22,7 @@ import org.springframework.stereotype.Service;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -93,12 +94,15 @@ public class ProductService {
             Map<Long, List<ReadProducts.ProductOptionResponse>> groupedOptions,
             Map<Long, List<ReadProducts.ProductOptionDetailResponse>> groupedDetails
     ) {
-        groupedOptions.forEach((productId, productOptionResponses) ->
-                productOptionResponses.forEach(option -> {
-                    List<ReadProducts.ProductOptionDetailResponse> details = groupedDetails.getOrDefault(option.getId(), List.of());
-                    option.addDetails(details);
-                })
-        );
-        return groupedOptions;
+        return groupedOptions.entrySet().stream()
+                .collect(Collectors.toMap(
+                        Map.Entry::getKey,
+                        entry -> entry.getValue().stream()
+                                .map(option -> new ReadProducts.ProductOptionResponse(
+                                        option.getId(), option.getName(),
+                                        groupedDetails.getOrDefault(option.getId(), List.of()))
+                                )
+                                .collect(Collectors.toList())
+                ));
     }
 }
