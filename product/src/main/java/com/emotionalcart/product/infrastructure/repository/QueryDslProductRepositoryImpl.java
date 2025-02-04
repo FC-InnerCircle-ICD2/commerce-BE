@@ -20,19 +20,14 @@ import java.util.Set;
 import static com.emotionalcart.core.feature.product.QProduct.product;
 import static com.emotionalcart.core.feature.product.QProductOption.productOption;
 import static com.emotionalcart.core.feature.product.QProductOptionDetail.productOptionDetail;
-
-import java.util.*;
+import static com.emotionalcart.core.feature.review.QReviewStatistic.reviewStatistic;
+import static com.emotionalcart.core.feature.category.QCategory.category;
+import static com.emotionalcart.core.feature.provider.QProvider.provider;
 
 @RequiredArgsConstructor
 public class QueryDslProductRepositoryImpl implements QueryDslProductRepository {
 
     private final JPAQueryFactory queryFactory;
-
-    private static final QProduct product = QProduct.product;
-    private static final QReviewStatistic reviewStatistic = QReviewStatistic.reviewStatistic;
-    private static final QProvider provider = QProvider.provider;
-    private static final QCategory category = QCategory.category;
-    private static final QProductOption productOption = QProductOption.productOption;
 
     @Override
     public Page<Product> findAllProducts(ProductSearch productSearch) {
