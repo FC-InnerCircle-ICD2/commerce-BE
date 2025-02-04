@@ -13,7 +13,7 @@ jobs:
     permissions: write-all
     runs-on: ubuntu-latest
     steps:
-    - name: checkout master branch
+    - name: checkout develop branch
       uses: actions/checkout@v3
       with:
         ref: ${{ github.event.inputs.branch }}
