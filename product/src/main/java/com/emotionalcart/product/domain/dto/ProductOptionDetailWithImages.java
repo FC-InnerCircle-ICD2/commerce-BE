@@ -6,8 +6,8 @@ import lombok.Setter;
 @Getter
 @Setter
 public class ProductOptionDetailWithImages {
-    private Long OptionDetailId;
-    private Long OptionId;
+    private Long optionDetailId;
+    private Long optionId;
     private String value;
     private Integer quantity;
     private Integer additionalPrice;
@@ -23,8 +23,8 @@ public class ProductOptionDetailWithImages {
                                          Long imageId,
                                          Integer fileOrder,
                                          String url) {
-        this.OptionDetailId = optionDetailId;
-        this.OptionId = optionId;
+        this.optionDetailId = optionDetailId;
+        this.optionId = optionId;
         this.value = value;
         this.quantity = quantity;
         this.additionalPrice = additionalPrice;
