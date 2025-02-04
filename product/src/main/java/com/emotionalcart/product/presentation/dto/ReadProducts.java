@@ -27,14 +27,16 @@ public class ReadProducts {
         private Double rating;
 
         public ProductSearch toProductSearch() {
-            ProductSearch productSearch = new ProductSearch();
-            productSearch.setPageRequest(getPageable());
-            productSearch.setProductId(productId);
-            productSearch.setKeyword(keyword);
-            productSearch.setPriceMin(priceMin);
-            productSearch.setPriceMax(priceMax);
-            productSearch.setRating(rating);
-            return productSearch;
+            return new ProductSearch(
+               getPageable(),
+               sortOption,
+               productId,
+               categoryId,
+               keyword,
+               priceMin,
+               priceMax,
+               rating
+            );
         }
     }
 
