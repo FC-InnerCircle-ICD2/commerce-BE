@@ -1,5 +1,7 @@
 package com.emotionalcart.core.feature.product;
 
+import java.util.List;
+
 import com.emotionalcart.core.base.BaseEntity;
 import com.emotionalcart.core.feature.category.Category;
 import com.emotionalcart.core.feature.provider.Provider;
@@ -30,6 +32,9 @@ public class Product extends BaseEntity {
     private Long providerId;
 
     private Long categoryId;
+
+    @OneToMany(mappedBy = "product", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)
+    private List<ProductOption> options;
 
     private Product(
             Long id,
