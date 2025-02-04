@@ -14,6 +14,14 @@ import com.querydsl.jpa.impl.JPAQueryFactory;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.*;
 import org.springframework.data.support.PageableExecutionUtils;
+import com.emotionalcart.product.domain.dto.ProductDetail;
+
+import java.util.List;
+import java.util.Set;
+
+import static com.emotionalcart.core.feature.product.QProduct.product;
+import static com.emotionalcart.core.feature.product.QProductOption.productOption;
+import static com.emotionalcart.core.feature.product.QProductOptionDetail.productOptionDetail;
 
 import java.util.*;
 
@@ -76,10 +84,7 @@ public class QueryDslProductRepositoryImpl implements QueryDslProductRepository 
                 .where(
                         productOption.product.id.in(productIds), // productIds 조건
                         productOption.isDeleted.eq(false)   // ProductOption 삭제 여부
-                )
-                .fetch();
-    }
-
+          
     @Override
     public List<ProductOptionDetailWithImages> findProductOptionDetailsWithImages(Set<Long> optionIds) {
         QProductOptionDetail productOptionDetail = QProductOptionDetail.productOptionDetail;
@@ -104,6 +109,33 @@ public class QueryDslProductRepositoryImpl implements QueryDslProductRepository 
                         productOptionDetail.isDeleted.eq(false),
                         productImage.isDeleted.isNull().or(productImage.isDeleted.eq(false)),
                         productImage.isRepresentative.isNull().or(productImage.isRepresentative.eq(true))
+                )
+                .fetch();
+    }
+  
+    @Override
+    public List<ProductDetail> findAllProductDetail(Set<Long> productIds) {
+        return queryFactory.select(
+                        Projections.constructor(
+                                ProductDetail.class,
+                                product.id,
+                                product.price,
+                                productOption.id,
+                                productOption.isRequired,
+                                productOptionDetail.id,
+                                productOptionDetail.additionalPrice,
+                                productOptionDetail.quantity
+                        ))
+                .from(product)
+                .leftJoin(productOption)
+                .on(product.id.eq(productOption.product.id))
+                .leftJoin(productOptionDetail)
+                .on(productOption.id.eq(productOptionDetail.productOption.id))
+                .where(
+                        product.id.in(productIds),
+                        product.isDeleted.isFalse(),
+                        productOption.isDeleted.isFalse(),
+                        productOptionDetail.isDeleted.isFalse()
                 )
                 .fetch();
     }

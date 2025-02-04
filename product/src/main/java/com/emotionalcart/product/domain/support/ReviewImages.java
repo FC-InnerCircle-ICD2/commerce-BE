@@ -1,4 +1,4 @@
-package com.emotionalcart.product.application;
+package com.emotionalcart.product.domain.support;
 
 import com.emotionalcart.core.feature.review.ReviewImage;
 import com.emotionalcart.product.presentation.dto.ReadProductReviews;

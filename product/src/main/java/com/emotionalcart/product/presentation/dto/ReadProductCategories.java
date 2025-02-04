@@ -7,7 +7,7 @@ import com.emotionalcart.core.feature.category.Category;
 
 import lombok.Data;
 
-public class ReadCategories {
+public class ReadProductCategories {
 
     @Data
     public static class Response {

@@ -2,6 +2,8 @@ package com.emotionalcart.core.feature.product;
 
 import com.emotionalcart.core.base.BaseEntity;
 import com.emotionalcart.core.feature.category.Category;
+import com.emotionalcart.core.feature.provider.Provider;
+
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotNull;
 import lombok.*;
@@ -25,22 +27,22 @@ public class Product extends BaseEntity {
     @NotNull
     private Integer price;
 
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "provider_id", insertable = false, updatable = false)
-    private Provider provider;
+    private Long providerId;
 
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "category_id", insertable = false, updatable = false)
-    private Category category;
+    private Long categoryId;
 
     private Product(
             Long id,
             String name,
             String description,
-            Integer price) {
+            Integer price,
+            Long providerId,
+            Long categoryId) {
         this.id = id;
         this.name = name;
         this.description = description;
         this.price = price;
+        this.providerId = providerId;
+        this.categoryId = categoryId;
     }
 }

@@ -1,4 +1,4 @@
-package com.emotionalcart.core.feature.product;
+package com.emotionalcart.core.feature.provider;
 
 import com.emotionalcart.core.base.BaseEntity;
 import jakarta.persistence.*;

@@ -14,27 +14,28 @@ public class ReadProductDetails {
         private String name;
         private String description;
         private Integer price;
-        private ReadCategories.Response categoryResponse;
-        private ReadProviders.Response providerResponse;
-        private List<ReadProductOptions.Response> productOptions;
-        // private List<ReadProductReviews.Response> productReviews; // 리뷰는 후에 추가
+        private ReadProductCategories.Response category;
+        private ReadProviders.Response provider;
+        private List<ReadProductOptions.Response> options;
+        private ReadProductReviewStatistic.Response reviewStatistic;
 
         public Response(Product product,
-                List<ReadProductOptions.Response> productOptions, ReadCategories.Response categoryResponse,
-                ReadProviders.Response providerResponse) {
+                List<ReadProductOptions.Response> options, ReadProductCategories.Response categoryResponse,
+                ReadProviders.Response providerResponse, ReadProductReviewStatistic.Response reviewStatistic) {
             this.id = product.getId();
             this.name = product.getName();
             this.description = product.getDescription();
             this.price = product.getPrice();
-            this.categoryResponse = categoryResponse;
-            this.providerResponse = providerResponse;
-            this.productOptions = productOptions;
+            this.category = categoryResponse;
+            this.provider = providerResponse;
+            this.options = options;
+            this.reviewStatistic = reviewStatistic;
         }
 
         public static Response toResponse(Product product,
-                List<ReadProductOptions.Response> productOptions, ReadCategories.Response categoryResponse,
-                ReadProviders.Response providerResponse) {
-            return new Response(product, productOptions, categoryResponse, providerResponse);
+                List<ReadProductOptions.Response> options, ReadProductCategories.Response categoryResponse,
+                ReadProviders.Response providerResponse, ReadProductReviewStatistic.Response reviewStatistic) {
+            return new Response(product, options, categoryResponse, providerResponse, reviewStatistic);
         }
     }
 }
