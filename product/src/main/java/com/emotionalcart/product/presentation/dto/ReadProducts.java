@@ -93,15 +93,15 @@ public class ReadProducts {
     @Data
     public static class ProductOptionDetailResponse {
         private String value;
-        private int quantity;
-        private int additional_price;
+        private Integer quantity;
+        private Integer additionalPrice;
         private Integer fileOrder;
         private String url;
 
         public ProductOptionDetailResponse (ProductOptionDetailWithImages detailWithImages) {
             this.value = detailWithImages.getValue();
             this.quantity = detailWithImages.getQuantity();
-            this.additional_price = detailWithImages.getAdditionalPrice();
+            this.additionalPrice = detailWithImages.getAdditionalPrice();
             this.fileOrder = detailWithImages.getFileOrder();
             this.url = detailWithImages.getUrl();
         }
