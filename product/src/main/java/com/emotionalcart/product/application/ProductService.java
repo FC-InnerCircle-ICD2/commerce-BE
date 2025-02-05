@@ -1,6 +1,7 @@
 package com.emotionalcart.product.application;
 
 import com.emotionalcart.core.feature.product.*;
+import com.emotionalcart.core.feature.provider.Provider;
 import com.emotionalcart.core.feature.review.Review;
 import com.emotionalcart.product.domain.dto.ProductOptionDetailWithImages;
 import com.emotionalcart.product.domain.support.ProductOptionDetails;
@@ -82,15 +83,11 @@ public class ProductService {
 
         Map<Long, List<ReadProducts.ProductOptionResponse>> mergedOptions = mergeOptionsWithDetails(groupedOptions, groupedDetails);
 
+        Map<Long, Category> categories = categoryDataProvider.findCategoryByIds(products.getCategoryIds());
+        Map<Long, Provider> providers = providerDataProvider.findProviderByIds(products.getProviderIds());
+
         // DTO 변환
-        return ReadProducts.Response.toResponse(products, mergedOptions, ratings);
-    }
-
-
-    private Map<Long, Double> findProductRatings(List<Product> products){
-        return productDataProvider.findProductRatings(products.stream()
-                .map(Product::getId)
-                .toList());
+        return ReadProducts.Response.toResponse(productPage, mergedOptions, categories, providers);
     }
 
     private Map<Long, List<ReadProducts.ProductOptionResponse>> mergeOptionsWithDetails(

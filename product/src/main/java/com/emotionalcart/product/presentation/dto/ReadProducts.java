@@ -1,7 +1,9 @@
 package com.emotionalcart.product.presentation.dto;
 
 import com.emotionalcart.core.base.BasePageRequest;
+import com.emotionalcart.core.feature.category.Category;
 import com.emotionalcart.core.feature.product.SortOption;
+import com.emotionalcart.core.feature.provider.Provider;
 import com.emotionalcart.product.domain.dto.ProductOptionDetailWithImages;
 import com.emotionalcart.product.domain.dto.ProductSearch;
 import lombok.*;
@@ -51,27 +53,29 @@ public class ReadProducts {
         private List<ProductOptionResponse> options;
         private Double rating;
 
-        public Response(Product product, List<ProductOptionResponse> options, Double rating) {
+        public Response(Product product, List<ProductOptionResponse> options, Category category, Provider provider) {
             this.productId = product.getId();
             this.name = product.getName();
             this.description = product.getDescription();
             this.price = product.getPrice();
 
-            // Category와 Provider를 별도 DTO로 변환
-            this.category = product.getCategory() != null ? new ReadCategories.Response(product.getCategory()) : null;
-            this.provider = product.getProvider() != null ? new ReadProviders.Response(product.getProvider()) : null;
+            this.category = category != null ? new ReadCategories.Response(category) : null;
+            this.provider = provider != null ? new ReadProviders.Response(provider) : null;
 
             this.options = options;
-            this.rating = rating;
+            this.rating = product.getReviewStatistic() != null ? product.getReviewStatistic().getAverageRating() : null;
         }
 
-        public static Page<Response> toResponse(Page<Product> products, Map<Long, List<ProductOptionResponse>> groupedOptions, Map<Long, Double> ratings) {
+        public static Page<Response> toResponse(Page<Product> products, Map<Long, List<ProductOptionResponse>> groupedOptions,
+                                                Map<Long, Category> categoryMap,
+                                                Map<Long, Provider> providerMap) {
             return products.map(product -> {
                 Long productId = product.getId();
                 List<ProductOptionResponse> productOptionResponses = groupedOptions.getOrDefault(productId, List.of());
-                Double rating = ratings.getOrDefault(productId, null);
+                Category category = categoryMap.getOrDefault(product.getCategoryId(), null);
+                Provider provider = providerMap.getOrDefault(product.getProviderId(), null);
 
-                return new Response(product, productOptionResponses, rating);
+                return new Response(product, productOptionResponses, category, provider);
             });
         }
     }

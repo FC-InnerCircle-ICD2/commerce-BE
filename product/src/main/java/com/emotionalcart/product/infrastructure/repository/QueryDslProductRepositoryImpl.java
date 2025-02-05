@@ -49,7 +49,7 @@ public class QueryDslProductRepositoryImpl implements QueryDslProductRepository 
         List<Product> products  = queryFactory
                 .selectDistinct(product)
                 .from(product)
-                .leftJoin(reviewStatistic).on(product.id.eq(reviewStatistic.productId))
+                .leftJoin(product.reviewStatistic, reviewStatistic).fetchJoin()
                 .where(filterBuilder)
                 .offset(productSearch.getPageRequest().getOffset())
                 .limit(productSearch.getPageRequest().getPageSize())

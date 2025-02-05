@@ -1,9 +1,11 @@
 package com.emotionalcart.product.domain.support;
 
 import com.emotionalcart.core.feature.product.Product;
+import org.springframework.data.domain.Page;
 
 import java.util.List;
 import java.util.Set;
+import java.util.function.Function;
 import java.util.stream.Collectors;
 
 public class Products {
@@ -21,9 +23,21 @@ public class Products {
         return new Products(products);
     }
 
-    public Set<Long> ids(){
+    public List<Long> ids(){
         return this.products.stream()
                 .map(Product::getId)
-                .collect(Collectors.toSet());
+                .collect(Collectors.toList());
+    }
+
+    public List<Long> getCategoryIds() {
+        return this.products.stream()
+                .map(Product::getCategoryId)
+                .collect(Collectors.toList());
+    }
+
+    public List<Long> getProviderIds() {
+        return this.products.stream()
+                .map(Product::getCategoryId)
+                .collect(Collectors.toList());
     }
 }
