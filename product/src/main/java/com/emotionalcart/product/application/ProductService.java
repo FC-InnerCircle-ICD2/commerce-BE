@@ -68,11 +68,13 @@ public class ProductService {
     }
 
     public Page<ReadProducts.Response> readProducts(ReadProducts.Request request) {
-        Page<Product> products = productDataProvider.findAllProducts(request.toProductSearch());
+        Page<Product> productPage = productDataProvider.findAllProducts(request.toProductSearch());
 
-        ProductOptions productOptions = findProductOptions(products.getContent());
-        ProductOptionDetails optionDetails = findProductOptionDetails(productOptions.ids());
-        Map<Long, Double> ratings = findProductRatings(products.getContent());
+        // Page<Product>를 Products로 변환
+        Products products = Products.from(productPage);
+
+        ProductOptions productOptions = ProductOptions.from(productDataProvider.findProductOptions(products.ids()));
+        ProductOptionDetails optionDetails = ProductOptionDetails.from(productDataProvider.findProductOptionDetails(productOptions.ids()));
 
         // ProductOptionResponse와 Details 병합 처리
         Map<Long, List<ReadProducts.ProductOptionResponse>> groupedOptions = productOptions.groupByProductId();
@@ -84,16 +86,6 @@ public class ProductService {
         return ReadProducts.Response.toResponse(products, mergedOptions, ratings);
     }
 
-    private ProductOptions findProductOptions(List<Product> products) {
-        Products from = Products.from(products);
-        List<ProductOption> productOptions = productDataProvider.findProductOptions(from.ids());
-        return ProductOptions.from(productOptions);
-    }
-
-    private ProductOptionDetails findProductOptionDetails(Set<Long> ids) {
-        List<ProductOptionDetailWithImages> optionWithDetails = productDataProvider.findProductOptionDetails(ids);
-        return ProductOptionDetails.from(optionWithDetails);
-    }
 
     private Map<Long, Double> findProductRatings(List<Product> products){
         return productDataProvider.findProductRatings(products.stream()

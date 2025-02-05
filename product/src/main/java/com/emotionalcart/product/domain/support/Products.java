@@ -12,6 +12,11 @@ public class Products {
     private Products(List<Product> products) {
         this.products = products;
     }
+
+    public static Products from(Page<Product> productPage) {
+        return new Products(productPage.getContent());
+    }
+
     public static Products from(List<Product> products) {
         return new Products(products);
     }
