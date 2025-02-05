@@ -18,6 +18,7 @@ java {
 repositories {
     mavenCentral()
 }
+
 dependencies {
     implementation(project(":common"))
     implementation("org.springframework.boot:spring-boot-starter")
@@ -37,6 +38,10 @@ dependencies {
 
     // https://mvnrepository.com/artifact/org.redisson/redisson-spring-boot-starter
     implementation("org.redisson:redisson-spring-boot-starter:$redissonVersion")
+
+    implementation("com.querydsl:querydsl-jpa:5.0.0:jakarta")
+    annotationProcessor("com.querydsl:querydsl-apt:5.0.0:jakarta")
+    annotationProcessor("jakarta.persistence:jakarta.persistence-api")
 
     annotationProcessor("org.projectlombok:lombok")
     // https://mvnrepository.com/artifact/org.projectlombok/lombok
@@ -58,7 +63,7 @@ dependencies {
 
     testAnnotationProcessor("org.projectlombok:lombok")
     testCompileOnly("org.projectlombok:lombok")
-    
+
     testRuntimeOnly("org.junit.platform:junit-platform-launcher")
     // https://mvnrepository.com/artifact/com.tngtech.archunit/archunit-junit5
     testImplementation("com.tngtech.archunit:archunit-junit5:$archunitVersion")

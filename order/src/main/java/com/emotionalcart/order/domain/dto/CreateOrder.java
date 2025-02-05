@@ -60,14 +60,16 @@ public class CreateOrder extends SelfValidation<CreateOrder> {
      * @param productName     상품명
      * @param price           상품 금액
      * @param quantity        수량
+     * @param categoryId      카테고리 식별자
      */
-    public void addItem(Long productId, Long productOptionId, String productName, double price, int quantity) {
+    public void addItem(Long productId, Long productOptionId, Long categoryId, String productName, double price, int quantity) {
         if (CollectionUtils.isEmpty(orderItems)) {
             orderItems = new ArrayList<>();
         }
         orderItems.add(CreateOrderItem.builder()
                            .productId(productId)
                            .productOptionId(productOptionId)
+                           .categoryId(categoryId)
                            .productName(productName)
                            .price(price)
                            .quantity(quantity)
