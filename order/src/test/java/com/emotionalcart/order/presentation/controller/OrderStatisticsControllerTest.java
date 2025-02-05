@@ -15,6 +15,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.PageRequest;
+import org.springframework.data.web.PageableHandlerMethodArgumentResolver;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
@@ -42,7 +43,8 @@ class OrderStatisticsControllerTest {
     @BeforeEach
     void setUp() {
         // MockMvc를 컨트롤러와 함께 수동으로 설정
-        mockMvc = MockMvcBuilders.standaloneSetup(orderStatisticsController).build();
+        mockMvc =
+            MockMvcBuilders.standaloneSetup(orderStatisticsController).setCustomArgumentResolvers(new PageableHandlerMethodArgumentResolver()).build();
     }
 
     @Test
