@@ -9,5 +9,5 @@ import com.emotionalcart.core.feature.product.ProductOption;
 
 @Repository
 public interface ProductOptionRepository extends JpaRepository<ProductOption, Long> {
-    Optional<List<ProductOption>> findAllByProductIdAndIsDeletedIsFalseAndIsRequiredIsTrue(Long productId);
+    Optional<List<ProductOption>> findAllByProduct_IdAndIsDeletedIsFalseAndIsRequiredIsTrue(Long productId);
 }
