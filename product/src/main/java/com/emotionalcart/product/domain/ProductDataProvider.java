@@ -71,7 +71,7 @@ public class ProductDataProvider {
 
     // 상품 옵션 관련 메서드
     public List<ProductOption> findAllProductOptionsByProductId(Long productId) {
-        return productOptionRepository.findAllByProduct_IdAndIsDeletedIsFalseAndIsRequiredIsTrue(productId)
+        return productOptionRepository.findAllByProduct_IdAndIsDeletedIsFalse(productId) // 시연 위해 AndIsRequiredIsTrue 제거. 나중에 실제 데이터에서는 추가
                 .orElseThrow(() -> new ProductException(ErrorCode.NOT_FOUND_PRODUCT_OPTION));
     }
 
