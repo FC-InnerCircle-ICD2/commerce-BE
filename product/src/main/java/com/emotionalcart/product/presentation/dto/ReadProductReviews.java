@@ -3,7 +3,7 @@ package com.emotionalcart.product.presentation.dto;
 import com.emotionalcart.core.base.BasePageRequest;
 import com.emotionalcart.core.feature.review.Review;
 import com.emotionalcart.core.feature.review.ReviewImage;
-import com.emotionalcart.product.application.ReviewImages;
+import com.emotionalcart.product.domain.support.ReviewImages;
 import lombok.Data;
 import lombok.Getter;
 import lombok.Setter;
@@ -16,13 +16,13 @@ import java.util.Map;
 public class ReadProductReviews {
 
     @Getter
-    @Setter
     public static class Request extends BasePageRequest {
         int pageSize = 10;
         int pageNumber = 0;
     }
 
-    @Data
+    @Getter
+    @Setter
     public static class Response {
         private Long id;
         private String productName;
