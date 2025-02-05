@@ -14,8 +14,8 @@ public class MemberController {
 
     private final MemberService memberService;
 
-    @PostMapping("/findOrCreateMember")
-    public ResponseEntity<AuthMembers.Response>findOrCreateMember(@RequestBody MemberRequest request) {
-        return ResponseEntity.ok(memberService.findOrCreateMember(request.getSocialId(), request.getName(), request.getSocialType()));
+    @PostMapping("/find-or-create")
+    public ResponseEntity<AuthMembers.Response>findOrCreate(@RequestBody MemberRequest request) {
+        return ResponseEntity.ok(memberService.findOrCreate(request.getSocialId(), request.getName(), request.getSocialType()));
     }
 }

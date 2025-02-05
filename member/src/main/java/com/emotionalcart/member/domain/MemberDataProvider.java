@@ -12,7 +12,7 @@ import org.springframework.stereotype.Service;
 public class MemberDataProvider {
     private final MemberRepository memberRepository;
 
-    public Member findOrCreateMember(String socialId, String name, SocialType socialType) {
+    public Member findOrCreate(String socialId, String name, SocialType socialType) {
         // 소셜 ID로 회원 검색
         Member member = memberRepository.findBySocialId(socialId);
 

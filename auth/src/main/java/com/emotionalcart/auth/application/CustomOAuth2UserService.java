@@ -60,7 +60,7 @@ public class CustomOAuth2UserService extends DefaultOAuth2UserService {
         memReq.setName(oAuth2Response.getName());
 
         // MemberResponse 작성
-        MemberResponse memberResponse = memberFeignClient.findOrCreateMember(memReq);
+        MemberResponse memberResponse = memberFeignClient.findOrCreate(memReq);
 
         memberResponse.setName(oAuth2Response.getName());
         memberResponse.setUserName(oAuth2Response.getName());

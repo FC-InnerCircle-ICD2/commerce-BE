@@ -9,6 +9,6 @@ import org.springframework.web.bind.annotation.RequestBody;
 @FeignClient(name = "member-service", url = "${member.find.feign-endpoint}", path = "/v1/members")
 public interface MemberFeignClient {
 
-    @PostMapping("/findOrCreateMember")
-    MemberResponse findOrCreateMember(@RequestBody MemberRequest request);
+    @PostMapping("/find-or-create")
+    MemberResponse findOrCreate(@RequestBody MemberRequest request);
 }

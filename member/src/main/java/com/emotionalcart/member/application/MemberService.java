@@ -13,8 +13,8 @@ public class MemberService {
 
     private final MemberDataProvider memberDataProvider;
 
-    public AuthMembers.Response findOrCreateMember(String socialId, String name, SocialType socialType) {
-        Member member = memberDataProvider.findOrCreateMember(socialId, name, socialType);
+    public AuthMembers.Response findOrCreate(String socialId, String name, SocialType socialType) {
+        Member member = memberDataProvider.findOrCreate(socialId, name, socialType);
 
         return new AuthMembers.Response("COMMERCE_MEMBER", member.getUserName(), member.getSocialId());
     }
