@@ -64,7 +64,7 @@ public class QueryDslProductRepositoryImpl implements QueryDslProductRepository 
     }
 
     @Override
-    public List<ProductOption> findProductOptions(Set<Long> productIds) {
+    public List<ProductOption> findProductOptions(List<Long> productIds) {
         return queryFactory
                 .selectFrom(productOption)
                 .where(

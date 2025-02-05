@@ -93,7 +93,7 @@ public class ProductDataProvider {
         return productRepository.findAllProducts(productSearch);
     }
 
-    public List<ProductOption> findProductOptions(Set<Long> productIds) {
+    public List<ProductOption> findProductOptions(List<Long> productIds) {
         return productRepository.findProductOptions(productIds);
     }
 
