@@ -3,6 +3,8 @@ package com.emotionalcart.product.domain;
 import com.emotionalcart.core.exception.ErrorCode;
 import com.emotionalcart.core.exception.ProductException;
 import com.emotionalcart.core.feature.category.Category;
+import com.emotionalcart.product.domain.dto.ProductOptionDetailWithImages;
+import com.emotionalcart.product.domain.dto.ProductSearch;
 import com.emotionalcart.core.feature.product.Product;
 import com.emotionalcart.core.feature.product.ProductImage;
 import com.emotionalcart.core.feature.product.ProductOption;
@@ -29,6 +31,8 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Component;
 
 import java.util.List;
+import java.util.Map;
+import java.util.stream.Collectors;
 import java.util.Set;
 
 @Component
@@ -83,5 +87,28 @@ public class ProductDataProvider {
     public ReviewStatistic findReviewStatistic(Long productId) {
         return reviewStatisticRepository.findByProductId(productId)
                 .orElseThrow(() -> new ProductException(ErrorCode.NOT_FOUND_REVIEW_STATISTIC));
+    }
+
+    public Page<Product> findAllProducts(ProductSearch productSearch) {
+        return productRepository.findAllProducts(productSearch);
+    }
+
+    public List<ProductOption> findProductOptions(List<Long> productIds) {
+        return productRepository.findProductOptions(productIds);
+    }
+
+    public List<ProductOptionDetailWithImages> findProductOptionDetails(Set<Long> optionIds) {
+        return productRepository.findProductOptionDetailsWithImages(optionIds);
+    }
+
+    public Map<Long, Double> findProductRatings(List<Long> productIds) {
+        List<ReviewStatistic> ratings = reviewStatisticRepository.findAllByProductIdIn(productIds);
+
+        // Map으로 변환
+        return ratings.stream()
+                .collect(Collectors.toMap(
+                        ReviewStatistic::getProductId,
+                        ReviewStatistic::getAverageRating
+                ));
     }
 }

@@ -1,5 +1,7 @@
 package com.emotionalcart.product.infrastructure.repository;
 
+import java.util.List;
+
 import com.emotionalcart.core.feature.review.Review;
 import com.emotionalcart.core.feature.review.ReviewStatistic;
 
@@ -14,5 +16,7 @@ import org.springframework.stereotype.Repository;
 
 @Repository
 public interface ReviewStatisticRepository extends JpaRepository<ReviewStatistic, Long> {
+    List<ReviewStatistic> findAllByProductIdIn(List<Long> productId);
+  
     Optional<ReviewStatistic> findByProductId(@NotNull Long productId);
 }

@@ -1,9 +1,15 @@
 package com.emotionalcart.product.application;
 
+import com.emotionalcart.core.feature.product.*;
+import com.emotionalcart.core.feature.provider.Provider;
+import com.emotionalcart.core.feature.review.Review;
+import com.emotionalcart.product.domain.dto.ProductOptionDetailWithImages;
+import com.emotionalcart.product.domain.support.ProductOptionDetails;
+import com.emotionalcart.product.domain.support.ProductOptions;
+import com.emotionalcart.product.domain.support.Products;
 import com.emotionalcart.core.exception.ErrorCode;
 import com.emotionalcart.core.exception.ProductException;
 import com.emotionalcart.core.feature.category.Category;
-import com.emotionalcart.core.feature.review.Review;
 import com.emotionalcart.product.domain.ProductDataProvider;
 import com.emotionalcart.product.domain.dto.ProductDetail;
 import com.emotionalcart.product.domain.support.ProductDetails;
@@ -18,9 +24,8 @@ import com.emotionalcart.product.presentation.dto.ReadProductReviewStatistic;
 import com.emotionalcart.product.presentation.dto.ReadProductReviews;
 import com.emotionalcart.product.presentation.dto.ReadProviders;
 import com.emotionalcart.product.domain.CategoryDataProvider;
-import com.emotionalcart.product.domain.ProductDataProvider;
 import com.emotionalcart.product.domain.ProviderDataProvider;
-import com.emotionalcart.core.feature.category.Category;
+import com.emotionalcart.product.presentation.dto.ReadProducts;
 import com.emotionalcart.core.feature.product.Product;
 import com.emotionalcart.core.feature.product.ProductImage;
 import com.emotionalcart.core.feature.product.ProductOption;
@@ -63,6 +68,44 @@ public class ProductService {
         return ReviewImages.from(productDataProvider.findAllReviewImages(from.ids()));
     }
 
+    public Page<ReadProducts.Response> readProducts(ReadProducts.Request request) {
+        Page<Product> productPage = productDataProvider.findAllProducts(request.toProductSearch());
+
+        // Page<Product>를 Products로 변환
+        Products products = Products.from(productPage);
+
+        ProductOptions productOptions = ProductOptions.from(productDataProvider.findProductOptions(products.ids()));
+        ProductOptionDetails optionDetails = ProductOptionDetails.from(productDataProvider.findProductOptionDetails(productOptions.ids()));
+
+        // ProductOptionResponse와 Details 병합 처리
+        Map<Long, List<ReadProducts.ProductOptionResponse>> groupedOptions = productOptions.groupByProductId();
+        Map<Long, List<ReadProducts.ProductOptionDetailResponse>> groupedDetails = optionDetails.groupByOptionId();
+
+        Map<Long, List<ReadProducts.ProductOptionResponse>> mergedOptions = mergeOptionsWithDetails(groupedOptions, groupedDetails);
+
+        Map<Long, Category> categories = categoryDataProvider.findCategoryByIds(products.getCategoryIds());
+        Map<Long, Provider> providers = providerDataProvider.findProviderByIds(products.getProviderIds());
+
+        // DTO 변환
+        return ReadProducts.Response.toResponse(productPage, mergedOptions, categories, providers);
+    }
+
+    private Map<Long, List<ReadProducts.ProductOptionResponse>> mergeOptionsWithDetails(
+            Map<Long, List<ReadProducts.ProductOptionResponse>> groupedOptions,
+            Map<Long, List<ReadProducts.ProductOptionDetailResponse>> groupedDetails
+    ) {
+        return groupedOptions.entrySet().stream()
+                .collect(Collectors.toMap(
+                        Map.Entry::getKey,
+                        entry -> entry.getValue().stream()
+                                .map(option -> new ReadProducts.ProductOptionResponse(
+                                        option.getId(), option.getName(),
+                                        groupedDetails.getOrDefault(option.getId(), List.of()))
+                                )
+                                .collect(Collectors.toList())
+                ));
+    }
+      
     public ReadProductDetails.Response getProductDetail(Long productId) {
 
         // 상품 정보
