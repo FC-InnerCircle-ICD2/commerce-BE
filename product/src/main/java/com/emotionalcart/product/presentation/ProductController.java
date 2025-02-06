@@ -6,6 +6,7 @@ import com.emotionalcart.product.presentation.dto.ReadProductsPrice;
 import jakarta.validation.Valid;
 import com.emotionalcart.product.presentation.dto.ReadProductReviews;
 
+import com.emotionalcart.product.presentation.dto.ReadProducts;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.http.ResponseEntity;
@@ -32,6 +33,12 @@ public class ProductController implements ProductControllerDocs {
     @Override
     public ResponseEntity<ReadProductDetails.Response> getProductDetail(@PathVariable Long productId) {
         return ResponseEntity.ok(productService.getProductDetail(productId));
+    }
+
+    @Override
+    public ResponseEntity<Page<ReadProducts.Response>> readProducts(
+            ReadProducts.Request request) {
+        return ResponseEntity.ok(productService.readProducts(request));
     }
 
     @Override

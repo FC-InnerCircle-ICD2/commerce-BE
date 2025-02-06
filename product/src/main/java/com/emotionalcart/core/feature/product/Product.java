@@ -1,9 +1,12 @@
 package com.emotionalcart.core.feature.product;
 
+import java.util.List;
+
 import com.emotionalcart.core.base.BaseEntity;
 import com.emotionalcart.core.feature.category.Category;
 import com.emotionalcart.core.feature.provider.Provider;
 
+import com.emotionalcart.core.feature.review.ReviewStatistic;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotNull;
 import lombok.*;
@@ -30,6 +33,12 @@ public class Product extends BaseEntity {
     private Long providerId;
 
     private Long categoryId;
+
+    @OneToOne(fetch = FetchType.LAZY)
+    private ReviewStatistic reviewStatistic;
+
+    @OneToMany(mappedBy = "product", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)
+    private List<ProductOption> options;
 
     private Product(
             Long id,

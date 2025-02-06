@@ -3,6 +3,8 @@ package com.emotionalcart.product.domain;
 import com.emotionalcart.core.exception.ErrorCode;
 import com.emotionalcart.core.exception.ProductException;
 import com.emotionalcart.core.feature.category.Category;
+import com.emotionalcart.product.domain.dto.ProductOptionDetailWithImages;
+import com.emotionalcart.product.domain.dto.ProductSearch;
 import com.emotionalcart.core.feature.product.Product;
 import com.emotionalcart.core.feature.product.ProductImage;
 import com.emotionalcart.core.feature.product.ProductOption;
@@ -10,6 +12,7 @@ import com.emotionalcart.core.feature.product.ProductOptionDetail;
 import com.emotionalcart.core.feature.provider.Provider;
 import com.emotionalcart.core.feature.review.Review;
 import com.emotionalcart.core.feature.review.ReviewImage;
+import com.emotionalcart.core.feature.review.ReviewStatistic;
 import com.emotionalcart.product.domain.dto.ProductDetail;
 import com.emotionalcart.product.infrastructure.repository.CategoryRepository;
 import com.emotionalcart.product.infrastructure.repository.ProductImageRepository;
@@ -19,12 +22,17 @@ import com.emotionalcart.product.infrastructure.repository.ProductRepository;
 import com.emotionalcart.product.infrastructure.repository.ProviderRepository;
 import com.emotionalcart.product.infrastructure.repository.ReviewImageRepository;
 import com.emotionalcart.product.infrastructure.repository.ReviewRepository;
+import com.emotionalcart.product.infrastructure.repository.ReviewStatisticRepository;
+import com.emotionalcart.product.presentation.dto.ReadProductReviewStatistic;
+
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Component;
 
 import java.util.List;
+import java.util.Map;
+import java.util.stream.Collectors;
 import java.util.Set;
 
 @Component
@@ -36,6 +44,7 @@ public class ProductDataProvider {
     private final ProductImageRepository productImageRepository;
     private final ProductOptionRepository productOptionRepository;
     private final ProductOptionDetailRepository productOptionDetailRepository;
+    private final ReviewStatisticRepository reviewStatisticRepository;
 
     // 상품 관련 메서드
     public Product findProduct(Long productId) {
@@ -62,7 +71,7 @@ public class ProductDataProvider {
 
     // 상품 옵션 관련 메서드
     public List<ProductOption> findAllProductOptionsByProductId(Long productId) {
-        return productOptionRepository.findAllByProductIdAndIsDeletedIsFalseAndIsRequiredIsTrue(productId)
+        return productOptionRepository.findAllByProduct_IdAndIsDeletedIsFalse(productId) // 시연 위해 AndIsRequiredIsTrue 제거. 나중에 실제 데이터에서는 추가
                 .orElseThrow(() -> new ProductException(ErrorCode.NOT_FOUND_PRODUCT_OPTION));
     }
 
@@ -73,5 +82,33 @@ public class ProductDataProvider {
 
     public List<ProductDetail> findAllProductDetail(Set<Long> productIds) {
         return productRepository.findAllProductDetail(productIds);
+    }
+
+    public ReviewStatistic findReviewStatistic(Long productId) {
+        return reviewStatisticRepository.findByProductId(productId)
+                .orElseThrow(() -> new ProductException(ErrorCode.NOT_FOUND_REVIEW_STATISTIC));
+    }
+
+    public Page<Product> findAllProducts(ProductSearch productSearch) {
+        return productRepository.findAllProducts(productSearch);
+    }
+
+    public List<ProductOption> findProductOptions(List<Long> productIds) {
+        return productRepository.findProductOptions(productIds);
+    }
+
+    public List<ProductOptionDetailWithImages> findProductOptionDetails(Set<Long> optionIds) {
+        return productRepository.findProductOptionDetailsWithImages(optionIds);
+    }
+
+    public Map<Long, Double> findProductRatings(List<Long> productIds) {
+        List<ReviewStatistic> ratings = reviewStatisticRepository.findAllByProductIdIn(productIds);
+
+        // Map으로 변환
+        return ratings.stream()
+                .collect(Collectors.toMap(
+                        ReviewStatistic::getProductId,
+                        ReviewStatistic::getAverageRating
+                ));
     }
 }

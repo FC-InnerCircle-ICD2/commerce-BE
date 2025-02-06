@@ -1,0 +1,122 @@
+package com.emotionalcart.product.presentation.dto;
+
+import com.emotionalcart.core.base.BasePageRequest;
+import com.emotionalcart.core.feature.category.Category;
+import com.emotionalcart.core.feature.product.SortOption;
+import com.emotionalcart.core.feature.provider.Provider;
+import com.emotionalcart.product.domain.dto.ProductOptionDetailWithImages;
+import com.emotionalcart.product.domain.dto.ProductSearch;
+import lombok.*;
+import com.emotionalcart.core.feature.product.ProductOption;
+import com.emotionalcart.core.feature.product.Product;
+import org.springframework.data.domain.Page;
+
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
+
+public class ReadProducts {
+
+    @Getter
+    @Setter
+    public static class Request extends BasePageRequest {
+        private SortOption sortOption;
+        private Long productId;
+        private Long categoryId;
+        private String keyword;
+        private Float priceMin;
+        private Float priceMax;
+        private Double rating;
+
+        public ProductSearch toProductSearch() {
+            return new ProductSearch(
+               getPageable(),
+               sortOption,
+               productId,
+               categoryId,
+               keyword,
+               priceMin,
+               priceMax,
+               rating
+            );
+        }
+    }
+
+    @Data
+    public static class Response {
+        private Long productId;
+        private String name;
+        private String description;
+        private Integer price;
+        private ReadCategories.Response category;
+        private ReadProviders.Response provider;
+        private List<ProductOptionResponse> options;
+        private Double rating;
+
+        public Response(Product product, List<ProductOptionResponse> options, Category category, Provider provider) {
+            this.productId = product.getId();
+            this.name = product.getName();
+            this.description = product.getDescription();
+            this.price = product.getPrice();
+
+            this.category = category != null ? new ReadCategories.Response(category) : null;
+            this.provider = provider != null ? new ReadProviders.Response(provider) : null;
+
+            this.options = options;
+            this.rating = product.getReviewStatistic() != null ? product.getReviewStatistic().getAverageRating() : null;
+        }
+
+        public static Page<Response> toResponse(Page<Product> products, Map<Long, List<ProductOptionResponse>> groupedOptions,
+                                                Map<Long, Category> categoryMap,
+                                                Map<Long, Provider> providerMap) {
+            return products.map(product -> {
+                Long productId = product.getId();
+                List<ProductOptionResponse> productOptionResponses = groupedOptions.getOrDefault(productId, List.of());
+                Category category = categoryMap.getOrDefault(product.getCategoryId(), null);
+                Provider provider = providerMap.getOrDefault(product.getProviderId(), null);
+
+                return new Response(product, productOptionResponses, category, provider);
+            });
+        }
+    }
+
+    @Data
+    public static class ProductOptionResponse {
+        @Getter
+        private Long id;
+        private String name;
+        private List<ProductOptionDetailResponse> optionDetails;
+
+        public ProductOptionResponse(ProductOption productOption) {
+            this.id = productOption.getId();
+            this.name = productOption.getName();
+        }
+
+        public ProductOptionResponse(Long id, String name, List<ProductOptionDetailResponse> details) {
+            this.id = id;
+            this.name = name;
+            this.optionDetails = (details != null) ? new ArrayList<>(details) : new ArrayList<>();
+        }
+    }
+
+    @Data
+    public static class ProductOptionDetailResponse {
+        private String value;
+        private Integer quantity;
+        private Integer additionalPrice;
+        private Integer fileOrder;
+        private String url;
+
+        public ProductOptionDetailResponse (ProductOptionDetailWithImages detailWithImages) {
+            this.value = detailWithImages.getValue();
+            this.quantity = detailWithImages.getQuantity();
+            this.additionalPrice = detailWithImages.getAdditionalPrice();
+            this.fileOrder = detailWithImages.getFileOrder();
+            this.url = detailWithImages.getUrl();
+        }
+
+        public static ProductOptionDetailResponse toResponse(ProductOptionDetailWithImages detailWithImages) {
+            return new ProductOptionDetailResponse(detailWithImages);
+        }
+    }
+}

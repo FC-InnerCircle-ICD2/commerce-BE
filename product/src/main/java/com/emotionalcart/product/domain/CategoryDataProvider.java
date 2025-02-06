@@ -1,7 +1,11 @@
 package com.emotionalcart.product.domain;
 
 import java.util.List;
+import java.util.Map;
+import java.util.stream.Collectors;
 
+import com.emotionalcart.core.feature.review.ReviewStatistic;
+import com.emotionalcart.product.presentation.dto.ReadCategories;
 import org.springframework.stereotype.Component;
 
 import com.emotionalcart.core.exception.ErrorCode;
@@ -24,4 +28,10 @@ public class CategoryDataProvider {
         return categoryRepository.findByIdAndIsDeletedIsFalse(categoryId)
                 .orElseThrow(() -> new ProductException(ErrorCode.NOT_FOUND_CATEGORY));
     }
-}
+
+    public Map<Long, Category> findCategoryByIds(List<Long> categoryIds) {
+        List<Category> categories = categoryRepository.findAllByIdIn(categoryIds);
+
+        return categories.stream()
+                .collect(Collectors.toMap(Category::getId, category -> category));
+    }}

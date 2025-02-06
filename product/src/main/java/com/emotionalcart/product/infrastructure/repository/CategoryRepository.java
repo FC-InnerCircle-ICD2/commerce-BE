@@ -13,4 +13,6 @@ public interface CategoryRepository extends JpaRepository<Category, Long> {
     List<Category> findAllByIsActiveIsTrueAndIsDeletedIsFalse();
 
     Optional<Category> findByIdAndIsDeletedIsFalse(Long categoryId);
+
+    List<Category> findAllByIdIn(List<Long> categoryIds);
 }
