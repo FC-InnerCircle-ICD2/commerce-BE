@@ -68,7 +68,7 @@ public class GlobalExceptionHandler {
     }
 
     /**
-     * RequiredValueException 및 InvalidValueRequestException 처리
+     * RequiredValueException
      * <p>
      * 필수 값 누락 또는 잘못된 값 요청에 대해 처리합니다.
      * </p>
@@ -76,10 +76,20 @@ public class GlobalExceptionHandler {
      * @param ex 발생한 예외
      * @return ResponseEntity<ErrorResponse> 잘못된 요청 응답
      */
-    @ExceptionHandler({RequiredValueException.class, InvalidValueRequestException.class})
+    @ExceptionHandler({RequiredValueException.class})
     @ResponseStatus(HttpStatus.BAD_REQUEST)
     public ResponseEntity<ErrorResponse> handleRequiredValueException(Exception ex) {
-        return buildErrorResponse(ex, OrderErrorCode.BAD_REQUEST, HttpStatus.BAD_REQUEST);
+        ErrorResponse errorResponse = new ErrorResponse("ORDER-0008", ex.getMessage());
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(errorResponse);
+    }
+
+    @ExceptionHandler({InvalidValueRequestException.class})
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
+    public ResponseEntity<ErrorResponse> handleInvalidValueRequestException(InvalidValueRequestException ex) {
+
+        ErrorResponse errorResponse = new ErrorResponse(OrderErrorCode.BAD_REQUEST.getErrorCode(), ex.getMessage());
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(errorResponse);
+
     }
 
     /**
