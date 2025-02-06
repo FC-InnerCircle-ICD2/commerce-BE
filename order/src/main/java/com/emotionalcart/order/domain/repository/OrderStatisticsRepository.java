@@ -1,7 +1,6 @@
-package com.emotionalcart.order.infra.order;
+package com.emotionalcart.order.domain.repository;
 
 import com.emotionalcart.order.domain.entity.OrderStatistics;
-import com.emotionalcart.order.domain.repository.OrderStatisticsQuerydsl;
 import jakarta.validation.constraints.NotNull;
 import org.springframework.data.jpa.repository.JpaRepository;
 
