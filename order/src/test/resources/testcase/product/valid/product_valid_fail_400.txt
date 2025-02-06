@@ -1,0 +1,4 @@
+{
+    "errorCode": "PRODUCT-0009",
+    "errorMessage": "상품의 필수 옵션이 선택되지 않았습니다."
+}

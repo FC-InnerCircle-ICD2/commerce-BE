@@ -1,0 +1,40 @@
+{
+  "content": [
+      {
+        "productId": 1005,
+        "categoryId": 501,
+        "totalOrder": 5,
+        "totalQuantitySold": 5
+      },
+      {
+        "productId": 1004,
+        "categoryId": 501,
+        "totalOrder": 4,
+        "totalQuantitySold": 4
+      },
+      {
+        "productId": 1003,
+        "categoryId": 501,
+        "totalOrder": 3,
+        "totalQuantitySold": 3
+      },
+      {
+        "productId": 1002,
+        "categoryId": 501,
+        "totalOrder": 2,
+        "totalQuantitySold": 2
+      },
+      {
+        "productId": 1001,
+        "categoryId": 501,
+        "totalOrder": 1,
+        "totalQuantitySold": 1
+      }
+  ],
+  "page": {
+    "size": 10,
+    "number": 0,
+    "totalElements": 5,
+    "totalPages": 1
+  }
+}
