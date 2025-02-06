@@ -47,8 +47,6 @@ dependencies {
     testImplementation("org.springframework.security:spring-security-test")
     testImplementation("org.springframework.boot:spring-boot-testcontainers")
     testImplementation("org.testcontainers:mysql")
-    // H2 Database Driver
-    implementation("com.h2database:h2:2.2.224")
 
     implementation("org.springdoc:springdoc-openapi-starter-webmvc-ui:2.7.0")
 
@@ -58,7 +56,7 @@ dependencies {
 
     testAnnotationProcessor("org.projectlombok:lombok")
     testCompileOnly("org.projectlombok:lombok")
-    
+
     testRuntimeOnly("org.junit.platform:junit-platform-launcher")
     // https://mvnrepository.com/artifact/com.tngtech.archunit/archunit-junit5
     testImplementation("com.tngtech.archunit:archunit-junit5:$archunitVersion")
