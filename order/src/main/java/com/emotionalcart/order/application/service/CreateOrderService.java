@@ -1,14 +1,16 @@
-package com.emotionalcart.order.application;
+package com.emotionalcart.order.application.service;
 
 import com.emotionalcart.order.domain.dto.CardInfo;
 import com.emotionalcart.order.domain.dto.CreateOrder;
 import com.emotionalcart.order.domain.dto.CreateOrderItem;
 import com.emotionalcart.order.domain.dto.CreatedOrder;
 import com.emotionalcart.order.domain.entity.OrderItem;
+import com.emotionalcart.order.domain.entity.OrderStatistics;
 import com.emotionalcart.order.domain.entity.Orders;
 import com.emotionalcart.order.infra.advice.exceptions.InvalidValueRequestException;
 import com.emotionalcart.order.infra.advice.exceptions.RedissonLockException;
 import com.emotionalcart.order.infra.order.OrderRepository;
+import com.emotionalcart.order.infra.order.OrderStatisticsRepository;
 import com.emotionalcart.order.infra.payment.PaymentInfo;
 import com.emotionalcart.order.infra.payment.PaymentService;
 import com.emotionalcart.order.infra.product.ProductService;
@@ -27,6 +29,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
+import java.util.List;
 
 @Slf4j
 @Service
@@ -34,6 +37,7 @@ import java.util.stream.Collectors;
 public class CreateOrderService {
 
     private final OrderRepository orderRepository;
+    private final OrderStatisticsRepository orderStatisticsRepository;
     private final PaymentService paymentService;
     private final ProductService productService;
     private final RedissonMultiLockProvider redissonMultiLockProvider;
@@ -127,6 +131,21 @@ public class CreateOrderService {
             if (productPriceMap.get(productPrice.getProductId()) != productPrice.getPrice()) {
                 throw new InvalidValueRequestException("상품 가격이 변경되었습니다. 새로고침 이후 다시 이용 부탁드립니다.");
             }
+        }
+    }
+
+    /**
+     * 주문 통계 테이블 저장
+     *
+     * @param orderItems
+     */
+    private void orderStatistics(List<CreateOrderItem> orderItems) {
+        for (CreateOrderItem orderItem : orderItems) {
+            OrderStatistics orderStatistics =
+                orderStatisticsRepository.findByProductIdAndCategoryId(orderItem.getProductId(), orderItem.getCategoryId()).orElse(
+                    OrderStatistics.create(orderItem));
+            orderStatistics.updateOrderStatistics(orderItem);
+            orderStatisticsRepository.save(orderStatistics);
         }
     }
 

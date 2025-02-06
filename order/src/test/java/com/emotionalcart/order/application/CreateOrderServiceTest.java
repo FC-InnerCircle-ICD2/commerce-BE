@@ -9,6 +9,7 @@ import com.emotionalcart.order.domain.enums.PaymentMethod;
 import com.emotionalcart.order.infra.advice.exceptions.InvalidValueRequestException;
 import com.emotionalcart.order.infra.advice.exceptions.RequiredValueException;
 import com.emotionalcart.order.infra.order.OrderRepository;
+import com.emotionalcart.order.infra.order.OrderStatisticsRepository;
 import com.emotionalcart.order.infra.payment.PaymentService;
 import com.emotionalcart.order.infra.product.ProductService;
 import com.emotionalcart.order.infra.product.dto.ProductPrice;
