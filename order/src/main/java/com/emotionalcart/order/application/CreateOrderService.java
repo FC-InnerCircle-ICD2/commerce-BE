@@ -4,6 +4,7 @@ import com.emotionalcart.order.domain.dto.CardInfo;
 import com.emotionalcart.order.domain.dto.CreateOrder;
 import com.emotionalcart.order.domain.dto.CreateOrderItem;
 import com.emotionalcart.order.domain.dto.CreatedOrder;
+import com.emotionalcart.order.domain.entity.OrderItem;
 import com.emotionalcart.order.domain.entity.Orders;
 import com.emotionalcart.order.infra.advice.exceptions.InvalidValueRequestException;
 import com.emotionalcart.order.infra.advice.exceptions.RedissonLockException;
@@ -13,6 +14,8 @@ import com.emotionalcart.order.infra.payment.PaymentService;
 import com.emotionalcart.order.infra.product.ProductService;
 import com.emotionalcart.order.infra.product.dto.ProductPrice;
 import com.emotionalcart.order.infra.product.dto.ProductPriceRequest;
+import com.emotionalcart.order.infra.product.dto.ProductStockRequest;
+import com.emotionalcart.order.infra.product.dto.ProductValidationRequest;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.redisson.RedissonMultiLock;
@@ -43,22 +46,20 @@ public class CreateOrderService {
      */
     @Transactional
     public CreatedOrder createOrder(CreateOrder createOrder) {
-        createOrder.valid();
-        log.info("createOrder: {}", createOrder);
-        Orders orders = Orders.createOrder(createOrder);
-        orderRepository.save(orders);
-        log.info("created order.id: {}", orders.getId());
+
+        Orders orders = validateAndSaveOrder(createOrder);
+
         RedissonMultiLock multiLock = redissonMultiLockProvider.getRedissonMultiLock(createOrder);
+
         try {
             if (multiLock.tryLock(10, 10, TimeUnit.SECONDS)) {
-                // TODO 상품 재고 조회
 
-                validatePrice(createOrder);
-                // TODO 결제 서비스 호출
+                validateQuantity(createOrder);
+                requestOriginalPriceAndValidatePrice(createOrder);
                 payment(orders, createOrder.getCardInfo());
                 shipment(orders);
                 orders.addHistory();
-                // TODO 상품 재고 차감
+                updateQuantity(orders);
             } else {
                 throw new RedissonLockException("잠금 획득 실패: 다른 사용자가 처리 중입니다.");
             }
@@ -72,7 +73,40 @@ public class CreateOrderService {
         return CreatedOrder.from(orders);
     }
 
-    private void validatePrice(CreateOrder createOrder) {
+    private void updateQuantity(Orders orders) {
+        List<ProductStockRequest> productStockRequests = new ArrayList<>();
+        for (OrderItem orderItem : orders.getOrderItems()) {
+            ProductStockRequest request = ProductStockRequest.of(orderItem.getProductId());
+            orderItem.getOrderItemOptions().forEach(option -> request.addOption(option.getProductOptionId(),
+                                                                                option.getProductOptionDetailId(),
+                                                                                orderItem.getQuantity()));
+            productStockRequests.add(request);
+        }
+        productService.updateProductStock(productStockRequests);
+    }
+
+    private void validateQuantity(CreateOrder createOrder) {
+        List<ProductValidationRequest> productValidationRequests = new ArrayList<>();
+        for (CreateOrderItem orderItem : createOrder.getOrderItems()) {
+            ProductValidationRequest request = ProductValidationRequest.of(orderItem.getProductId());
+            orderItem.getOrderItemOptions().forEach(option -> request.addOption(option.getProductOptionId(),
+                                                                                option.getProductOptionDetailId(),
+                                                                                orderItem.getQuantity()));
+            productValidationRequests.add(request);
+        }
+        productService.isValidProduct(productValidationRequests);
+    }
+
+    private Orders validateAndSaveOrder(CreateOrder createOrder) {
+        createOrder.valid();
+        log.info("saveRequest: {}", createOrder);
+        Orders orders = Orders.createOrder(createOrder);
+        orderRepository.save(orders);
+        log.info("created order.id: {}", orders.getId());
+        return orders;
+    }
+
+    private void requestOriginalPriceAndValidatePrice(CreateOrder createOrder) {
         List<ProductPriceRequest> productPriceRequests = new ArrayList<>();
         for (CreateOrderItem orderItem : createOrder.getOrderItems()) {
             ProductPriceRequest productPriceRequest = ProductPriceRequest.of(orderItem.getProductId());
@@ -80,9 +114,15 @@ public class CreateOrderService {
                                                                                             option.getProductOptionDetailId()));
             productPriceRequests.add(productPriceRequest);
         }
+        log.info("request product price: {}", productPriceRequests);
+        validatePrice(productPriceRequests);
+    }
+
+    private void validatePrice(List<ProductPriceRequest> productPriceRequests) {
         List<ProductPrice> productPriceList = productService.getProductPrice(productPriceRequests);
         Map<Long, Double> productPriceMap = productPriceList.stream()
             .collect(Collectors.toMap(ProductPrice::getProductId, ProductPrice::getPrice));
+        log.info("response product price: {}", productPriceMap);
         for (ProductPrice productPrice : productPriceList) {
             if (productPriceMap.get(productPrice.getProductId()) != productPrice.getPrice()) {
                 throw new InvalidValueRequestException("상품 가격이 변경되었습니다. 새로고침 이후 다시 이용 부탁드립니다.");
