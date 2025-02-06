@@ -4,6 +4,7 @@ import com.emotionalcart.order.infra.config.TestContainerConfiguration;
 import com.emotionalcart.order.infra.utils.FileUtils;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -17,7 +18,6 @@ import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.MvcResult;
 import org.springframework.transaction.annotation.Transactional;
 
-import static org.junit.Assert.assertEquals;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
@@ -54,7 +54,7 @@ class GetOrderStatisticsTest {
         String actualJson = mvcResult.getResponse().getContentAsString();
         JsonNode actualJsonNode = objectMapper.readTree(actualJson);
 
-        assertEquals(expectedJsonNode, actualJsonNode);
+        Assertions.assertEquals(expectedJsonNode, actualJsonNode);
     }
 
 }
