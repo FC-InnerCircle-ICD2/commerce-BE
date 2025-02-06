@@ -1,8 +1,7 @@
-package com.emotionalcart.order.infra.order.impl;
+package com.emotionalcart.order.domain.repository;
 
-import com.emotionalcart.order.domain.dto.BestSellingProduct;
 import com.emotionalcart.order.domain.entity.QOrderStatistics;
-import com.emotionalcart.order.infra.order.OrderStatisticsQuerydsl;
+import com.emotionalcart.order.infra.dto.BestSellingProduct;
 import com.querydsl.core.types.Projections;
 import com.querydsl.core.types.dsl.BooleanExpression;
 import com.querydsl.jpa.JPQLQueryFactory;

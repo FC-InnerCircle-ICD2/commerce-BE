@@ -1,6 +1,6 @@
 package com.emotionalcart.order.presentation.controller;
 
-import com.emotionalcart.order.domain.dto.BestSellingProduct;
+import com.emotionalcart.order.infra.dto.BestSellingProduct;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import org.springframework.data.domain.Page;
@@ -13,4 +13,5 @@ public interface OrderStatisticsDocs {
 
     @Operation(summary = "카테고리 별 상품 판매량 많은 순 조회 API")
     ResponseEntity<Page<BestSellingProduct>> getProductRanking(@PathVariable Long categoryId, Pageable request);
+
 }

@@ -1,4 +1,4 @@
-package com.emotionalcart.order.domain.dto;
+package com.emotionalcart.order.infra.dto;
 
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
