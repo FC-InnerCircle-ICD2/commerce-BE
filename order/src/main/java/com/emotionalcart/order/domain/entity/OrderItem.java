@@ -44,20 +44,24 @@ public class OrderItem extends BaseEntity {
     private String productName;
 
     /**
-     * 결제 금액
-     */
-    @Embedded
-    @Column(nullable = false)
-    private Money orderItemPrice;
-
-    /**
-     * 수량
+     * 상품 수량
      */
     @Column(nullable = false)
     private int quantity;
 
+    /**
+     * 결제 금액
+     */
+    @Embedded
+    @Column(nullable = false)
+    @AttributeOverride(name = "amount", column = @Column(name = "order_item_price"))
+    private Money orderItemPrice;
+
     @OneToMany(mappedBy = "orderItem", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
     private List<OrderItemHistory> orderItemHistories;
+
+    @OneToMany(mappedBy = "orderItem", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+    private List<OrderItemOption> orderItemOptions;
 
     public static OrderItem createOrderItem(Orders orders, CreateOrderItem orderItem) {
         OrderItem item = new OrderItem();
@@ -66,7 +70,16 @@ public class OrderItem extends BaseEntity {
         item.productName = orderItem.getProductName();
         item.orderItemPrice = Money.of(orderItem.getPrice());
         item.quantity = orderItem.getQuantity();
+        orderItem.getOrderItemOptions().stream().map(option -> OrderItemOption.createOrderItemOption(item,
+                                                                                                     option)).forEach(item::addOrderItemOption);
         return item;
+    }
+
+    public void addOrderItemOption(OrderItemOption option) {
+        if (CollectionUtils.isEmpty(this.orderItemOptions)) {
+            this.orderItemOptions = new ArrayList<>();
+        }
+        this.orderItemOptions.add(option);
     }
 
     /**
