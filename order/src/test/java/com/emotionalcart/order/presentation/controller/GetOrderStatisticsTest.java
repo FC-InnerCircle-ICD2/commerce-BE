@@ -9,6 +9,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.MediaType;
+import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.jdbc.Sql;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.MvcResult;
@@ -18,6 +19,7 @@ import static org.junit.Assert.assertEquals;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
+@ActiveProfiles("test")
 @Transactional
 @SpringBootTest
 @AutoConfigureMockMvc
@@ -27,7 +29,8 @@ class GetOrderStatisticsTest {
     private MockMvc mockMvc;
 
     @Test
-    @Sql(scripts = "/databases/insert_order_statistics.sql", executionPhase = Sql.ExecutionPhase.BEFORE_TEST_METHOD)
+    @Sql(scripts = {"/databases/schema.sql",
+        "/databases/insert_order_statistics.sql"}, executionPhase = Sql.ExecutionPhase.BEFORE_TEST_METHOD)
     @DisplayName("데이터 삽입 후 통계 API 테스트")
     void test_case_1() throws Exception {
         // given
