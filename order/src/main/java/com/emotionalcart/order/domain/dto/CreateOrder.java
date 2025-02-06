@@ -46,6 +46,12 @@ public class CreateOrder extends SelfValidation<CreateOrder> {
     @NotNull(message = "주문 상품을 선택해주세요.")
     private List<CreateOrderItem> orderItems;
 
+    /**
+     * 총 주문금액
+     */
+    @NotNull(message = "총 주문금액을 입력해주세요.")
+    private double totalAmount;
+
     public static CreateOrder ofPaymentMethod(String payment) {
         return CreateOrder.builder()
             .paymentMethod(PaymentMethod.valueOf(payment))
@@ -54,26 +60,13 @@ public class CreateOrder extends SelfValidation<CreateOrder> {
 
     /**
      * 주문 상품 추가
-     *
-     * @param productId       상품 식별자
-     * @param productOptionId 상품 옵션 식별자
-     * @param productName     상품명
-     * @param price           상품 금액
-     * @param quantity        수량
-     * @param categoryId      카테고리 식별자
+     * 상품 금액
      */
-    public void addItem(Long productId, Long productOptionId, Long categoryId, String productName, double price, int quantity) {
+    public void addItem(CreateOrderItem createOrderItem) {
         if (CollectionUtils.isEmpty(orderItems)) {
             orderItems = new ArrayList<>();
         }
-        orderItems.add(CreateOrderItem.builder()
-                           .productId(productId)
-                           .productOptionId(productOptionId)
-                           .categoryId(categoryId)
-                           .productName(productName)
-                           .price(price)
-                           .quantity(quantity)
-                           .build());
+        orderItems.add(createOrderItem);
     }
 
     /**
@@ -119,6 +112,19 @@ public class CreateOrder extends SelfValidation<CreateOrder> {
      */
     public List<PriceAndQuantity> getOrderItemsPriceAndQuantity() {
         return this.orderItems.stream().map(item -> PriceAndQuantity.of(item.getPrice(), item.getQuantity())).toList();
+    }
+
+    public CreateOrderItem createOrderItem(@NotNull(message = "상품을 선택해주세요.") Long productId,
+                                           @NotNull(message = "상품명을 입력해주세요.") String productName,
+                                           @NotNull(message = "상품 금액을 입력해주세요.") double price,
+                                           int quantity, @NotNull(message = "상품 카테고리를 확인해주세요.") Long categoryId) {
+        return CreateOrderItem.builder()
+            .productId(productId)
+            .productName(productName)
+            .price(price)
+            .quantity(quantity)
+            .categoryId(categoryId)
+            .build();
     }
 
 }

@@ -1,4 +1,4 @@
-package com.emotionalcart.order.application.service;
+package com.emotionalcart.order.application;
 
 import com.emotionalcart.order.domain.dto.BestSellingProduct;
 import com.emotionalcart.order.infra.order.OrderStatisticsRepository;

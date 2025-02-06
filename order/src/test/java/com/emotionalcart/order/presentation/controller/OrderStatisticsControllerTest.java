@@ -1,6 +1,6 @@
 package com.emotionalcart.order.presentation.controller;
 
-import com.emotionalcart.order.application.service.OrderStatisticsService;
+import com.emotionalcart.order.application.OrderStatisticsService;
 import com.emotionalcart.order.domain.dto.BestSellingProduct;
 import com.emotionalcart.order.presentation.controller.response.SalesRankingResponse;
 import org.junit.jupiter.api.BeforeEach;

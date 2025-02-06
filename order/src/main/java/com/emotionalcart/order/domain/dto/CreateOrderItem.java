@@ -6,6 +6,10 @@ import lombok.Builder;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.ToString;
+import org.springframework.util.CollectionUtils;
+
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * <h2>주문 상품 생성 DTO</h2>
@@ -21,12 +25,6 @@ public class CreateOrderItem extends SelfValidation<CreateOrderItem> {
      */
     @NotNull(message = "상품을 선택해주세요.")
     private Long productId;
-
-    /**
-     * 상품 옵션 식별자
-     */
-    @NotNull(message = "상품 옵션을 선택해주세요.")
-    private Long productOptionId;
 
     /**
      * 카테고리 식별자
@@ -47,9 +45,28 @@ public class CreateOrderItem extends SelfValidation<CreateOrderItem> {
     private double price;
 
     /**
-     * 수량
+     * 상품 수량
      */
-    @Min(value = 1, message = "수량은 1개 이상이어야 합니다.")
+    @Min(value = 1, message = "상품 수량은 1개 이상이어야 합니다.")
     private int quantity;
+
+    /**
+     * 상품 옵션 상세
+     */
+    private List<CreateOrderItemOption> orderItemOptions;
+
+    public void addOrderItemOption(@NotNull(message = "상품 옵션을 선택해주세요.") Long productOptionId,
+                                   @NotNull(message = "상품 옵션 상세를 선택해주세요.") Long productOptionDetailId,
+                                   double additionalPrice) {
+        if (CollectionUtils.isEmpty(orderItemOptions)) {
+            orderItemOptions = new ArrayList<>();
+        }
+        orderItemOptions.add(CreateOrderItemOption.builder()
+                                 .productOptionId(productOptionId)
+                                 .productOptionDetailId(productOptionDetailId)
+                                 .additionalPrice(additionalPrice)
+                                 .build());
+
+    }
 
 }

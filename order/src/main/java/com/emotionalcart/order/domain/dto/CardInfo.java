@@ -6,7 +6,9 @@ import lombok.*;
 import org.springframework.util.StringUtils;
 
 import java.time.LocalDate;
-import java.time.temporal.TemporalAdjusters;
+
+import static com.emotionalcart.order.infra.utils.DateUtil.getLastDateFromExpirationDate;
+import static com.emotionalcart.order.infra.utils.NumberUtil.isNotNumeric;
 
 /**
  * <h2>카드 정보</h2>
@@ -44,28 +46,17 @@ public class CardInfo extends SelfValidation<CardInfo> {
     }
 
     /**
-     * 카드 유효기간 검증
+     * <h2>카드 유효기간 검증</h2>
+     * 만료일이 지났는지 판단하기 위해서 해당 월까지는 유효하다고 판단하기 위해 마지막 날짜를 구한다. {@link com.emotionalcart.order.infra.utils.DateUtil#getLastDateFromExpirationDate(String)}
      */
     private void validateExpirationDate() {
         if (expirationDate.length() != 5 || !expirationDate.matches("^(0[1-9]|1[0-2])/\\d{2}$")) {
             throw new InvalidValueRequestException("만료일은 MM/YY 형식으로 입력해주세요.");
         }
-        LocalDate lastDate = getLastDateFromExpirationDate();
+        LocalDate lastDate = getLastDateFromExpirationDate(expirationDate);
         if (lastDate.isBefore(LocalDate.now())) {
             throw new InvalidValueRequestException("유효기간이 만료된 카드입니다.");
         }
-    }
-
-    /**
-     * <h2>만료일로부터 마지막 날짜를 반환</h2>
-     * 만료일이 지났는지 판단하기 위해서 해당 월까지는 유효하다고 판단하기 위해 마지막 날짜를 반환한다.
-     *
-     * @return 만료일로부터 마지막 날짜
-     */
-    private LocalDate getLastDateFromExpirationDate() {
-        String[] dates = expirationDate.split("/");
-        LocalDate expirationLocalDate = LocalDate.of(2000 + Integer.parseInt(dates[1]), Integer.parseInt(dates[0]), 1);
-        return expirationLocalDate.with(TemporalAdjusters.lastDayOfMonth());
     }
 
     /**
@@ -100,20 +91,6 @@ public class CardInfo extends SelfValidation<CardInfo> {
         if (cvc.length() != 3) {
             throw new InvalidValueRequestException("CVC는 3자리여야 합니다.");
         }
-    }
-
-    /**
-     * <h2>숫자가 아닌 문자열인지 확인</h2>
-     * 숫자가 아닌 문자열인지 확인한다.
-     *
-     * @param str 확인할 문자열
-     * @return 숫자가 아닌 문자열이면 true, 숫자이면 false
-     */
-    public boolean isNotNumeric(String str) {
-        if (str.trim().isEmpty()) {
-            return true;
-        }
-        return !str.matches("-?\\d+(\\.\\d+)?");
     }
 
 }

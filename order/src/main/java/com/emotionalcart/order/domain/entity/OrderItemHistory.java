@@ -38,11 +38,6 @@ public class OrderItemHistory extends AuditableEntity {
     @Column(nullable = false)
     private Money orderItemPrice;
 
-    /**
-     * 수량
-     */
-    private int quantity;
-
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "order_item_id")
     private OrderItem orderItem;
@@ -52,7 +47,6 @@ public class OrderItemHistory extends AuditableEntity {
         orderItemHistory.productId = orderItem.getProductId();
         orderItemHistory.productName = orderItem.getProductName();
         orderItemHistory.orderItemPrice = orderItem.getOrderItemPrice();
-        orderItemHistory.quantity = orderItem.getQuantity();
         orderItemHistory.orderItem = orderItem;
         return orderItemHistory;
     }

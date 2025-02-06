@@ -1,6 +1,7 @@
 package com.emotionalcart.order.presentation.controller.request;
 
 import com.emotionalcart.order.domain.dto.CreateOrder;
+import com.emotionalcart.order.domain.dto.CreateOrderItem;
 import com.emotionalcart.order.infra.validator.ValidPhoneNumber;
 import jakarta.validation.constraints.NotNull;
 import lombok.AccessLevel;
@@ -56,12 +57,16 @@ public class CreateOrderRequest {
                                           cardInfo.getCardOwnerName());
         }
         for (CreateOrderItemRequest orderItem : orderItems) {
-            createOrder.addItem(orderItem.productId,
-                                orderItem.productOptionId,
-                                orderItem.categoryId,
-                                orderItem.productName,
-                                orderItem.price,
-                                orderItem.quantity);
+            CreateOrderItem createOrderItem =
+                createOrder.createOrderItem(orderItem.productId,
+                                            orderItem.productName,
+                                            orderItem.price,
+                                            orderItem.quantity,
+                                            orderItem.categoryId);
+            orderItem.getProductOptionDetails().forEach(option -> createOrderItem.addOrderItemOption(option.productOptionId,
+                                                                                                     option.productOptionDetailId,
+                                                                                                     option.additionalPrice));
+            createOrder.addItem(createOrderItem);
         }
         createOrder.createDeliveryInfo(delivery.getName(),
                                        delivery.getPhoneNumber(),
@@ -70,6 +75,18 @@ public class CreateOrderRequest {
                                        delivery.getDetailAddress(),
                                        delivery.getDeliveryMemo());
         return createOrder;
+    }
+
+    public String getCardNumber() {
+        return cardInfo.cardNumber;
+    }
+
+    public String getExpirationDate() {
+        return cardInfo.expirationDate;
+    }
+
+    public String getCvc() {
+        return cardInfo.cvc;
     }
 
     /**
@@ -88,12 +105,7 @@ public class CreateOrderRequest {
         @NotNull(message = "상품을 선택해주세요.")
         private Long productId;
 
-        /**
-         * 상품 옵션 식별자
-         */
-        @NotNull(message = "상품 옵션을 선택해주세요.")
-        private Long productOptionId;
-
+        private List<CreateOrderItemOptionRequest> productOptionDetails;
         /**
          * 카테고리 식별자
          */
@@ -112,11 +124,28 @@ public class CreateOrderRequest {
         @NotNull(message = "상품 금액을 입력해주세요.")
         private double price;
 
+        private int quantity;
+
+    }
+
+    private static class CreateOrderItemOptionRequest {
+
+        @NotNull(message = "상품 옵션을 선택해주세요.")
+        private Long productOptionId;
+
+        @NotNull(message = "상품 옵션 상세를 선택해주세요.")
+        private Long productOptionDetailId;
+
         /**
          * 수량
          */
         @NotNull(message = "수량을 입력해주세요.")
         private int quantity;
+
+        /**
+         * 추가 금액
+         */
+        private double additionalPrice;
 
     }
 
