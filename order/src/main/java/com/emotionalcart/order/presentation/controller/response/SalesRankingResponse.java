@@ -1,6 +1,6 @@
 package com.emotionalcart.order.presentation.controller.response;
 
-import com.emotionalcart.order.domain.dto.BestSellingProduct;
+import com.emotionalcart.order.infra.dto.BestSellingProduct;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;

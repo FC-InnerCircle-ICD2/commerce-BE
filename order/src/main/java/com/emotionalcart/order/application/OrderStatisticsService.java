@@ -1,6 +1,6 @@
 package com.emotionalcart.order.application;
 
-import com.emotionalcart.order.domain.dto.BestSellingProduct;
+import com.emotionalcart.order.infra.dto.BestSellingProduct;
 import com.emotionalcart.order.infra.order.OrderStatisticsRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
