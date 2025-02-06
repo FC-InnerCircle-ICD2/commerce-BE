@@ -38,6 +38,12 @@ public class OrderItem extends BaseEntity {
     private Long productId;
 
     /**
+     * 카테고리 아이디
+     */
+    @Column(nullable = false)
+    private Long categoryId;
+
+    /**
      * 상품 이름
      */
     @Column(nullable = false)

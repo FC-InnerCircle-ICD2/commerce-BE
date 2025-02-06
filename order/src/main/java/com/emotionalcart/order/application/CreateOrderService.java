@@ -1,4 +1,4 @@
-package com.emotionalcart.order.application.service;
+package com.emotionalcart.order.application;
 
 import com.emotionalcart.order.domain.dto.CardInfo;
 import com.emotionalcart.order.domain.dto.CreateOrder;
@@ -29,7 +29,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
-import java.util.List;
 
 @Slf4j
 @Service

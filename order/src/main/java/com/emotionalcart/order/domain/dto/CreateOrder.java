@@ -117,12 +117,13 @@ public class CreateOrder extends SelfValidation<CreateOrder> {
     public CreateOrderItem createOrderItem(@NotNull(message = "상품을 선택해주세요.") Long productId,
                                            @NotNull(message = "상품명을 입력해주세요.") String productName,
                                            @NotNull(message = "상품 금액을 입력해주세요.") double price,
-                                           int quantity) {
+                                           int quantity, @NotNull(message = "상품 카테고리를 확인해주세요.") Long categoryId) {
         return CreateOrderItem.builder()
             .productId(productId)
             .productName(productName)
             .price(price)
             .quantity(quantity)
+            .categoryId(categoryId)
             .build();
     }
 

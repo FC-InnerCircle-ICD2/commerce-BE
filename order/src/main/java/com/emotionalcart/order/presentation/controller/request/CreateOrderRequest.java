@@ -58,7 +58,11 @@ public class CreateOrderRequest {
         }
         for (CreateOrderItemRequest orderItem : orderItems) {
             CreateOrderItem createOrderItem =
-                createOrder.createOrderItem(orderItem.productId, orderItem.productName, orderItem.price, orderItem.quantity);
+                createOrder.createOrderItem(orderItem.productId,
+                                            orderItem.productName,
+                                            orderItem.price,
+                                            orderItem.quantity,
+                                            orderItem.categoryId);
             orderItem.getProductOptionDetails().forEach(option -> createOrderItem.addOrderItemOption(option.productOptionId,
                                                                                                      option.productOptionDetailId,
                                                                                                      option.additionalPrice));

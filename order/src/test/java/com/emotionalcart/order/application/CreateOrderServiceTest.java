@@ -9,7 +9,6 @@ import com.emotionalcart.order.domain.enums.PaymentMethod;
 import com.emotionalcart.order.infra.advice.exceptions.InvalidValueRequestException;
 import com.emotionalcart.order.infra.advice.exceptions.RequiredValueException;
 import com.emotionalcart.order.infra.order.OrderRepository;
-import com.emotionalcart.order.infra.order.OrderStatisticsRepository;
 import com.emotionalcart.order.infra.payment.PaymentService;
 import com.emotionalcart.order.infra.product.ProductService;
 import com.emotionalcart.order.infra.product.dto.ProductPrice;
@@ -21,8 +20,6 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.redisson.RedissonMultiLock;
 import org.redisson.api.RLock;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import java.time.LocalDate;
 import java.util.List;
@@ -36,7 +33,6 @@ import static org.mockito.Mockito.*;
 @ExtendWith(MockitoExtension.class)
 class CreateOrderServiceTest {
 
-    private static final Logger log = LoggerFactory.getLogger(CreateOrderServiceTest.class);
     @Mock
     private OrderRepository orderRepository;
 
@@ -68,6 +64,7 @@ class CreateOrderServiceTest {
         createOrder.addItem(CreateOrderItem.builder()
                                 .productId(1L)
                                 .productName("상품명")
+                                .categoryId(1L)
                                 .orderItemOptions(List.of(CreateOrderItemOption.builder().productOptionId(1L).productOptionDetailId(1L).build()))
                                 .price(1000L).quantity(1).build());
         createOrder.createNewCardInfo("1234567890123456", getValidExpirationDate(), "123", "ddd");
