@@ -30,7 +30,6 @@ public class Review extends BaseEntity {
 
     private String productOptionName;
 
-    @Size(min = 1, max = 5)
     @NotNull
     private Integer rating;
 
@@ -55,7 +54,6 @@ public class Review extends BaseEntity {
     }
 
     public static Review of(
-            String userId,
             Long productId,
             String productName,
             String productOptionId,
@@ -63,7 +61,8 @@ public class Review extends BaseEntity {
             Integer rating,
             String content
     ) {
-        return new Review(userId,
+        return new Review(
+                "userId", // TODO 회원가입 적용 이후 반영
                 productId,
                 productName,
                 productOptionId,

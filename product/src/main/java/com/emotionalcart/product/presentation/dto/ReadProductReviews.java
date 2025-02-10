@@ -17,8 +17,6 @@ public class ReadProductReviews {
 
     @Getter
     public static class Request extends BasePageRequest {
-//        int pageSize = 10;
-//        int pageNumber = 0;
     }
 
     @Getter

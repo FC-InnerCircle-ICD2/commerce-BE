@@ -23,5 +23,5 @@ public abstract class BaseEntity {
     @LastModifiedDate
     private LocalDateTime updatedAt;
 
-    private Boolean isDeleted;
+    private Boolean isDeleted = false;
 }

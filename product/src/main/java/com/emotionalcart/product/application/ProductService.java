@@ -1,38 +1,21 @@
 package com.emotionalcart.product.application;
 
-import com.emotionalcart.core.feature.product.*;
-import com.emotionalcart.core.feature.provider.Provider;
-import com.emotionalcart.core.feature.review.Review;
-import com.emotionalcart.product.domain.dto.ProductOptionDetailWithImages;
-import com.emotionalcart.product.domain.support.ProductOptionDetails;
-import com.emotionalcart.product.domain.support.ProductOptions;
-import com.emotionalcart.product.domain.support.Products;
 import com.emotionalcart.core.exception.ErrorCode;
 import com.emotionalcart.core.exception.ProductException;
 import com.emotionalcart.core.feature.category.Category;
-import com.emotionalcart.product.domain.ProductDataProvider;
-import com.emotionalcart.product.domain.dto.ProductDetail;
-import com.emotionalcart.product.domain.support.ProductDetails;
-import com.emotionalcart.product.domain.support.ReviewImages;
-import com.emotionalcart.product.domain.support.Reviews;
-import com.emotionalcart.product.presentation.dto.ReadCategories;
-import com.emotionalcart.product.presentation.dto.ReadProductCategories;
-import com.emotionalcart.product.presentation.dto.ReadProductDetails;
-import com.emotionalcart.product.presentation.dto.ReadProductOptionDetails;
-import com.emotionalcart.product.presentation.dto.ReadProductOptions;
-import com.emotionalcart.product.presentation.dto.ReadProductReviewStatistic;
-import com.emotionalcart.product.presentation.dto.ReadProductReviews;
-import com.emotionalcart.product.presentation.dto.ReadProviders;
-import com.emotionalcart.product.domain.CategoryDataProvider;
-import com.emotionalcart.product.domain.ProviderDataProvider;
-import com.emotionalcart.product.presentation.dto.ReadProducts;
 import com.emotionalcart.core.feature.product.Product;
 import com.emotionalcart.core.feature.product.ProductImage;
 import com.emotionalcart.core.feature.product.ProductOption;
 import com.emotionalcart.core.feature.product.ProductOptionDetail;
-
-import com.emotionalcart.product.presentation.dto.ReadProductsPrice;
-import com.emotionalcart.product.presentation.dto.ReadProductsValidate;
+import com.emotionalcart.core.feature.provider.Provider;
+import com.emotionalcart.core.feature.review.Review;
+import com.emotionalcart.core.feature.review.ReviewImage;
+import com.emotionalcart.product.domain.CategoryDataProvider;
+import com.emotionalcart.product.domain.ProductDataProvider;
+import com.emotionalcart.product.domain.ProviderDataProvider;
+import com.emotionalcart.product.domain.dto.ProductDetail;
+import com.emotionalcart.product.domain.support.*;
+import com.emotionalcart.product.presentation.dto.*;
 import jakarta.validation.constraints.NotNull;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
@@ -54,7 +37,7 @@ public class ProductService {
     private final ProviderDataProvider providerDataProvider;
 
     public Page<ReadProductReviews.Response> readProductReviews(@NotNull Long productId,
-            ReadProductReviews.Request request) {
+                                                                ReadProductReviews.Request request) {
         productDataProvider.findProduct(productId);
 
         Page<Review> reviews = productDataProvider.findAllReviews(productId, request.getPageable());
@@ -66,6 +49,19 @@ public class ProductService {
     private ReviewImages findAllReviewImages(List<Review> reviews) {
         Reviews from = Reviews.from(reviews);
         return ReviewImages.from(productDataProvider.findAllReviewImages(from.ids()));
+    }
+
+    @Transactional
+    public CreateProductReview.Response createProductReview(@NotNull Long productId, CreateProductReview.Request request) {
+        productDataProvider.findProduct(productId);
+        productDataProvider.findProductReview(productId, "userId123"); // TODO 실제 userId 반영
+        Review review = request.toReviewEntity(productId);
+        Long reviewId = productDataProvider.saveProductReview(review);
+        List<ReviewImage> reviewImages = request.toReviewImageEntities(reviewId);
+        productDataProvider.saveProductReviewImages(reviewImages);
+
+        // TODO review_statistics 점수 반영
+        return new CreateProductReview.Response(reviewId);
     }
 
     public Page<ReadProducts.Response> readProducts(ReadProducts.Request request) {
@@ -105,7 +101,7 @@ public class ProductService {
                                 .collect(Collectors.toList())
                 ));
     }
-      
+
     public ReadProductDetails.Response getProductDetail(Long productId) {
 
         // 상품 정보

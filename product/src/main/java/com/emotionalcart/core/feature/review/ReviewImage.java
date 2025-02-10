@@ -62,7 +62,6 @@ public class ReviewImage extends BaseEntity {
 
     public static ReviewImage of(
             Long reviewId,
-            String bucketName,
             String originalFileName,
             String filePath,
             String fileType,
@@ -71,7 +70,7 @@ public class ReviewImage extends BaseEntity {
     ) {
         return new ReviewImage(
                 reviewId,
-                bucketName,
+                "reviews", // TODO enum 으로 변경
                 originalFileName,
                 filePath,
                 fileType,
