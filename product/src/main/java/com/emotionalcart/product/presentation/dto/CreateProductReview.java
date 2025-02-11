@@ -39,21 +39,6 @@ public class CreateProductReview {
                     content
             );
         }
-
-        public List<ReviewImage> toReviewImageEntities(Long reviewId) {
-            return Optional.ofNullable(reviewImages)
-                    .orElse(Collections.emptyList())
-                    .stream()
-                    .map(file -> ReviewImage.of(
-                            reviewId,
-                            file.getOriginalFilename(),
-                            file.getOriginalFilename(),
-                            file.getContentType(),
-                            file.getSize(),
-                            reviewImages.indexOf(file) + 1
-                    ))
-                    .collect(Collectors.toList());
-        }
     }
 
     @Getter

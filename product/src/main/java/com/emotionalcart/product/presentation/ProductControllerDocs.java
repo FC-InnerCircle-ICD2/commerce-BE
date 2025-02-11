@@ -11,17 +11,13 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import org.springframework.data.domain.Page;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
 @Tag(name = "상품 API", description = "상품 관련 API")
 public interface ProductControllerDocs {
 
-    @GetMapping("/{productId}/reviews")
     @Operation(summary = "상품 리뷰 조회", description = "특정 상품의 리뷰 목록을 페이징하여 조회합니다.")
     @ApiResponses({
             @ApiResponse(responseCode = "200", description = "상품 리뷰 조회 성공", content = @Content(mediaType = "application/json",
@@ -69,6 +65,11 @@ public interface ProductControllerDocs {
     ResponseEntity<Page<ReadProductReviews.Response>> readProductReviews(
             @PathVariable Long productId,
             ReadProductReviews.Request request);
+
+    @Operation(summary = "상품 리뷰 등록", description = "특정 상품의 리뷰를 등록합니다.")
+    ResponseEntity<CreateProductReview.Response> createProductReview(
+            @PathVariable Long productId,
+            @ModelAttribute @Valid CreateProductReview.Request request);
 
     // 상품 상세 조회
     @GetMapping("/{productId}")

@@ -16,11 +16,13 @@ import com.emotionalcart.product.domain.ProviderDataProvider;
 import com.emotionalcart.product.domain.dto.ProductDetail;
 import com.emotionalcart.product.domain.support.*;
 import com.emotionalcart.product.presentation.dto.*;
+import com.emotionalcart.s3.S3Utils;
 import jakarta.validation.constraints.NotNull;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -35,6 +37,9 @@ public class ProductService {
     private final ProductDataProvider productDataProvider;
     private final CategoryDataProvider categoryDataProvider;
     private final ProviderDataProvider providerDataProvider;
+    private final S3Utils s3Utils;
+    static String bucketName = "emotionalcart-bucket"; // TODO
+    static String directory = "reviews"; // TODO
 
     public Page<ReadProductReviews.Response> readProductReviews(@NotNull Long productId,
                                                                 ReadProductReviews.Request request) {
@@ -57,11 +62,32 @@ public class ProductService {
         productDataProvider.findProductReview(productId, "userId123"); // TODO 실제 userId 반영
         Review review = request.toReviewEntity(productId);
         Long reviewId = productDataProvider.saveProductReview(review);
-        List<ReviewImage> reviewImages = request.toReviewImageEntities(reviewId);
+        List<ReviewImage> reviewImages = uploadAndCreateReviewImages(review.getId(), request.getReviewImages());
         productDataProvider.saveProductReviewImages(reviewImages);
 
         // TODO review_statistics 점수 반영
         return new CreateProductReview.Response(reviewId);
+    }
+
+    private List<ReviewImage> uploadAndCreateReviewImages(Long reviewId, List<MultipartFile> files) {
+        if (files == null || files.isEmpty()) {
+            return List.of();
+        }
+
+        return files.stream().map(file -> {
+            try {
+                String fileUrl = s3Utils.uploadFile(bucketName, directory, reviewId.toString(), file);
+                return ReviewImage.of(
+                        reviewId, fileUrl,
+                        file.getOriginalFilename(),
+                        file.getContentType(),
+                        file.getSize(),
+                        files.indexOf(file) + 1
+                );
+            } catch (Exception e) {
+                throw new ProductException(ErrorCode.S3_UPLOAD_FAILED);
+            }
+        }).toList();
     }
 
     public Page<ReadProducts.Response> readProducts(ReadProducts.Request request) {

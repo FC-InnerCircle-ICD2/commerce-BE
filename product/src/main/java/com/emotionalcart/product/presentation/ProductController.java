@@ -19,12 +19,14 @@ public class ProductController implements ProductControllerDocs {
 
     // 상품 리뷰 조회
     @Override
+    @GetMapping("/{productId}/reviews")
     public ResponseEntity<Page<ReadProductReviews.Response>> readProductReviews(
             @PathVariable Long productId,
             ReadProductReviews.Request request) {
         return ResponseEntity.ok(productService.readProductReviews(productId, request));
     }
 
+    @Override
     @PostMapping("/{productId}/review")
     public ResponseEntity<CreateProductReview.Response> createProductReview(
             @PathVariable Long productId,
