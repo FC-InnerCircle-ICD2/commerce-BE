@@ -1,9 +1,8 @@
 package com.emotionalcart.core.feature.review;
 
 import com.emotionalcart.core.base.BaseEntity;
-import jakarta.persistence.Entity;
-import jakarta.persistence.Id;
-import jakarta.persistence.Table;
+import com.emotionalcart.core.feature.product.Product;
+import jakarta.persistence.*;
 import jakarta.validation.constraints.NotNull;
 import lombok.AccessLevel;
 import lombok.Getter;
@@ -17,6 +16,11 @@ public class ReviewStatistic extends BaseEntity {
 
     @Id
     private Long productId;
+
+    @OneToOne
+    @MapsId
+    @JoinColumn(name = "product_id")
+    private Product product;
 
     @NotNull
     private Double averageRating = 0.0;
