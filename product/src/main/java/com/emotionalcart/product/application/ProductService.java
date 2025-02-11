@@ -14,11 +14,13 @@ import com.emotionalcart.product.domain.CategoryDataProvider;
 import com.emotionalcart.product.domain.ProductDataProvider;
 import com.emotionalcart.product.domain.ProviderDataProvider;
 import com.emotionalcart.product.domain.dto.ProductDetail;
+import com.emotionalcart.product.domain.event.UpdateReviewStatisticEvent;
 import com.emotionalcart.product.domain.support.*;
 import com.emotionalcart.product.presentation.dto.*;
 import com.emotionalcart.s3.S3Utils;
 import jakarta.validation.constraints.NotNull;
 import lombok.RequiredArgsConstructor;
+import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.data.domain.Page;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -38,6 +40,7 @@ public class ProductService {
     private final CategoryDataProvider categoryDataProvider;
     private final ProviderDataProvider providerDataProvider;
     private final S3Utils s3Utils;
+    private final ApplicationEventPublisher eventPublisher;
     static String bucketName = "emotionalcart-bucket"; // TODO
     static String directory = "reviews"; // TODO
 
@@ -65,7 +68,7 @@ public class ProductService {
         List<ReviewImage> reviewImages = uploadAndCreateReviewImages(review.getId(), request.getReviewImages());
         productDataProvider.saveProductReviewImages(reviewImages);
 
-        // TODO review_statistics 점수 반영
+        eventPublisher.publishEvent(new UpdateReviewStatisticEvent(productId, request.getRating()));
         return new CreateProductReview.Response(reviewId);
     }
 

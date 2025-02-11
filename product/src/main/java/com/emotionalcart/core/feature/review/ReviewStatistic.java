@@ -22,6 +22,8 @@ public class ReviewStatistic extends BaseEntity {
     @JoinColumn(name = "product_id")
     private Product product;
 
+    private Integer totalRating = 0;
+
     @NotNull
     private Double averageRating = 0.0;
 
@@ -30,19 +32,28 @@ public class ReviewStatistic extends BaseEntity {
 
     private ReviewStatistic(
             Long productId,
+            Integer totalRating,
             Double averageRating,
             Integer reviewCount
     ) {
         this.productId = productId;
+        this.totalRating = totalRating;
         this.averageRating = averageRating;
         this.reviewCount = reviewCount;
     }
 
     public static ReviewStatistic of(
             Long productId,
+            Integer totalRating,
             Double averageRating,
             Integer reviewCount
     ) {
-        return new ReviewStatistic(productId, averageRating, reviewCount);
+        return new ReviewStatistic(productId, totalRating, averageRating, reviewCount);
+    }
+
+    public void updateStatistics(Integer newRating) {
+        this.totalRating += newRating;
+        this.reviewCount++;
+        this.averageRating = (double) this.totalRating / this.reviewCount;
     }
 }
