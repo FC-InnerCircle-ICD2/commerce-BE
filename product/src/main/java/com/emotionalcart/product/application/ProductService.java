@@ -81,8 +81,9 @@ public class ProductService {
             try {
                 String fileUrl = s3Utils.uploadFile(bucketName, directory, reviewId.toString(), file);
                 return ReviewImage.of(
-                        reviewId, fileUrl,
+                        reviewId,
                         file.getOriginalFilename(),
+                        fileUrl,
                         file.getContentType(),
                         file.getSize(),
                         files.indexOf(file) + 1
