@@ -1,5 +1,6 @@
-package com.emotionalcart.member.domain;
+package com.emotionalcart.core.feature;
 
+import com.emotionalcart.core.base.BaseEntity;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotNull;
 import lombok.AccessLevel;

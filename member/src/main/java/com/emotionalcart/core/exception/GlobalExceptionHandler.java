@@ -1,4 +1,4 @@
-package com.emotionalcart.member.exception;
+package com.emotionalcart.core.exception;
 
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.ExceptionHandler;
