@@ -2,6 +2,8 @@ package com.emotionalcart.order.infra.product.dto;
 
 import lombok.*;
 
+import java.util.List;
+
 @Getter
 @Builder
 @AllArgsConstructor
@@ -18,7 +20,7 @@ public class ProductPrice {
      */
     private double price;
 
-    private ProductOption productOptions;
+    private List<ProductOption> productOptions;
 
     @Getter
     @NoArgsConstructor(access = AccessLevel.PROTECTED)
@@ -54,7 +56,7 @@ public class ProductPrice {
     public ProductPrice(ProductPriceResponse productPriceResponse) {
         this.productId = productPriceResponse.getProductId();
         this.price = productPriceResponse.getPrice();
-        this.productOptions = ProductOption.from(productPriceResponse.getProductOptions());
+        this.productOptions = productPriceResponse.getProductOptions().stream().map(ProductOption::from).toList();
     }
 
     public static ProductPrice convert(ProductPriceResponse productPriceResponse) {
