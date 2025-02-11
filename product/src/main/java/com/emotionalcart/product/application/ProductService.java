@@ -17,6 +17,7 @@ import com.emotionalcart.product.domain.dto.ProductDetail;
 import com.emotionalcart.product.domain.support.*;
 import com.emotionalcart.product.presentation.dto.*;
 import com.emotionalcart.s3.S3Utils;
+import com.emotionalcart.s3.config.S3Constants;
 import jakarta.validation.constraints.NotNull;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
@@ -38,8 +39,6 @@ public class ProductService {
     private final CategoryDataProvider categoryDataProvider;
     private final ProviderDataProvider providerDataProvider;
     private final S3Utils s3Utils;
-    static String bucketName = "emotionalcart-bucket"; // TODO
-    static String directory = "reviews"; // TODO
 
     public Page<ReadProductReviews.Response> readProductReviews(@NotNull Long productId,
                                                                 ReadProductReviews.Request request) {
@@ -75,7 +74,7 @@ public class ProductService {
 
         return files.stream().map(file -> {
             try {
-                String fileUrl = s3Utils.uploadFile(bucketName, directory, reviewId.toString(), file);
+                String fileUrl = s3Utils.uploadFile(S3Constants.REVIEW_DIRECTORY, reviewId.toString(), file);
                 return ReviewImage.of(
                         reviewId,
                         file.getOriginalFilename(),
