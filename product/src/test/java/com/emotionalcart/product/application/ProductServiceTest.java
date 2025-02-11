@@ -15,7 +15,6 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.junit.jupiter.MockitoExtension;
-import org.springframework.context.ApplicationEventPublisher;
 
 import java.util.List;
 import java.util.Set;
@@ -36,14 +35,11 @@ class ProductServiceTest {
     @Mock
     private S3Utils s3Utils;
 
-    @Mock
-    private ApplicationEventPublisher eventPublisher;
-
     private ProductService productService;
 
     @BeforeEach
     void setUp() {
-        productService = new ProductService(productDataProvider, categoryDataProvider, providerDataProvider, s3Utils, eventPublisher);
+        productService = new ProductService(productDataProvider, categoryDataProvider, providerDataProvider, s3Utils);
     }
 
     @Test

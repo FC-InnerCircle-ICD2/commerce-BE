@@ -14,13 +14,11 @@ import com.emotionalcart.product.domain.CategoryDataProvider;
 import com.emotionalcart.product.domain.ProductDataProvider;
 import com.emotionalcart.product.domain.ProviderDataProvider;
 import com.emotionalcart.product.domain.dto.ProductDetail;
-import com.emotionalcart.product.domain.event.UpdateReviewStatisticEvent;
 import com.emotionalcart.product.domain.support.*;
 import com.emotionalcart.product.presentation.dto.*;
 import com.emotionalcart.s3.S3Utils;
 import jakarta.validation.constraints.NotNull;
 import lombok.RequiredArgsConstructor;
-import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.data.domain.Page;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -40,7 +38,6 @@ public class ProductService {
     private final CategoryDataProvider categoryDataProvider;
     private final ProviderDataProvider providerDataProvider;
     private final S3Utils s3Utils;
-    private final ApplicationEventPublisher eventPublisher;
     static String bucketName = "emotionalcart-bucket"; // TODO
     static String directory = "reviews"; // TODO
 
@@ -61,14 +58,13 @@ public class ProductService {
 
     @Transactional
     public CreateProductReview.Response createProductReview(@NotNull Long productId, CreateProductReview.Request request) {
-        productDataProvider.findProduct(productId);
+        Product product = productDataProvider.findProduct(productId);
         productDataProvider.findProductReview(productId, "userId123"); // TODO 실제 userId 반영
         Review review = request.toReviewEntity(productId);
         Long reviewId = productDataProvider.saveProductReview(review);
         List<ReviewImage> reviewImages = uploadAndCreateReviewImages(review.getId(), request.getReviewImages());
         productDataProvider.saveProductReviewImages(reviewImages);
-
-        eventPublisher.publishEvent(new UpdateReviewStatisticEvent(productId, request.getRating()));
+        product.getReviewStatistic().updateStatistics(request.getRating());
         return new CreateProductReview.Response(reviewId);
     }
 
