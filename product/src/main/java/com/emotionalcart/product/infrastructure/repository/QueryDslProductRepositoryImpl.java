@@ -1,7 +1,6 @@
 package com.emotionalcart.product.infrastructure.repository;
 
 import com.emotionalcart.core.feature.product.*;
-import com.emotionalcart.product.domain.dto.ProductOptionDetailWithImages;
 import com.emotionalcart.product.domain.dto.ProductSearch;
 import com.querydsl.core.BooleanBuilder;
 import com.querydsl.core.types.OrderSpecifier;
@@ -73,31 +72,8 @@ public class QueryDslProductRepositoryImpl implements QueryDslProductRepository 
                 .fetch();
     }
           
-    @Override
-    public List<ProductOptionDetailWithImages> findProductOptionDetailsWithImages(Set<Long> optionIds) {
-        QProductOptionDetail productOptionDetail = QProductOptionDetail.productOptionDetail;
-        QProductImage productImage = QProductImage.productImage;
-
-        return queryFactory
-                .select(Projections.constructor(
-                        ProductOptionDetailWithImages.class, // DTO 클래스
-                        productOptionDetail.id,
-                        productOptionDetail.productOption.id,
-                        productOptionDetail.value,
-                        productOptionDetail.quantity,
-                        productOptionDetail.additionalPrice,
-                        productImage.id,
-                        productImage.fileOrder,
-                        productImage.filePath
-                ))
-                .from(productOptionDetail)
-                .leftJoin(productImage).on(productOptionDetail.id.eq(productImage.productOptionDetail.id)) // 이미지와 조인
-                .where(
-                        productOptionDetail.productOption.id.in(optionIds),
-                        productOptionDetail.isDeleted.isFalse(),
-                        productImage.isDeleted.isNull().or(productImage.isDeleted.isFalse()),
-                        productImage.isRepresentative.isNull().or(productImage.isRepresentative.isTrue())
-                )
+                        productOption.isDeleted.isFalse(),
+                        productOptionDetail.isDeleted.isFalse()) // ProductOption 삭제 여부
                 .fetch();
     }
   

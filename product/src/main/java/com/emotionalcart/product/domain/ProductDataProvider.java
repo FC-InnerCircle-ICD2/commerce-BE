@@ -58,6 +58,12 @@ public class ProductDataProvider {
         return reviewImageRepository.findAllByReviewIdInAndIsDeletedIsFalse(reviewIds);
     }
 
+    // 메인 이미지만 조회
+    public List<ProductImage> findAllProductImages(List<Long> productIds) {
+        return productImageRepository.findAllByProductIdInAndIsDeletedIsFalseAndImageType(productIds, ProductImageType.MAIN)
+                .orElseThrow(() -> new ProductException(ErrorCode.NOT_FOUND_PRODUCT_IMAGE));
+    }
+
     // 메인 + 상세 이미지 조회
     public List<ProductImage> findProductImages(Long productId) {
         return productImageRepository.findAllByProductIdAndIsDeletedIsFalse(productId)
@@ -90,10 +96,6 @@ public class ProductDataProvider {
 
     public List<ProductOption> findProductOptions(List<Long> productIds) {
         return productRepository.findProductOptions(productIds);
-    }
-
-    public List<ProductOptionDetailWithImages> findProductOptionDetails(Set<Long> optionIds) {
-        return productRepository.findProductOptionDetailsWithImages(optionIds);
     }
 
     public Map<Long, Double> findProductRatings(List<Long> productIds) {

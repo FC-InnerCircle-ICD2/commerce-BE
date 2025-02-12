@@ -65,6 +65,7 @@ public class ProductService {
 
         Map<Long, Category> categories = categoryDataProvider.findCategoryByIds(products.getCategoryIds());
         Map<Long, Provider> providers = providerDataProvider.findProviderByIds(products.getProviderIds());
+        ProductImages productImages = ProductImages.from(productDataProvider.findAllProductImages(products.ids()));
 
         // DTO 변환
         return ReadProducts.Response.toResponse(productPage, mergedOptions, categories, providers);
