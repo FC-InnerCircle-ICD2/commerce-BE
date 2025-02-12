@@ -17,14 +17,15 @@ public class ProductImage extends BaseImageEntity {
     private Long id;
 
     @NotNull
-    private boolean isRepresentative;
+    private Long productId;
 
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "product_option_detail_id")
-    private ProductOptionDetail productOptionDetail;
+    @NotNull
+    @Enumerated(EnumType.STRING)
+    private ProductImageType imageType;
 
     private ProductImage(
-            boolean isRepresentative,
+            Long productId,
+            ProductImageType imageType,
             String bucketName,
             String originalFileName,
             String filePath,
@@ -32,6 +33,7 @@ public class ProductImage extends BaseImageEntity {
             Long fileSize,
             Integer fileOrder) {
         super(bucketName, originalFileName, filePath, fileType, fileSize, fileOrder);
-        this.isRepresentative = isRepresentative;
+        this.productId = productId;
+        this.imageType = imageType;
     }
 }
