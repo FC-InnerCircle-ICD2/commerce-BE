@@ -38,76 +38,80 @@ public interface ProductControllerDocs {
     @Operation(summary = "상품 상세 조회", description = "특정 상품의 상세 정보를 조회합니다.", responses = {
             @ApiResponse(responseCode = "200", description = "상품 상세 조회 성공", content = @Content(mediaType = "application/json", schema = @Schema(implementation = ReadProductDetails.Response.class), examples = @ExampleObject(value = """
                     {
-                        "options": [
-                            {
-                                "optionDetails": [
-                                    {
-                                        "images": [
-                                            {
-                                                "id": 10,
-                                                "fileOrder": 1,
-                                                "url": "https://your-s3-bucket.s3.amazonaws.com/images/products/100/photo1.jpg",
-                                                "representative": true
-                                            }
-                                        ],
-                                        "id": 1,
-                                        "value": "256GB",
-                                        "quantity": 20,
-                                        "order": 1,
-                                        "additionalPrice": 10000
-                                    },
-                                    {
-                                        "images": [
-                                            {
-                                                "id": 10,
-                                                "fileOrder": 1,
-                                                "url": "https://your-s3-bucket.s3.amazonaws.com/images/products/100/photo1.jpg",
-                                                "representative": true
-                                            }
-                                        ],
-                                        "id": 2,
-                                        "value": "512GB",
-                                        "quantity": 10,
-                                        "order": 2,
-                                        "additionalPrice": 20000
-                                    }
-                                ],
-                                "id": 1,
-                                "name": "저장용량"
-                            }
-                        ],
-                        "id": 100,
-                        "name": "노트북 X1",
-                        "description": "고성능 노트북입니다.",
-                        "price": 1599000,
+                        "id": 1,
+                        "name": "핸드폰",
+                        "description": "핸드폰 설명",
+                        "price": 1500000,
                         "category": {
                             "id": 1,
                             "name": "전자제품",
                             "parentCategoryId": null,
                             "subCategories": [
                                 {
-                                    "id": 2,
+                                    "id": 4,
+                                    "name": "노트북",
+                                    "parentCategoryId": 1,
+                                    "subCategories": []
+                                },
+                                {
+                                    "id": 5,
                                     "name": "스마트폰",
                                     "parentCategoryId": 1,
                                     "subCategories": []
                                 },
                                 {
-                                    "id": 3,
-                                    "name": "노트북",
+                                    "id": 6,
+                                    "name": "태블릿",
                                     "parentCategoryId": 1,
                                     "subCategories": []
                                 }
                             ]
                         },
                         "provider": {
-                            "id": 10,
-                            "name": "ABC 전자",
-                            "description": "전자제품 전문 업체입니다."
+                            "id": 1,
+                            "name": "TechProvider",
+                            "description": "최고의 기술 제품 제공 업체"
                         },
+                        "options": [
+                            {
+                                "id": 5,
+                                "name": "색상",
+                                "optionDetails": [
+                                    {
+                                        "id": 8,
+                                        "value": "검정",
+                                        "quantity": 50,
+                                        "order": 1,
+                                        "additionalPrice": 0
+                                    },
+                                    {
+                                        "id": 12,
+                                        "value": "은색",
+                                        "quantity": 30,
+                                        "order": 2,
+                                        "additionalPrice": 10000
+                                    }
+                                ]
+                            }
+                        ],
                         "reviewStatistic": {
                             "averageRating": 4.5,
                             "reviewCount": 120
-                        }
+                        },
+                        "images": [
+                            {
+                                "id": 1,
+                                "fileOrder": 1,
+                                "url": "https://example.com/images/main.png",
+                                "type": "MAIN"
+                            },
+                            {
+                                "id": 5,
+                                "fileOrder": 1,
+                                "url": "https://example.com/images/datail.png",
+                                "type": "DETAIL"
+                            }
+                        ]
                     }
                     """))),
             @ApiResponse(responseCode = "404", description = "상품을 찾을 수 없습니다.", content = @Content(mediaType = "application/json", examples = @ExampleObject(value = """

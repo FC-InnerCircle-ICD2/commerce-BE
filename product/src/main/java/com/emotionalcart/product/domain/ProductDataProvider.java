@@ -3,12 +3,9 @@ package com.emotionalcart.product.domain;
 import com.emotionalcart.core.exception.ErrorCode;
 import com.emotionalcart.core.exception.ProductException;
 import com.emotionalcart.core.feature.category.Category;
+import com.emotionalcart.core.feature.product.*;
 import com.emotionalcart.product.domain.dto.ProductOptionDetailWithImages;
 import com.emotionalcart.product.domain.dto.ProductSearch;
-import com.emotionalcart.core.feature.product.Product;
-import com.emotionalcart.core.feature.product.ProductImage;
-import com.emotionalcart.core.feature.product.ProductOption;
-import com.emotionalcart.core.feature.product.ProductOptionDetail;
 import com.emotionalcart.core.feature.provider.Provider;
 import com.emotionalcart.core.feature.review.Review;
 import com.emotionalcart.core.feature.review.ReviewImage;
@@ -61,11 +58,9 @@ public class ProductDataProvider {
         return reviewImageRepository.findAllByReviewIdInAndIsDeletedIsFalse(reviewIds);
     }
 
-    // 상품 이미지 관련 메서드
-    public List<ProductImage> findAllProductImagesByProductOptionDetailId(Long productOptionDetailId) {
-        return productImageRepository
-                .findAllByProductOptionDetailIdAndIsDeletedIsFalseOrderByIsRepresentativeAscFileOrderAsc(
-                        productOptionDetailId)
+    // 메인 + 상세 이미지 조회
+    public List<ProductImage> findProductImages(Long productId) {
+        return productImageRepository.findAllByProductIdAndIsDeletedIsFalse(productId)
                 .orElseThrow(() -> new ProductException(ErrorCode.NOT_FOUND_PRODUCT_IMAGE));
     }
 

@@ -3,46 +3,26 @@ package com.emotionalcart.product.application;
 import com.emotionalcart.core.feature.product.*;
 import com.emotionalcart.core.feature.provider.Provider;
 import com.emotionalcart.core.feature.review.Review;
-import com.emotionalcart.product.domain.dto.ProductOptionDetailWithImages;
-import com.emotionalcart.product.domain.support.ProductOptionDetails;
-import com.emotionalcart.product.domain.support.ProductOptions;
-import com.emotionalcart.product.domain.support.Products;
 import com.emotionalcart.core.exception.ErrorCode;
 import com.emotionalcart.core.exception.ProductException;
 import com.emotionalcart.core.feature.category.Category;
 import com.emotionalcart.product.domain.ProductDataProvider;
 import com.emotionalcart.product.domain.dto.ProductDetail;
-import com.emotionalcart.product.domain.support.ProductDetails;
-import com.emotionalcart.product.domain.support.ReviewImages;
-import com.emotionalcart.product.domain.support.Reviews;
-import com.emotionalcart.product.presentation.dto.ReadCategories;
-import com.emotionalcart.product.presentation.dto.ReadProductCategories;
-import com.emotionalcart.product.presentation.dto.ReadProductDetails;
-import com.emotionalcart.product.presentation.dto.ReadProductOptionDetails;
-import com.emotionalcart.product.presentation.dto.ReadProductOptions;
-import com.emotionalcart.product.presentation.dto.ReadProductReviewStatistic;
-import com.emotionalcart.product.presentation.dto.ReadProductReviews;
-import com.emotionalcart.product.presentation.dto.ReadProviders;
+import com.emotionalcart.product.domain.support.*;
 import com.emotionalcart.product.domain.CategoryDataProvider;
 import com.emotionalcart.product.domain.ProviderDataProvider;
-import com.emotionalcart.product.presentation.dto.ReadProducts;
 import com.emotionalcart.core.feature.product.Product;
-import com.emotionalcart.core.feature.product.ProductImage;
 import com.emotionalcart.core.feature.product.ProductOption;
 import com.emotionalcart.core.feature.product.ProductOptionDetail;
 
-import com.emotionalcart.product.presentation.dto.ReadProductsPrice;
-import com.emotionalcart.product.presentation.dto.ReadProductsValidate;
+import com.emotionalcart.product.presentation.dto.*;
 import jakarta.validation.constraints.NotNull;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 import java.util.stream.Collectors;
 
 @Service
@@ -124,14 +104,7 @@ public class ProductService {
             List<ReadProductOptionDetails.Response> productOptionDetailResponses = new ArrayList<>();
 
             for (ProductOptionDetail productOptionDetail : productOptionDetails) {
-                // 상품 옵션 상세 이미지 조회
-                List<ProductImage> productImages = productDataProvider
-                        .findAllProductImagesByProductOptionDetailId(
-                                productOptionDetail.getId());
-
-                ReadProductOptionDetails.Response productOptionDetailResponse = ReadProductOptionDetails.Response
-                        .toResponse(productOptionDetail, productImages);
-
+                ReadProductOptionDetails.Response productOptionDetailResponse = ReadProductOptionDetails.Response.toResponse(productOptionDetail);
                 productOptionDetailResponses.add(productOptionDetailResponse);
             }
 
@@ -153,8 +126,12 @@ public class ProductService {
         ReadProviders.Response providerResponse = ReadProviders.Response
                 .toResponse(providerDataProvider.findProviderById(product.getProviderId()));
 
+        // 상품 이미지
+        List<ReadProductImages.Response> productImages = ReadProductImages.Response
+                .toResponse(productDataProvider.findProductImages(productId));
+
         return ReadProductDetails.Response.toResponse(product, productOptionsResponses, categoryResponse,
-                providerResponse, reviewStatistic);
+                providerResponse, reviewStatistic, productImages);
     }
 
     public void readProductsValidate(List<ReadProductsValidate.Request> requests) {
