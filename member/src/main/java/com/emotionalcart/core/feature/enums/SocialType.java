@@ -1,4 +1,4 @@
-package com.emotionalcart.member.domain.enums;
+package com.emotionalcart.core.feature.enums;
 
 public enum SocialType {
     KAKAO,

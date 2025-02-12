@@ -19,6 +19,7 @@ dependencies {
     implementation("org.springframework.boot:spring-boot-starter-web")
     implementation("org.springframework.boot:spring-boot-starter-oauth2-client")
     implementation("org.springframework.boot:spring-boot-starter-security")
+    implementation("org.springframework.cloud:spring-cloud-starter-openfeign")
 
     implementation ("io.jsonwebtoken:jjwt-api:0.12.3")
     implementation ("io.jsonwebtoken:jjwt-impl:0.12.3")
@@ -30,6 +31,12 @@ dependencies {
     developmentOnly("org.springframework.boot:spring-boot-devtools")
     testImplementation(platform("org.junit:junit-bom"))
     testImplementation("org.junit.jupiter:junit-jupiter")
+}
+
+dependencyManagement {
+    imports {
+        mavenBom("org.springframework.cloud:spring-cloud-dependencies:2023.0.0")
+    }
 }
 
 tasks.test {
