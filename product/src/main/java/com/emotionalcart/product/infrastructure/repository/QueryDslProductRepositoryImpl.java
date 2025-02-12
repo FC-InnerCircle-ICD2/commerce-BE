@@ -20,8 +20,6 @@ import static com.emotionalcart.core.feature.product.QProduct.product;
 import static com.emotionalcart.core.feature.product.QProductOption.productOption;
 import static com.emotionalcart.core.feature.product.QProductOptionDetail.productOptionDetail;
 import static com.emotionalcart.core.feature.review.QReviewStatistic.reviewStatistic;
-import static com.emotionalcart.core.feature.category.QCategory.category;
-import static com.emotionalcart.core.feature.provider.QProvider.provider;
 
 @RequiredArgsConstructor
 public class QueryDslProductRepositoryImpl implements QueryDslProductRepository {
@@ -65,13 +63,11 @@ public class QueryDslProductRepositoryImpl implements QueryDslProductRepository 
     @Override
     public List<ProductOption> findProductOptions(List<Long> productIds) {
         return queryFactory
-                .selectFrom(productOption)
+                .selectDistinct(productOption)
+                .from(productOption)
+                .leftJoin(productOption.details, productOptionDetail).fetchJoin()
                 .where(
                         productOption.product.id.in(productIds), // productIds 조건
-                        productOption.isDeleted.isFalse()) // ProductOption 삭제 여부
-                .fetch();
-    }
-          
                         productOption.isDeleted.isFalse(),
                         productOptionDetail.isDeleted.isFalse()) // ProductOption 삭제 여부
                 .fetch();

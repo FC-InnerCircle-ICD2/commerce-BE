@@ -51,40 +51,19 @@ public class ProductService {
     public Page<ReadProducts.Response> readProducts(ReadProducts.Request request) {
         Page<Product> productPage = productDataProvider.findAllProducts(request.toProductSearch());
 
-        // Page<Product>를 Products로 변환
+
+
         Products products = Products.from(productPage);
 
         ProductOptions productOptions = ProductOptions.from(productDataProvider.findProductOptions(products.ids()));
-        ProductOptionDetails optionDetails = ProductOptionDetails.from(productDataProvider.findProductOptionDetails(productOptions.ids()));
-
-        // ProductOptionResponse와 Details 병합 처리
-        Map<Long, List<ReadProducts.ProductOptionResponse>> groupedOptions = productOptions.groupByProductId();
-        Map<Long, List<ReadProducts.ProductOptionDetailResponse>> groupedDetails = optionDetails.groupByOptionId();
-
-        Map<Long, List<ReadProducts.ProductOptionResponse>> mergedOptions = mergeOptionsWithDetails(groupedOptions, groupedDetails);
-
         Map<Long, Category> categories = categoryDataProvider.findCategoryByIds(products.getCategoryIds());
         Map<Long, Provider> providers = providerDataProvider.findProviderByIds(products.getProviderIds());
         ProductImages productImages = ProductImages.from(productDataProvider.findAllProductImages(products.ids()));
 
         // DTO 변환
-        return ReadProducts.Response.toResponse(productPage, mergedOptions, categories, providers);
+        return ReadProducts.Response.toResponse(productPage, productOptions, categories, providers, productImages);
     }
 
-    private Map<Long, List<ReadProducts.ProductOptionResponse>> mergeOptionsWithDetails(
-            Map<Long, List<ReadProducts.ProductOptionResponse>> groupedOptions,
-            Map<Long, List<ReadProducts.ProductOptionDetailResponse>> groupedDetails
-    ) {
-        return groupedOptions.entrySet().stream()
-                .collect(Collectors.toMap(
-                        Map.Entry::getKey,
-                        entry -> entry.getValue().stream()
-                                .map(option -> new ReadProducts.ProductOptionResponse(
-                                        option.getId(), option.getName(),
-                                        groupedDetails.getOrDefault(option.getId(), List.of()))
-                                )
-                                .collect(Collectors.toList())
-                ));
     }
       
     public ReadProductDetails.Response getProductDetail(Long productId) {
