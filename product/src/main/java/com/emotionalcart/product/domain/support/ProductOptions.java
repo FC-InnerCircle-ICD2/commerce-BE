@@ -23,7 +23,7 @@ public class ProductOptions {
         return options.stream()
                 .collect(Collectors.groupingBy(
                         ProductOption::getProductId,
-                        Collectors.mapping(ReadProducts.ProductOptionResponse::new, Collectors.toList())
+                        Collectors.mapping(ReadProducts.ProductOptionResponse::toResponse, Collectors.toList())
                 ));
     }
 

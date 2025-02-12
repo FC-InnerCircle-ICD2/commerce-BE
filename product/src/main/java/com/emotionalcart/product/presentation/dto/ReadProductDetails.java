@@ -18,10 +18,12 @@ public class ReadProductDetails {
         private ReadProviders.Response provider;
         private List<ReadProductOptions.Response> options;
         private ReadProductReviewStatistic.Response reviewStatistic;
+        private List<ReadProductImages.Response> images;
 
         public Response(Product product,
                 List<ReadProductOptions.Response> options, ReadProductCategories.Response categoryResponse,
-                ReadProviders.Response providerResponse, ReadProductReviewStatistic.Response reviewStatistic) {
+                ReadProviders.Response providerResponse, ReadProductReviewStatistic.Response reviewStatistic,
+                List<ReadProductImages.Response> images) {
             this.id = product.getId();
             this.name = product.getName();
             this.description = product.getDescription();
@@ -30,12 +32,14 @@ public class ReadProductDetails {
             this.provider = providerResponse;
             this.options = options;
             this.reviewStatistic = reviewStatistic;
+            this.images = images;
         }
 
         public static Response toResponse(Product product,
                 List<ReadProductOptions.Response> options, ReadProductCategories.Response categoryResponse,
-                ReadProviders.Response providerResponse, ReadProductReviewStatistic.Response reviewStatistic) {
-            return new Response(product, options, categoryResponse, providerResponse, reviewStatistic);
+                ReadProviders.Response providerResponse, ReadProductReviewStatistic.Response reviewStatistic,
+                List<ReadProductImages.Response> images) {
+            return new Response(product, options, categoryResponse, providerResponse, reviewStatistic, images);
         }
     }
 }

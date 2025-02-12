@@ -31,7 +31,7 @@ public class ProductController implements ProductControllerDocs {
 
     // 상품 상세 조회
     @Override
-    public ResponseEntity<ReadProductDetails.Response> getProductDetail(@PathVariable Long productId) {
+    public ResponseEntity<ReadProductDetails.Response> getProductDetail(@PathVariable("productId") Long productId) {
         return ResponseEntity.ok(productService.getProductDetail(productId));
     }
 

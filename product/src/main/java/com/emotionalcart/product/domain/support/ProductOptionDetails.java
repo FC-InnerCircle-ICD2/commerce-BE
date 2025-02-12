@@ -18,15 +18,4 @@ public class ProductOptionDetails {
     public static ProductOptionDetails from(List<ProductOptionDetailWithImages> options){
         return new ProductOptionDetails(options);
     }
-
-    // Option ID 기준으로 그룹화
-    public Map<Long, List<ReadProducts.ProductOptionDetailResponse>> groupByOptionId() {
-        return optionDetails.stream().collect(Collectors.groupingBy(
-                ProductOptionDetailWithImages::getOptionId,
-                Collectors.mapping(
-                        ReadProducts.ProductOptionDetailResponse::new,
-                        Collectors.toList()
-                )
-        ));
-    }
 }

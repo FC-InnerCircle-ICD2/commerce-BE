@@ -36,9 +36,6 @@ public class ProductOptionDetail extends BaseEntity {
     @JoinColumn(name = "product_option_id")
     private ProductOption productOption;
 
-    @OneToMany(mappedBy = "productOptionDetail", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)
-    private List<ProductImage> images;
-
     private ProductOptionDetail(
             String value,
             Integer quantity,
