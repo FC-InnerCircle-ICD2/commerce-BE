@@ -51,8 +51,6 @@ public class ProductService {
     public Page<ReadProducts.Response> readProducts(ReadProducts.Request request) {
         Page<Product> productPage = productDataProvider.findAllProducts(request.toProductSearch());
 
-
-
         Products products = Products.from(productPage);
 
         ProductOptions productOptions = ProductOptions.from(productDataProvider.findProductOptions(products.ids()));
@@ -62,8 +60,6 @@ public class ProductService {
 
         // DTO 변환
         return ReadProducts.Response.toResponse(productPage, productOptions, categories, providers, productImages);
-    }
-
     }
       
     public ReadProductDetails.Response getProductDetail(Long productId) {
