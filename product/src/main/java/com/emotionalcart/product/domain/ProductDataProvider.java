@@ -56,8 +56,8 @@ public class ProductDataProvider {
                 });
     }
 
-    public Long saveProductReview(Review review) {
-        return reviewRepository.save(review).getId();
+    public void saveProductReview(Review review) {
+        reviewRepository.save(review);
     }
 
     public void saveProductReviewImages(List<ReviewImage> reviewImages) {

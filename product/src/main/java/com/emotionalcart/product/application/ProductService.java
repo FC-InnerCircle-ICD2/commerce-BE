@@ -59,12 +59,13 @@ public class ProductService {
     public CreateProductReview.Response createProductReview(@NotNull Long productId, CreateProductReview.Request request) {
         Product product = productDataProvider.findProduct(productId);
         productDataProvider.findProductReview(productId, "userId123"); // TODO 실제 userId 반영
+        // TODO 유저 구매내역 확인
         Review review = request.toReviewEntity(productId);
-        Long reviewId = productDataProvider.saveProductReview(review);
+        productDataProvider.saveProductReview(review);
         List<ReviewImage> reviewImages = uploadAndCreateReviewImages(review.getId(), request.getReviewImages());
         productDataProvider.saveProductReviewImages(reviewImages);
         product.getReviewStatistic().updateStatistics(request.getRating());
-        return new CreateProductReview.Response(reviewId);
+        return new CreateProductReview.Response(review.getId());
     }
 
     private List<ReviewImage> uploadAndCreateReviewImages(Long reviewId, List<MultipartFile> files) {
