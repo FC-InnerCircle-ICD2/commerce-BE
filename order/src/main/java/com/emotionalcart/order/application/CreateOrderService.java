@@ -8,6 +8,7 @@ import com.emotionalcart.order.domain.entity.OrderItem;
 import com.emotionalcart.order.domain.entity.OrderItemHistory;
 import com.emotionalcart.order.domain.entity.OrderStatistics;
 import com.emotionalcart.order.domain.entity.Orders;
+import com.emotionalcart.order.domain.repository.OrderItemHistoryRepository;
 import com.emotionalcart.order.domain.repository.OrderStatisticsRepository;
 import com.emotionalcart.order.infra.advice.exceptions.InvalidValueRequestException;
 import com.emotionalcart.order.infra.advice.exceptions.RedissonLockException;
@@ -38,6 +39,7 @@ public class CreateOrderService {
 
     private final OrderRepository orderRepository;
     private final OrderStatisticsRepository orderStatisticsRepository;
+    private final OrderItemHistoryRepository orderItemHistoryRepository;
     private final PaymentService paymentService;
     private final ProductService productService;
     private final RedissonMultiLockProvider redissonMultiLockProvider;
@@ -79,8 +81,9 @@ public class CreateOrderService {
     }
 
     private void orderHistory(Orders orders) {
-        List<OrderItemHistory> orderItemHistoryList = orders.getOrderItems().stream().map(OrderItemHistory::createOrderItemHistory).toList();
-        
+        List<OrderItemHistory> orderItemHistoryList =
+            orders.getOrderItems().stream().map(OrderItemHistory::createOrderItemHistory).toList();
+        orderItemHistoryRepository.saveAll(orderItemHistoryList);
     }
 
     private void updateQuantity(Orders orders) {
@@ -88,11 +91,11 @@ public class CreateOrderService {
         for (OrderItem orderItem : orders.getOrderItems()) {
             ProductStockRequest request = ProductStockRequest.of(orderItem.getProductId());
             orderItem.getOrderItemOptions().forEach(option -> request.addOption(option.getProductOptionId(),
-                    option.getProductOptionDetailId(),
-                    orderItem.getQuantity()));
+                                                                                option.getProductOptionDetailId(),
+                                                                                orderItem.getQuantity()));
             productStockRequests.add(request);
         }
-//        productService.updateProductStock(productStockRequests);
+        //        productService.updateProductStock(productStockRequests);
     }
 
     private void validateQuantity(CreateOrder createOrder) {
@@ -100,8 +103,8 @@ public class CreateOrderService {
         for (CreateOrderItem orderItem : createOrder.getOrderItems()) {
             ProductValidationRequest request = ProductValidationRequest.of(orderItem.getProductId());
             orderItem.getOrderItemOptions().forEach(option -> request.addOption(option.getProductOptionId(),
-                    option.getProductOptionDetailId(),
-                    orderItem.getQuantity()));
+                                                                                option.getProductOptionDetailId(),
+                                                                                orderItem.getQuantity()));
             productValidationRequests.add(request);
         }
         productService.isValidProduct(productValidationRequests);
@@ -121,7 +124,7 @@ public class CreateOrderService {
         for (CreateOrderItem orderItem : createOrder.getOrderItems()) {
             ProductPriceRequest productPriceRequest = ProductPriceRequest.of(orderItem.getProductId());
             orderItem.getOrderItemOptions().forEach(option -> productPriceRequest.addOption(option.getProductOptionId(),
-                    option.getProductOptionDetailId()));
+                                                                                            option.getProductOptionDetailId()));
             productPriceRequests.add(productPriceRequest);
         }
         log.info("request product price: {}", productPriceRequests);
@@ -131,7 +134,7 @@ public class CreateOrderService {
     private void validatePrice(List<ProductPriceRequest> productPriceRequests) {
         List<ProductPrice> productPriceList = productService.getProductPrice(productPriceRequests);
         Map<Long, Double> productPriceMap = productPriceList.stream()
-                .collect(Collectors.toMap(ProductPrice::getProductId, ProductPrice::getPrice));
+            .collect(Collectors.toMap(ProductPrice::getProductId, ProductPrice::getPrice));
         log.info("response product price: {}", productPriceMap);
         for (ProductPrice productPrice : productPriceList) {
             if (productPriceMap.get(productPrice.getProductId()) != productPrice.getPrice()) {
@@ -148,8 +151,8 @@ public class CreateOrderService {
     private void orderStatistics(List<OrderItem> orderItems) {
         for (OrderItem orderItem : orderItems) {
             OrderStatistics orderStatistics =
-                    orderStatisticsRepository.findByProductIdAndCategoryId(orderItem.getProductId(), orderItem.getCategoryId()).orElse(
-                            OrderStatistics.create(orderItem));
+                orderStatisticsRepository.findByProductIdAndCategoryId(orderItem.getProductId(), orderItem.getCategoryId()).orElse(
+                    OrderStatistics.create(orderItem));
             orderStatistics.updateOrderStatistics(orderItem);
             orderStatisticsRepository.save(orderStatistics);
         }
