@@ -30,9 +30,8 @@ public class ProductService {
      * @param productValidationRequest
      * @return
      */
-    public boolean isValidProduct(List<ProductValidationRequest> productValidationRequest) {
-        ResponseEntity<Void> response = productFeignClient.validateProductPrice(productValidationRequest);
-        return response.getStatusCode().is2xxSuccessful();
+    public void isValidProduct(List<ProductValidationRequest> productValidationRequest) {
+        productFeignClient.validateProductPrice(productValidationRequest);
     }
 
     /**
@@ -41,9 +40,8 @@ public class ProductService {
      * @param productStockRequest
      * @return
      */
-    public boolean updateProductStock(List<ProductStockRequest> productStockRequest) {
-        ResponseEntity<Void> response = productFeignClient.updateProductStock(productStockRequest);
-        return response.getStatusCode().is2xxSuccessful();
+    public void updateProductStock(List<ProductStockRequest> productStockRequest) {
+        productFeignClient.updateProductStock(productStockRequest);
     }
 
 }
