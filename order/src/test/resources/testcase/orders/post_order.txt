@@ -8,11 +8,11 @@
   },
   "orderItems": [
     {
-      "productId": 5976046,
+      "productId": 4002396259960888885,
       "productOptionDetails": [
         {
-          "productOptionId": 3995554923459105000,
-          "productOptionDetailId": 3995554923454071000,
+          "productOptionId": 4002396260259129221,
+          "productOptionDetailId": 4002396260257538495,
           "quantity": 1,
           "additionalPrice": 0
         }

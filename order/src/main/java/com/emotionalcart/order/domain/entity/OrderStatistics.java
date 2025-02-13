@@ -1,6 +1,5 @@
 package com.emotionalcart.order.domain.entity;
 
-import com.emotionalcart.order.domain.dto.CreateOrderItem;
 import com.emotionalcart.order.domain.generator.IdGenerator;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -53,18 +52,18 @@ public class OrderStatistics extends AuditableEntity {
     @LastModifiedDate
     private LocalDateTime lastOrderedAt;
 
-    public OrderStatistics(CreateOrderItem orderItem) {
+    public OrderStatistics(OrderItem orderItem) {
         this.productId = orderItem.getProductId();
         this.categoryId = orderItem.getCategoryId();
         this.totalOrder = 0L;
         this.totalQuantitySold = 0L;
     }
 
-    public static OrderStatistics create(CreateOrderItem orderItem) {
+    public static OrderStatistics create(OrderItem orderItem) {
         return new OrderStatistics(orderItem);
     }
 
-    public void updateOrderStatistics(CreateOrderItem orderItem) {
+    public void updateOrderStatistics(OrderItem orderItem) {
         this.totalOrder++;
         this.totalQuantitySold += orderItem.getQuantity();
     }

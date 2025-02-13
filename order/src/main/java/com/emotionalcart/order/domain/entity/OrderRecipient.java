@@ -38,7 +38,7 @@ public class OrderRecipient {
     /**
      * 수신자 전화번호
      */
-    @Column(nullable = false, length = 11)
+    @Column(nullable = false, length = 13)
     private String recipientPhone;
 
     /**
@@ -65,7 +65,7 @@ public class OrderRecipient {
         orderRecipient.recipientName = deliveryInfo.getName();
         orderRecipient.recipientPhone = deliveryInfo.getPhoneNumber();
         orderRecipient.address =
-            OrderAddress.createNewOrderAddress(deliveryInfo.getZonecode(), deliveryInfo.getAddress(), deliveryInfo.getDetailAddress());
+                OrderAddress.createNewOrderAddress(deliveryInfo.getZonecode(), deliveryInfo.getAddress(), deliveryInfo.getDetailAddress());
         orderRecipient.deliveryRequirement = deliveryInfo.getDeliveryMemo();
         return orderRecipient;
     }

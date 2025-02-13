@@ -5,6 +5,7 @@ import com.emotionalcart.order.domain.dto.CreateOrder;
 import com.emotionalcart.order.domain.dto.CreateOrderItem;
 import com.emotionalcart.order.domain.dto.CreatedOrder;
 import com.emotionalcart.order.domain.entity.OrderItem;
+import com.emotionalcart.order.domain.entity.OrderItemHistory;
 import com.emotionalcart.order.domain.entity.OrderStatistics;
 import com.emotionalcart.order.domain.entity.Orders;
 import com.emotionalcart.order.domain.repository.OrderStatisticsRepository;
@@ -61,8 +62,9 @@ public class CreateOrderService {
                 requestOriginalPriceAndValidatePrice(createOrder);
                 payment(orders, createOrder.getCardInfo());
                 shipment(orders);
-                orders.addHistory();
+                orderHistory(orders);
                 updateQuantity(orders);
+                orderStatistics(orders.getOrderItems());
             } else {
                 throw new RedissonLockException("잠금 획득 실패: 다른 사용자가 처리 중입니다.");
             }
@@ -76,16 +78,21 @@ public class CreateOrderService {
         return CreatedOrder.from(orders);
     }
 
+    private void orderHistory(Orders orders) {
+        List<OrderItemHistory> orderItemHistoryList = orders.getOrderItems().stream().map(OrderItemHistory::createOrderItemHistory).toList();
+        
+    }
+
     private void updateQuantity(Orders orders) {
         List<ProductStockRequest> productStockRequests = new ArrayList<>();
         for (OrderItem orderItem : orders.getOrderItems()) {
             ProductStockRequest request = ProductStockRequest.of(orderItem.getProductId());
             orderItem.getOrderItemOptions().forEach(option -> request.addOption(option.getProductOptionId(),
-                                                                                option.getProductOptionDetailId(),
-                                                                                orderItem.getQuantity()));
+                    option.getProductOptionDetailId(),
+                    orderItem.getQuantity()));
             productStockRequests.add(request);
         }
-        productService.updateProductStock(productStockRequests);
+//        productService.updateProductStock(productStockRequests);
     }
 
     private void validateQuantity(CreateOrder createOrder) {
@@ -93,8 +100,8 @@ public class CreateOrderService {
         for (CreateOrderItem orderItem : createOrder.getOrderItems()) {
             ProductValidationRequest request = ProductValidationRequest.of(orderItem.getProductId());
             orderItem.getOrderItemOptions().forEach(option -> request.addOption(option.getProductOptionId(),
-                                                                                option.getProductOptionDetailId(),
-                                                                                orderItem.getQuantity()));
+                    option.getProductOptionDetailId(),
+                    orderItem.getQuantity()));
             productValidationRequests.add(request);
         }
         productService.isValidProduct(productValidationRequests);
@@ -114,7 +121,7 @@ public class CreateOrderService {
         for (CreateOrderItem orderItem : createOrder.getOrderItems()) {
             ProductPriceRequest productPriceRequest = ProductPriceRequest.of(orderItem.getProductId());
             orderItem.getOrderItemOptions().forEach(option -> productPriceRequest.addOption(option.getProductOptionId(),
-                                                                                            option.getProductOptionDetailId()));
+                    option.getProductOptionDetailId()));
             productPriceRequests.add(productPriceRequest);
         }
         log.info("request product price: {}", productPriceRequests);
@@ -124,7 +131,7 @@ public class CreateOrderService {
     private void validatePrice(List<ProductPriceRequest> productPriceRequests) {
         List<ProductPrice> productPriceList = productService.getProductPrice(productPriceRequests);
         Map<Long, Double> productPriceMap = productPriceList.stream()
-            .collect(Collectors.toMap(ProductPrice::getProductId, ProductPrice::getPrice));
+                .collect(Collectors.toMap(ProductPrice::getProductId, ProductPrice::getPrice));
         log.info("response product price: {}", productPriceMap);
         for (ProductPrice productPrice : productPriceList) {
             if (productPriceMap.get(productPrice.getProductId()) != productPrice.getPrice()) {
@@ -138,11 +145,11 @@ public class CreateOrderService {
      *
      * @param orderItems
      */
-    private void orderStatistics(List<CreateOrderItem> orderItems) {
-        for (CreateOrderItem orderItem : orderItems) {
+    private void orderStatistics(List<OrderItem> orderItems) {
+        for (OrderItem orderItem : orderItems) {
             OrderStatistics orderStatistics =
-                orderStatisticsRepository.findByProductIdAndCategoryId(orderItem.getProductId(), orderItem.getCategoryId()).orElse(
-                    OrderStatistics.create(orderItem));
+                    orderStatisticsRepository.findByProductIdAndCategoryId(orderItem.getProductId(), orderItem.getCategoryId()).orElse(
+                            OrderStatistics.create(orderItem));
             orderStatistics.updateOrderStatistics(orderItem);
             orderStatisticsRepository.save(orderStatistics);
         }
