@@ -33,7 +33,7 @@ public class GlobalExceptionHandler {
     private ResponseEntity<ErrorResponse> buildErrorResponse(Exception ex, OrderErrorCode errorCode, HttpStatus status) {
         log.error("{} 발생: {}", ex.getClass().getName(), ex.getMessage(), ex);
 
-        ErrorResponse errorResponse = new ErrorResponse(errorCode.getErrorCode(), errorCode.getMessage());
+        ErrorResponse errorResponse = new ErrorResponse(errorCode.getErrorCode(), ex.getMessage());
         return ResponseEntity.status(status).body(errorResponse);
     }
 
@@ -79,17 +79,13 @@ public class GlobalExceptionHandler {
     @ExceptionHandler({RequiredValueException.class})
     @ResponseStatus(HttpStatus.BAD_REQUEST)
     public ResponseEntity<ErrorResponse> handleRequiredValueException(Exception ex) {
-        ErrorResponse errorResponse = new ErrorResponse("ORDER-0008", ex.getMessage());
-        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(errorResponse);
+        return buildErrorResponse(ex, OrderErrorCode.INVALID_PRODUCT, HttpStatus.BAD_REQUEST);
     }
 
     @ExceptionHandler({InvalidValueRequestException.class})
     @ResponseStatus(HttpStatus.BAD_REQUEST)
     public ResponseEntity<ErrorResponse> handleInvalidValueRequestException(InvalidValueRequestException ex) {
-
-        ErrorResponse errorResponse = new ErrorResponse(OrderErrorCode.BAD_REQUEST.getErrorCode(), ex.getMessage());
-        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(errorResponse);
-
+        return buildErrorResponse(ex, OrderErrorCode.BAD_REQUEST, HttpStatus.BAD_REQUEST);
     }
 
     /**
