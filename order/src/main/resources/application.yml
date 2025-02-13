@@ -29,7 +29,7 @@ springdoc:
   swagger-ui:
     urls:
       - name: Order Service
-        url: ${ORDER_SERVER_URL:http://localhost}:8080/v3/api-docs
+        url: ${ORDER_SERVER_URL:http://localhost}:${server.port}/v3/api-docs
       - name: Product Service
         url: ${PRODUCT_SERVER_URL:http://localhost}:8080/api/v3/api-docs
 aws:
