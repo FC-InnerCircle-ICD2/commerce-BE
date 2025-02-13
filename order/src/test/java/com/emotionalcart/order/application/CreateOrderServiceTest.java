@@ -6,6 +6,7 @@ import com.emotionalcart.order.domain.dto.CreateOrderItemOption;
 import com.emotionalcart.order.domain.dto.CreatedOrder;
 import com.emotionalcart.order.domain.entity.Orders;
 import com.emotionalcart.order.domain.enums.PaymentMethod;
+import com.emotionalcart.order.domain.repository.OrderStatisticsRepository;
 import com.emotionalcart.order.infra.advice.exceptions.InvalidValueRequestException;
 import com.emotionalcart.order.infra.advice.exceptions.RequiredValueException;
 import com.emotionalcart.order.infra.order.OrderRepository;
@@ -37,6 +38,9 @@ class CreateOrderServiceTest {
     private OrderRepository orderRepository;
 
     @Mock
+    private OrderStatisticsRepository orderStatisticsRepository;
+
+    @Mock
     private PaymentService paymentService;
 
     @Mock
@@ -58,15 +62,15 @@ class CreateOrderServiceTest {
         Orders mockOrder = mock(Orders.class);
 
         CreateOrder createOrder = CreateOrder.builder()
-            .paymentMethod(PaymentMethod.CARD)
-            .build();
+                .paymentMethod(PaymentMethod.CARD)
+                .build();
 
         createOrder.addItem(CreateOrderItem.builder()
-                                .productId(1L)
-                                .productName("상품명")
-                                .categoryId(1L)
-                                .orderItemOptions(List.of(CreateOrderItemOption.builder().productOptionId(1L).productOptionDetailId(1L).build()))
-                                .price(1000L).quantity(1).build());
+                .productId(1L)
+                .productName("상품명")
+                .categoryId(1L)
+                .orderItemOptions(List.of(CreateOrderItemOption.builder().productOptionId(1L).productOptionDetailId(1L).build()))
+                .price(1000L).quantity(1).build());
         createOrder.createNewCardInfo("1234567890123456", getValidExpirationDate(), "123", "ddd");
         createOrder.createDeliveryInfo("이름", "010-1234-5678", "12345", "서울시 강남구", "상세주소", "비고");
 
@@ -97,8 +101,8 @@ class CreateOrderServiceTest {
         CreateOrder createOrder = CreateOrder.builder().build();
         // when & then
         assertThatThrownBy(() -> createOrderService.createOrder(createOrder))
-            .isInstanceOf(RequiredValueException.class)
-            .hasMessageContaining("주문 상품을 선택해주세요.");
+                .isInstanceOf(RequiredValueException.class)
+                .hasMessageContaining("주문 상품을 선택해주세요.");
     }
 
     @Test
@@ -108,8 +112,8 @@ class CreateOrderServiceTest {
         CreateOrder createOrder = CreateOrder.builder().build();
         // when & then
         assertThatThrownBy(() -> createOrderService.createOrder(createOrder))
-            .isInstanceOf(RequiredValueException.class)
-            .hasMessageContaining("결제 수단을 선택해주세요.");
+                .isInstanceOf(RequiredValueException.class)
+                .hasMessageContaining("결제 수단을 선택해주세요.");
     }
 
     @Test
@@ -118,15 +122,15 @@ class CreateOrderServiceTest {
         // given
         CreateOrder createOrder = CreateOrder.builder().paymentMethod(PaymentMethod.TOSS).build();
         createOrder.addItem(CreateOrderItem.builder()
-                                .productId(1L)
-                                .productName("상품명")
-                                .price(1000L).quantity(1).build());
+                .productId(1L)
+                .productName("상품명")
+                .price(1000L).quantity(1).build());
         createOrder.createDeliveryInfo(null, null, null, null, null, null);
 
         // when & then
         assertThatThrownBy(() -> createOrderService.createOrder(createOrder))
-            .isInstanceOfAny(InvalidValueRequestException.class)
-            .hasMessageContaining("결제 수단은 카드만 가능합니다.");
+                .isInstanceOfAny(InvalidValueRequestException.class)
+                .hasMessageContaining("결제 수단은 카드만 가능합니다.");
 
     }
 
@@ -136,15 +140,15 @@ class CreateOrderServiceTest {
         // given
         CreateOrder createOrder = CreateOrder.builder().paymentMethod(PaymentMethod.CARD).build();
         createOrder.addItem(CreateOrderItem.builder()
-                                .productName("상품명")
-                                .price(1000L).quantity(1).build());
+                .productName("상품명")
+                .price(1000L).quantity(1).build());
         createOrder.createNewCardInfo("1234567890123456", getValidExpirationDate(), "123", "ddd");
         createOrder.createDeliveryInfo(null, null, null, null, null, null);
 
         // when & then
         assertThatThrownBy(() -> createOrderService.createOrder(createOrder))
-            .isInstanceOf(RequiredValueException.class)
-            .hasMessageContaining("상품을 선택해주세요.");
+                .isInstanceOf(RequiredValueException.class)
+                .hasMessageContaining("상품을 선택해주세요.");
 
     }
 
@@ -154,14 +158,14 @@ class CreateOrderServiceTest {
         // given
         CreateOrder createOrder = CreateOrder.builder().paymentMethod(PaymentMethod.CARD).build();
         createOrder.addItem(CreateOrderItem.builder()
-                                .productId(1L)
-                                .price(1000L).quantity(1).build());
+                .productId(1L)
+                .price(1000L).quantity(1).build());
         createOrder.createNewCardInfo("1234567890123456", getValidExpirationDate(), "123", "ddd");
         createOrder.createDeliveryInfo(null, null, null, null, null, null);
         // when & then
         assertThatThrownBy(() -> createOrderService.createOrder(createOrder))
-            .isInstanceOf(RequiredValueException.class)
-            .hasMessageContaining("상품명을 입력해주세요.");
+                .isInstanceOf(RequiredValueException.class)
+                .hasMessageContaining("상품명을 입력해주세요.");
     }
 
     @Test
@@ -170,15 +174,15 @@ class CreateOrderServiceTest {
         // given
         CreateOrder createOrder = CreateOrder.builder().paymentMethod(PaymentMethod.CARD).build();
         createOrder.addItem(CreateOrderItem.builder()
-                                .productId(1L)
-                                .productName("상품명")
-                                .price(99L).quantity(1).build());
+                .productId(1L)
+                .productName("상품명")
+                .price(99L).quantity(1).build());
         createOrder.createNewCardInfo("1234567890123456", getValidExpirationDate(), "123", "ddd");
         createOrder.createDeliveryInfo(null, null, null, null, null, null);
         // when & then
         assertThatThrownBy(() -> createOrderService.createOrder(createOrder))
-            .isInstanceOfAny(RequiredValueException.class)
-            .hasMessageContaining("상품 금액은 100원 이상이어야 합니다.");
+                .isInstanceOfAny(RequiredValueException.class)
+                .hasMessageContaining("상품 금액은 100원 이상이어야 합니다.");
     }
 
     @Test
@@ -187,15 +191,15 @@ class CreateOrderServiceTest {
         // given
         CreateOrder createOrder = CreateOrder.builder().paymentMethod(PaymentMethod.CARD).build();
         createOrder.addItem(CreateOrderItem.builder()
-                                .productId(1L)
-                                .productName("상품명")
-                                .price(1000L).build());
+                .productId(1L)
+                .productName("상품명")
+                .price(1000L).build());
         createOrder.createNewCardInfo("1234567890123456", getValidExpirationDate(), "123", "ddd");
         createOrder.createDeliveryInfo(null, null, null, null, null, null);
         // when & then
         assertThatThrownBy(() -> createOrderService.createOrder(createOrder))
-            .isInstanceOf(RequiredValueException.class)
-            .hasMessageContaining("수량은 1개 이상이어야 합니다.");
+                .isInstanceOf(RequiredValueException.class)
+                .hasMessageContaining("수량은 1개 이상이어야 합니다.");
     }
 
     @Test
@@ -204,14 +208,14 @@ class CreateOrderServiceTest {
         // given
         CreateOrder createOrder = CreateOrder.builder().paymentMethod(PaymentMethod.CARD).build();
         createOrder.addItem(CreateOrderItem.builder()
-                                .productId(1L)
-                                .productName("상품명")
-                                .price(1000L).quantity(1).build());
+                .productId(1L)
+                .productName("상품명")
+                .price(1000L).quantity(1).build());
         createOrder.createDeliveryInfo(null, null, null, null, null, null);
         // when & then
         assertThatThrownBy(() -> createOrderService.createOrder(createOrder))
-            .isInstanceOfAny(InvalidValueRequestException.class)
-            .hasMessageContaining("카드 정보를 입력해주세요.");
+                .isInstanceOfAny(InvalidValueRequestException.class)
+                .hasMessageContaining("카드 정보를 입력해주세요.");
     }
 
     @Test
@@ -220,20 +224,20 @@ class CreateOrderServiceTest {
         // given
         CreateOrder createOrder = CreateOrder.builder().paymentMethod(PaymentMethod.CARD).build();
         createOrder.addItem(CreateOrderItem.builder()
-                                .productId(1L)
-                                .productName("상품명")
-                                .price(1000L).quantity(1).build());
+                .productId(1L)
+                .productName("상품명")
+                .price(1000L).quantity(1).build());
         createOrder.createNewCardInfo(null, null, null, null);
         createOrder.createDeliveryInfo(null, null, null, null, null, null);
         // when & then
         assertThatThrownBy(() -> createOrderService.createOrder(createOrder))
-            .isInstanceOf(RequiredValueException.class)
-            .satisfies(e -> {
-                assertThat(e.getMessage()).contains("카드 번호를 입력해주세요.");
-                assertThat(e.getMessage()).contains("만료일을 입력해주세요.");
-                assertThat(e.getMessage()).contains("CVC를 입력해주세요.");
-                assertThat(e.getMessage()).contains("카드 소유자 이름을 입력해주세요.");
-            });
+                .isInstanceOf(RequiredValueException.class)
+                .satisfies(e -> {
+                    assertThat(e.getMessage()).contains("카드 번호를 입력해주세요.");
+                    assertThat(e.getMessage()).contains("만료일을 입력해주세요.");
+                    assertThat(e.getMessage()).contains("CVC를 입력해주세요.");
+                    assertThat(e.getMessage()).contains("카드 소유자 이름을 입력해주세요.");
+                });
     }
 
     @Test
@@ -242,27 +246,27 @@ class CreateOrderServiceTest {
         // given
         CreateOrder createOrder = CreateOrder.builder().paymentMethod(PaymentMethod.CARD).build();
         createOrder.addItem(CreateOrderItem.builder()
-                                .productId(1L)
-                                .productName("상품명")
-                                .price(1000L).quantity(1).build());
+                .productId(1L)
+                .productName("상품명")
+                .price(1000L).quantity(1).build());
         createOrder.createNewCardInfo("12345678901234", "1234", "123", "ddd");
         createOrder.createDeliveryInfo(null, null, null, null, null, null);
         // when & then
         assertThatThrownBy(() -> createOrderService.createOrder(createOrder))
-            .isInstanceOfAny(InvalidValueRequestException.class)
-            .hasMessageContaining("카드 번호는 16자리여야 합니다.");
+                .isInstanceOfAny(InvalidValueRequestException.class)
+                .hasMessageContaining("카드 번호는 16자리여야 합니다.");
         // given
         createOrder.createNewCardInfo("abcddkdkdkd", "1234", "123", "ddd");
         // when & then
         assertThatThrownBy(() -> createOrderService.createOrder(createOrder))
-            .isInstanceOfAny(InvalidValueRequestException.class)
-            .hasMessageContaining("카드 번호는 숫자나 하이픈(-)으로만 입력해주세요.");
+                .isInstanceOfAny(InvalidValueRequestException.class)
+                .hasMessageContaining("카드 번호는 숫자나 하이픈(-)으로만 입력해주세요.");
         // given
         createOrder.createNewCardInfo("-----", "1234", "123", "ddd");
         // when & then
         assertThatThrownBy(() -> createOrderService.createOrder(createOrder))
-            .isInstanceOfAny(InvalidValueRequestException.class)
-            .hasMessageContaining("카드 번호를 올바르게 입력해 주세요.");
+                .isInstanceOfAny(InvalidValueRequestException.class)
+                .hasMessageContaining("카드 번호를 올바르게 입력해 주세요.");
     }
 
     @Test
@@ -271,21 +275,21 @@ class CreateOrderServiceTest {
         // given
         CreateOrder createOrder = CreateOrder.builder().paymentMethod(PaymentMethod.CARD).build();
         createOrder.addItem(CreateOrderItem.builder()
-                                .productId(1L)
-                                .productName("상품명")
-                                .price(1000L).quantity(1).build());
+                .productId(1L)
+                .productName("상품명")
+                .price(1000L).quantity(1).build());
         createOrder.createNewCardInfo("1234567890123456", getValidExpirationDate(), "abc", "ddd");
         createOrder.createDeliveryInfo(null, null, null, null, null, null);
         // when & then
         assertThatThrownBy(() -> createOrderService.createOrder(createOrder))
-            .isInstanceOfAny(InvalidValueRequestException.class)
-            .hasMessageContaining("CVC는 숫자로만 입력해주세요.");
+                .isInstanceOfAny(InvalidValueRequestException.class)
+                .hasMessageContaining("CVC는 숫자로만 입력해주세요.");
         // given
         createOrder.createNewCardInfo("1234567890123456", getValidExpirationDate(), "1234", "ddd");
         // when & then
         assertThatThrownBy(() -> createOrderService.createOrder(createOrder))
-            .isInstanceOfAny(InvalidValueRequestException.class)
-            .hasMessageContaining("CVC는 3자리여야 합니다.");
+                .isInstanceOfAny(InvalidValueRequestException.class)
+                .hasMessageContaining("CVC는 3자리여야 합니다.");
     }
 
     private String getValidExpirationDate() {
