@@ -6,6 +6,7 @@ import com.emotionalcart.order.domain.dto.CreateOrderItemOption;
 import com.emotionalcart.order.domain.entity.OrderStatistics;
 import com.emotionalcart.order.domain.entity.Orders;
 import com.emotionalcart.order.domain.enums.PaymentMethod;
+import com.emotionalcart.order.domain.repository.OrderItemHistoryRepository;
 import com.emotionalcart.order.domain.repository.OrderStatisticsRepository;
 import com.emotionalcart.order.infra.order.OrderRepository;
 import com.emotionalcart.order.infra.payment.PaymentService;
@@ -40,10 +41,13 @@ class OrderStatisticsServiceTest {
     private ProductService productService;
 
     @Mock
+    private OrderStatisticsRepository orderStatisticsRepository;
+
+    @Mock
     private RedissonMultiLockProvider redissonMultiLockProvider;
 
     @Mock
-    private OrderStatisticsRepository orderStatisticsRepository;
+    private OrderItemHistoryRepository orderItemHistoryRepository;
 
     @InjectMocks
     private CreateOrderService createOrderService;
