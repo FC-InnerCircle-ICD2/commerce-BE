@@ -3,12 +3,15 @@ package com.emotionalcart.order.application;
 import com.emotionalcart.order.domain.dto.CreateOrder;
 import com.emotionalcart.order.domain.dto.CreateOrderItem;
 import com.emotionalcart.order.domain.dto.CreateOrderItemOption;
+import com.emotionalcart.order.domain.entity.OrderStatistics;
 import com.emotionalcart.order.domain.entity.Orders;
 import com.emotionalcart.order.domain.enums.PaymentMethod;
 import com.emotionalcart.order.domain.repository.OrderStatisticsRepository;
 import com.emotionalcart.order.infra.order.OrderRepository;
 import com.emotionalcart.order.infra.payment.PaymentService;
 import com.emotionalcart.order.infra.product.ProductService;
+import org.junit.jupiter.api.DisplayName;
+import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
@@ -17,11 +20,12 @@ import org.redisson.RedissonMultiLock;
 
 import java.time.LocalDate;
 import java.util.List;
+import java.util.Optional;
 import java.util.concurrent.TimeUnit;
 
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.ArgumentMatchers.*;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.when;
+import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
 class OrderStatisticsServiceTest {
@@ -44,20 +48,20 @@ class OrderStatisticsServiceTest {
     @InjectMocks
     private CreateOrderService createOrderService;
 
-//    @Test
-//    @DisplayName("주문 만들기 성공 시 주문 통계 저장 테스트")
-//    void createOrder_success() throws Exception {
-//        // Mock 데이터 설정
-//        lenient().when(orderStatisticsRepository.findByProductIdAndCategoryId(anyLong(), anyLong()))
-//                .thenReturn(Optional.of(OrderStatistics.create(OrderItem.builder().categoryId(2L).productId(2L).price(1000).quantity(
-//                        1).build())));
-//        createOrder();
-//
-//        Optional<OrderStatistics> orderStatistics = orderStatisticsRepository.findByProductIdAndCategoryId(2L, 2L);
-//        assertThat(orderStatistics).isPresent();
-//        assertThat(orderStatistics.get().getTotalOrder()).isEqualTo(0L);
-//        assertThat(orderStatistics.get().getTotalQuantitySold()).isEqualTo(0L);
-//    }
+    @Test
+    @DisplayName("주문 만들기 성공 시 주문 통계 저장 테스트")
+    void createOrder_success() throws Exception {
+        // Mock 데이터 설정
+        lenient().when(orderStatisticsRepository.findByProductIdAndCategoryId(anyLong(), anyLong()))
+                .thenReturn(Optional.of(OrderStatistics.create(CreateOrderItem.builder().categoryId(2L).productId(2L).price(1000).quantity(
+                        1).build())));
+        createOrder();
+
+        Optional<OrderStatistics> orderStatistics = orderStatisticsRepository.findByProductIdAndCategoryId(2L, 2L);
+        assertThat(orderStatistics).isPresent();
+        assertThat(orderStatistics.get().getTotalOrder()).isEqualTo(1L);
+        assertThat(orderStatistics.get().getTotalQuantitySold()).isEqualTo(1L);
+    }
 
     private void createOrder() throws Exception {
         // given
