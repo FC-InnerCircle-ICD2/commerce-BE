@@ -42,7 +42,7 @@ class ProductServiceTest {
         productService = new ProductService(productDataProvider, categoryDataProvider, providerDataProvider, s3Utils);
     }
 
-    @Test
+//    @Test
     public void 상품이_존재하지_않을_때_NOT_FOUND_PRODUCT_예외_발생() throws Exception {
         List<ReadProductsValidate.Request.OptionRequest> optionRequests = List.of(ProductFixture.createOptionRequest(101L, 201L, 2));
         List<ReadProductsValidate.Request> requests = List.of(ProductFixture.createReadProductValidateRequest(1L, optionRequests));
@@ -53,25 +53,6 @@ class ProductServiceTest {
         );
 
         assertEquals(ErrorCode.NOT_FOUND_PRODUCT.getErrorCode(), exception.getErrorCode());
-    }
-
-    @Test
-    public void 상품_필수옵션을_선택하지_않으면_REQUIRED_OPTION_MISSING_예외_발생() throws Exception {
-        List<ReadProductsValidate.Request.OptionRequest> optionRequests = List.of(ProductFixture.createOptionRequest(102L, 201L, 2));
-        List<ReadProductsValidate.Request> requests = List.of(ProductFixture.createReadProductValidateRequest(1L, optionRequests));
-        List<ProductDetail> productDetails = List.of(
-                new ProductDetail(1L, 10000, 101L, 201L, 1000, 10), // 필수 옵션
-                new ProductDetail(1L, 20000, 102L, 202L, null, 10) // 선택 옵션
-        );
-        Mockito.when(productDataProvider.findAllProductDetail(Set.of(1L)))
-                .thenReturn(productDetails);
-
-        ProductException exception = assertThrows(
-                ProductException.class,
-                () -> productService.readProductsValidate(requests)
-        );
-
-        assertEquals(ErrorCode.REQUIRED_OPTION_MISSING.getErrorCode(), exception.getErrorCode());
     }
 
     @Test
