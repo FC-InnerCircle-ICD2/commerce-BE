@@ -73,7 +73,7 @@ public class ReadProducts {
                                                 Map<Long, Provider> providerMap,
                                                 ProductImages productImages) {
             Map<Long,List<ProductOptionResponse>> optionsMap = productOptions.groupByProductId();
-            Map<Long, List<ReadProductImages.Response>> readProductImagesMap = productImages.groupByProductId();
+            Map<Product, List<ReadProductImages.Response>> readProductImagesMap = productImages.groupByProductId();
 
             return products.map(product -> {
                 Long productId = product.getId();
@@ -81,7 +81,7 @@ public class ReadProducts {
                 Category category = categoryMap.getOrDefault(product.getCategoryId(), null);
                 Provider provider = providerMap.getOrDefault(product.getProviderId(), null);
                 //Long sales = salesData.getOrDefault(product.getId(), 0L); // 판매량 정보 포함
-                List<ReadProductImages.Response> images = readProductImagesMap.getOrDefault(productId, List.of());
+                List<ReadProductImages.Response> images = readProductImagesMap.getOrDefault(product, List.of());
 
                 return new Response(product, productOptionResponses, category, provider, images);
             });
@@ -121,7 +121,6 @@ public class ReadProducts {
         private ProductOptionDetailResponse(ProductOptionDetail optionDetail) {
             this.id = optionDetail.getId();
             this.value = optionDetail.getValue();
-            this.quantity = optionDetail.getQuantity();
             this.order = optionDetail.getOptionOrder();
             this.additionalPrice = optionDetail.getAdditionalPrice();
         }

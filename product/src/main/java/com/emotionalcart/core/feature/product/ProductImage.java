@@ -6,6 +6,7 @@ import jakarta.validation.constraints.NotNull;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import lombok.Setter;
 
 @Entity
 @Table
@@ -17,23 +18,49 @@ public class ProductImage extends BaseImageEntity {
     private Long id;
 
     @NotNull
-    private Long productId;
-
-    @NotNull
     @Enumerated(EnumType.STRING)
     private ProductImageType imageType;
 
+    @Setter
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "product_id")
+    private Product product;
+
     private ProductImage(
-            Long productId,
+            Product product,
             ProductImageType imageType,
             String bucketName,
             String originalFileName,
             String filePath,
             String fileType,
             Long fileSize,
-            Integer fileOrder) {
+            Integer fileOrder
+    ) {
         super(bucketName, originalFileName, filePath, fileType, fileSize, fileOrder);
-        this.productId = productId;
+        this.product = product;
         this.imageType = imageType;
     }
+
+    public static ProductImage of(
+            Product product,
+            ProductImageType imageType,
+            String bucketName,
+            String originalFileName,
+            String filePath,
+            String fileType,
+            Long fileSize,
+            Integer fileOrder
+    ) {
+        return new ProductImage(
+                product,
+                imageType,
+                bucketName,
+                originalFileName,
+                filePath,
+                fileType,
+                fileSize,
+                fileOrder
+        );
+    }
+
 }

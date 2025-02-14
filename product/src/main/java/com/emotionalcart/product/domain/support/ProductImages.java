@@ -1,5 +1,6 @@
 package com.emotionalcart.product.domain.support;
 
+import com.emotionalcart.core.feature.product.Product;
 import com.emotionalcart.core.feature.product.ProductImage;
 import com.emotionalcart.product.presentation.dto.ReadProductImages;
 import com.emotionalcart.product.presentation.dto.ReadProducts;
@@ -17,10 +18,10 @@ public class ProductImages {
         return new ProductImages(productImages);
     }
 
-    public Map<Long, List<ReadProductImages.Response>> groupByProductId() {
+    public Map<Product, List<ReadProductImages.Response>> groupByProductId() {
         return productImages.stream()
                 .collect(Collectors.groupingBy(
-                        ProductImage::getProductId,
+                        ProductImage::getProduct,
                         Collectors.mapping(ReadProductImages.Response::new, Collectors.toList())
                 ));
     }

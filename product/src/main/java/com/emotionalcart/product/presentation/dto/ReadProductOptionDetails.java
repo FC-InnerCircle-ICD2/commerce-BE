@@ -17,7 +17,6 @@ public class ReadProductOptionDetails {
         private Response(ProductOptionDetail optionDetail) {
             this.id = optionDetail.getId();
             this.value = optionDetail.getValue();
-            this.quantity = optionDetail.getQuantity();
             this.order = optionDetail.getOptionOrder();
             this.additionalPrice = optionDetail.getAdditionalPrice();
         }
