@@ -50,9 +50,14 @@ public class OrderController implements OrderApiDocs {
      * 사용자 주문 목록 조회
      */
     @GetMapping("/my-orders")
+<<<<<<< HEAD
     public ResponseEntity<Page<UserOrderResponse>> getOrderList(@AuthenticationPrincipal Long userId, Pageable request) {
         Page<UserOrder> userOrders = orderDetailService.getOrderListByUserId(userId, request);
         return ResponseEntity.ok().body(userOrders.map(UserOrderResponse::from));
+=======
+    public ResponseEntity<GetOrderListResponse> getOrderList() {
+        return ResponseEntity.ok(GetOrderListResponse.from());
+>>>>>>> b52254f (feat : 주문목록 객체 생성)
     }
 
 }

@@ -24,6 +24,10 @@ public interface OrderApiDocs {
     ResponseEntity<OrderDetailResponse> getOrderDetail(@PathVariable Long orderId);
 
     @Operation(summary = "사용자 주문 목록 조회 API")
+<<<<<<< HEAD
     ResponseEntity<Page<UserOrderResponse>> getOrderList(Long userId, Pageable request);
+=======
+    ResponseEntity<GetOrderListResponse> getOrderList();
+>>>>>>> b52254f (feat : 주문목록 객체 생성)
 
 }
