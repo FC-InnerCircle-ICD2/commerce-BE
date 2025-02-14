@@ -53,18 +53,29 @@ public class OrderStatistics extends AuditableEntity {
     @LastModifiedDate
     private LocalDateTime lastOrderedAt;
 
-    public OrderStatistics(CreateOrderItem orderItem) {
+    public OrderStatistics(OrderItem orderItem) {
         this.productId = orderItem.getProductId();
         this.categoryId = orderItem.getCategoryId();
         this.totalOrder = 0L;
         this.totalQuantitySold = 0L;
     }
 
-    public static OrderStatistics create(CreateOrderItem orderItem) {
+    public OrderStatistics(CreateOrderItem createOrderItem) {
+        this.productId = createOrderItem.getProductId();
+        this.categoryId = createOrderItem.getCategoryId();
+        this.totalOrder = 0L;
+        this.totalQuantitySold = 0L;
+    }
+
+    public static OrderStatistics create(OrderItem orderItem) {
         return new OrderStatistics(orderItem);
     }
 
-    public void updateOrderStatistics(CreateOrderItem orderItem) {
+    public static OrderStatistics create(CreateOrderItem createOrderItem) {
+        return new OrderStatistics(createOrderItem);
+    }
+
+    public void updateOrderStatistics(OrderItem orderItem) {
         this.totalOrder++;
         this.totalQuantitySold += orderItem.getQuantity();
     }

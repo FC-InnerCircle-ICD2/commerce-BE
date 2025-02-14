@@ -4,6 +4,8 @@ import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
+import java.util.List;
+
 /**
  * 상품 가격 응답값
  */
@@ -25,7 +27,7 @@ public class ProductPriceResponse {
     /**
      * 상품옵션
      */
-    private ProductOption productOptions;
+    private List<ProductOption> productOptions;
 
     @Getter
     @NoArgsConstructor(access = AccessLevel.PROTECTED)

@@ -5,8 +5,10 @@ import com.emotionalcart.order.domain.dto.CreateOrder;
 import com.emotionalcart.order.domain.dto.CreateOrderItem;
 import com.emotionalcart.order.domain.dto.CreatedOrder;
 import com.emotionalcart.order.domain.entity.OrderItem;
+import com.emotionalcart.order.domain.entity.OrderItemHistory;
 import com.emotionalcart.order.domain.entity.OrderStatistics;
 import com.emotionalcart.order.domain.entity.Orders;
+import com.emotionalcart.order.domain.repository.OrderItemHistoryRepository;
 import com.emotionalcart.order.domain.repository.OrderStatisticsRepository;
 import com.emotionalcart.order.infra.advice.exceptions.InvalidValueRequestException;
 import com.emotionalcart.order.infra.advice.exceptions.RedissonLockException;
@@ -37,6 +39,7 @@ public class CreateOrderService {
 
     private final OrderRepository orderRepository;
     private final OrderStatisticsRepository orderStatisticsRepository;
+    private final OrderItemHistoryRepository orderItemHistoryRepository;
     private final PaymentService paymentService;
     private final ProductService productService;
     private final RedissonMultiLockProvider redissonMultiLockProvider;
@@ -61,8 +64,9 @@ public class CreateOrderService {
                 requestOriginalPriceAndValidatePrice(createOrder);
                 payment(orders, createOrder.getCardInfo());
                 shipment(orders);
-                orders.addHistory();
+                orderHistory(orders);
                 updateQuantity(orders);
+                orderStatistics(orders.getOrderItems());
             } else {
                 throw new RedissonLockException("잠금 획득 실패: 다른 사용자가 처리 중입니다.");
             }
@@ -76,6 +80,12 @@ public class CreateOrderService {
         return CreatedOrder.from(orders);
     }
 
+    private void orderHistory(Orders orders) {
+        List<OrderItemHistory> orderItemHistoryList =
+            orders.getOrderItems().stream().map(OrderItemHistory::createOrderItemHistory).toList();
+        orderItemHistoryRepository.saveAll(orderItemHistoryList);
+    }
+
     private void updateQuantity(Orders orders) {
         List<ProductStockRequest> productStockRequests = new ArrayList<>();
         for (OrderItem orderItem : orders.getOrderItems()) {
@@ -85,7 +95,7 @@ public class CreateOrderService {
                                                                                 orderItem.getQuantity()));
             productStockRequests.add(request);
         }
-        productService.updateProductStock(productStockRequests);
+        //        productService.updateProductStock(productStockRequests);
     }
 
     private void validateQuantity(CreateOrder createOrder) {
@@ -138,8 +148,8 @@ public class CreateOrderService {
      *
      * @param orderItems
      */
-    private void orderStatistics(List<CreateOrderItem> orderItems) {
-        for (CreateOrderItem orderItem : orderItems) {
+    private void orderStatistics(List<OrderItem> orderItems) {
+        for (OrderItem orderItem : orderItems) {
             OrderStatistics orderStatistics =
                 orderStatisticsRepository.findByProductIdAndCategoryId(orderItem.getProductId(), orderItem.getCategoryId()).orElse(
                     OrderStatistics.create(orderItem));

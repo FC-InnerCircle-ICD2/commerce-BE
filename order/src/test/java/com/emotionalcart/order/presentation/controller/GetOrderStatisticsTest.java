@@ -32,8 +32,7 @@ class GetOrderStatisticsTest {
     private MockMvc mockMvc;
 
     @Test
-    @Sql(scripts = {"/databases/schema.sql",
-        "/databases/insert_order_statistics.sql"}, executionPhase = Sql.ExecutionPhase.BEFORE_TEST_METHOD)
+    @Sql(scripts = {"/databases/insert_order_statistics.sql"}, executionPhase = Sql.ExecutionPhase.BEFORE_TEST_METHOD)
     @DisplayName("데이터 삽입 후 통계 API 테스트")
     void test_case_1() throws Exception {
         // given

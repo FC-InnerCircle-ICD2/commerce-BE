@@ -1,0 +1,37 @@
+{
+  "paymentMethod": "CARD",
+  "cardInfo": {
+    "cardNumber": "1111-2222-3333-4444",
+    "expirationDate": "08/27",
+    "cvc": "123",
+    "cardOwnerName": "string"
+  },
+  "orderItems": [
+    {
+      "productId": 4002396259960888885,
+      "productOptionDetails": [
+        {
+          "productOptionId": 4002396260259129221,
+          "productOptionDetailId": 4002396260257538495,
+          "quantity": 1,
+          "additionalPrice": 0
+        }
+      ],
+      "categoryId": 502994,
+      "productName": "string",
+      "price": 1000,
+      "quantity": 1
+    }
+  ],
+  "delivery": {
+    "name": "string",
+    "phoneNumber": "010-1111-2222",
+    "zoneCode": "string",
+    "address": "string",
+    "detailAddress": "string",
+    "deliveryMemo": "string"
+  },
+  "cvc": "string",
+  "expirationDate": "string",
+  "cardNumber": "string"
+}

@@ -6,6 +6,7 @@ import com.emotionalcart.order.domain.dto.CreateOrderItemOption;
 import com.emotionalcart.order.domain.entity.OrderStatistics;
 import com.emotionalcart.order.domain.entity.Orders;
 import com.emotionalcart.order.domain.enums.PaymentMethod;
+import com.emotionalcart.order.domain.repository.OrderItemHistoryRepository;
 import com.emotionalcart.order.domain.repository.OrderStatisticsRepository;
 import com.emotionalcart.order.infra.order.OrderRepository;
 import com.emotionalcart.order.infra.payment.PaymentService;
@@ -40,10 +41,13 @@ class OrderStatisticsServiceTest {
     private ProductService productService;
 
     @Mock
+    private OrderStatisticsRepository orderStatisticsRepository;
+
+    @Mock
     private RedissonMultiLockProvider redissonMultiLockProvider;
 
     @Mock
-    private OrderStatisticsRepository orderStatisticsRepository;
+    private OrderItemHistoryRepository orderItemHistoryRepository;
 
     @InjectMocks
     private CreateOrderService createOrderService;
@@ -53,14 +57,14 @@ class OrderStatisticsServiceTest {
     void createOrder_success() throws Exception {
         // Mock 데이터 설정
         lenient().when(orderStatisticsRepository.findByProductIdAndCategoryId(anyLong(), anyLong()))
-            .thenReturn(Optional.of(OrderStatistics.create(CreateOrderItem.builder().categoryId(2L).productId(2L).price(1000).quantity(
-                1).build())));
+                .thenReturn(Optional.of(OrderStatistics.create(CreateOrderItem.builder().categoryId(2L).productId(2L).price(1000).quantity(
+                        1).build())));
         createOrder();
 
         Optional<OrderStatistics> orderStatistics = orderStatisticsRepository.findByProductIdAndCategoryId(2L, 2L);
         assertThat(orderStatistics).isPresent();
-        assertThat(orderStatistics.get().getTotalOrder()).isEqualTo(0L);
-        assertThat(orderStatistics.get().getTotalQuantitySold()).isEqualTo(0L);
+        assertThat(orderStatistics.get().getTotalOrder()).isEqualTo(1L);
+        assertThat(orderStatistics.get().getTotalQuantitySold()).isEqualTo(1L);
     }
 
     private void createOrder() throws Exception {
@@ -68,11 +72,11 @@ class OrderStatisticsServiceTest {
         Orders mockOrder = mock(Orders.class);
         CreateOrder createOrder = CreateOrder.builder().paymentMethod(PaymentMethod.CARD).build();
         createOrder.addItem(CreateOrderItem.builder()
-                                .productId(1L)
-                                .productName("상품명")
-                                .categoryId(1L)
-                                .orderItemOptions(List.of(CreateOrderItemOption.builder().productOptionId(1L).productOptionDetailId(1L).build()))
-                                .price(1000L).quantity(1).build());
+                .productId(1L)
+                .productName("상품명")
+                .categoryId(1L)
+                .orderItemOptions(List.of(CreateOrderItemOption.builder().productOptionId(1L).productOptionDetailId(1L).build()))
+                .price(1000L).quantity(1).build());
         createOrder.createNewCardInfo("1234567890123456", getValidExpirationDate(), "123", "ddd");
         createOrder.createDeliveryInfo("이름", "010-1234-5678", "12345", "서울시 강남구", "상세주소", "비고");
         when(orderRepository.save(any())).thenReturn(mockOrder);

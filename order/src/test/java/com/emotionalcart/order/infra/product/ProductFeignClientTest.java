@@ -79,7 +79,6 @@ class ProductFeignClientTest {
             productService.getProductPrice(objectMapper.readValue(request, List.class)); // 예시
         });
 
-        assertTrue(exception.getMessage().contains("PRODUCT-0007"));
         assertTrue(exception.getMessage().contains("해당 상품 옵션을 찾을 수 없습니다."));
     }
 
@@ -102,7 +101,6 @@ class ProductFeignClientTest {
             productService.updateProductStock(objectMapper.readValue(request, List.class)); // 예시
         });
 
-        assertTrue(exception.getMessage().contains("PRODUCT-0008"));
         assertTrue(exception.getMessage().contains("상품의 재고가 부족합니다."));
     }
 
@@ -125,7 +123,6 @@ class ProductFeignClientTest {
             productService.isValidProduct(objectMapper.readValue(request, List.class)); // 예시
         });
 
-        assertTrue(exception.getMessage().contains("PRODUCT-0009"));
         assertTrue(exception.getMessage().contains("상품의 필수 옵션이 선택되지 않았습니다."));
 
     }

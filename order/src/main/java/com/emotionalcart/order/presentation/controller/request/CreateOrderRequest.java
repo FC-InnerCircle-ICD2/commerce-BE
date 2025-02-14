@@ -5,6 +5,7 @@ import com.emotionalcart.order.domain.dto.CreateOrderItem;
 import com.emotionalcart.order.infra.validator.ValidPhoneNumber;
 import jakarta.validation.constraints.NotNull;
 import lombok.AccessLevel;
+import lombok.Data;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
@@ -52,28 +53,28 @@ public class CreateOrderRequest {
         CreateOrder createOrder = CreateOrder.ofPaymentMethod(paymentMethod.name());
         if (paymentMethod == PaymentMethod.CARD) {
             createOrder.createNewCardInfo(cardInfo.getCardNumber(),
-                                          cardInfo.getExpirationDate(),
-                                          cardInfo.getCvc(),
-                                          cardInfo.getCardOwnerName());
+                    cardInfo.getExpirationDate(),
+                    cardInfo.getCvc(),
+                    cardInfo.getCardOwnerName());
         }
         for (CreateOrderItemRequest orderItem : orderItems) {
             CreateOrderItem createOrderItem =
-                createOrder.createOrderItem(orderItem.productId,
-                                            orderItem.productName,
-                                            orderItem.price,
-                                            orderItem.quantity,
-                                            orderItem.categoryId);
+                    createOrder.createOrderItem(orderItem.productId,
+                            orderItem.productName,
+                            orderItem.price,
+                            orderItem.quantity,
+                            orderItem.categoryId);
             orderItem.getProductOptionDetails().forEach(option -> createOrderItem.addOrderItemOption(option.productOptionId,
-                                                                                                     option.productOptionDetailId,
-                                                                                                     option.additionalPrice));
+                    option.productOptionDetailId,
+                    option.additionalPrice));
             createOrder.addItem(createOrderItem);
         }
         createOrder.createDeliveryInfo(delivery.getName(),
-                                       delivery.getPhoneNumber(),
-                                       delivery.getZoneCode(),
-                                       delivery.getAddress(),
-                                       delivery.getDetailAddress(),
-                                       delivery.getDeliveryMemo());
+                delivery.getPhoneNumber(),
+                delivery.getZoneCode(),
+                delivery.getAddress(),
+                delivery.getDetailAddress(),
+                delivery.getDeliveryMemo());
         return createOrder;
     }
 
@@ -128,6 +129,7 @@ public class CreateOrderRequest {
 
     }
 
+    @Data
     private static class CreateOrderItemOptionRequest {
 
         @NotNull(message = "상품 옵션을 선택해주세요.")

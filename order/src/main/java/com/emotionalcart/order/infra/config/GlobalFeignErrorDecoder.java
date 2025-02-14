@@ -32,9 +32,9 @@ public class GlobalFeignErrorDecoder implements ErrorDecoder {
                 ErrorResponse errorResponse = objectMapper.readValue(responseBody, ErrorResponse.class);
 
                 switch (errorResponse.getErrorCode()) {
-                    case "PRODUCT-0007" -> throw new ProductPriceException(errorResponse.toString());
-                    case "PRODUCT-0009" -> throw new ProductValidationException(errorResponse.toString());
-                    default -> throw new ProductStockException(errorResponse.toString());
+                    case "PRODUCT-0007" -> throw new ProductPriceException(errorResponse.getErrorMessage());
+                    case "PRODUCT-0009" -> throw new ProductValidationException(errorResponse.getErrorMessage());
+                    default -> throw new ProductStockException(errorResponse.getErrorMessage());
 
                 }
             } catch (IOException e) {

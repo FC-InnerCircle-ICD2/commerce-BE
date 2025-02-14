@@ -4,7 +4,6 @@ import com.emotionalcart.core.exception.ErrorCode;
 import com.emotionalcart.core.exception.ProductException;
 import com.emotionalcart.core.feature.category.Category;
 import com.emotionalcart.core.feature.product.Product;
-import com.emotionalcart.core.feature.product.ProductImage;
 import com.emotionalcart.core.feature.product.ProductOption;
 import com.emotionalcart.core.feature.product.ProductOptionDetail;
 import com.emotionalcart.core.feature.provider.Provider;
@@ -93,41 +92,17 @@ public class ProductService {
     public Page<ReadProducts.Response> readProducts(ReadProducts.Request request) {
         Page<Product> productPage = productDataProvider.findAllProducts(request.toProductSearch());
 
-        // Page<Product>를 Products로 변환
         Products products = Products.from(productPage);
 
         ProductOptions productOptions = ProductOptions.from(productDataProvider.findProductOptions(products.ids()));
-        ProductOptionDetails optionDetails = ProductOptionDetails.from(productDataProvider.findProductOptionDetails(productOptions.ids()));
-
-        // ProductOptionResponse와 Details 병합 처리
-        Map<Long, List<ReadProducts.ProductOptionResponse>> groupedOptions = productOptions.groupByProductId();
-        Map<Long, List<ReadProducts.ProductOptionDetailResponse>> groupedDetails = optionDetails.groupByOptionId();
-
-        Map<Long, List<ReadProducts.ProductOptionResponse>> mergedOptions = mergeOptionsWithDetails(groupedOptions, groupedDetails);
-
         Map<Long, Category> categories = categoryDataProvider.findCategoryByIds(products.getCategoryIds());
         Map<Long, Provider> providers = providerDataProvider.findProviderByIds(products.getProviderIds());
+        ProductImages productImages = ProductImages.from(productDataProvider.findAllProductImages(products.ids()));
 
         // DTO 변환
-        return ReadProducts.Response.toResponse(productPage, mergedOptions, categories, providers);
+        return ReadProducts.Response.toResponse(productPage, productOptions, categories, providers, productImages);
     }
-
-    private Map<Long, List<ReadProducts.ProductOptionResponse>> mergeOptionsWithDetails(
-            Map<Long, List<ReadProducts.ProductOptionResponse>> groupedOptions,
-            Map<Long, List<ReadProducts.ProductOptionDetailResponse>> groupedDetails
-    ) {
-        return groupedOptions.entrySet().stream()
-                .collect(Collectors.toMap(
-                        Map.Entry::getKey,
-                        entry -> entry.getValue().stream()
-                                .map(option -> new ReadProducts.ProductOptionResponse(
-                                        option.getId(), option.getName(),
-                                        groupedDetails.getOrDefault(option.getId(), List.of()))
-                                )
-                                .collect(Collectors.toList())
-                ));
-    }
-
+      
     public ReadProductDetails.Response getProductDetail(Long productId) {
 
         // 상품 정보
@@ -146,14 +121,7 @@ public class ProductService {
             List<ReadProductOptionDetails.Response> productOptionDetailResponses = new ArrayList<>();
 
             for (ProductOptionDetail productOptionDetail : productOptionDetails) {
-                // 상품 옵션 상세 이미지 조회
-                List<ProductImage> productImages = productDataProvider
-                        .findAllProductImagesByProductOptionDetailId(
-                                productOptionDetail.getId());
-
-                ReadProductOptionDetails.Response productOptionDetailResponse = ReadProductOptionDetails.Response
-                        .toResponse(productOptionDetail, productImages);
-
+                ReadProductOptionDetails.Response productOptionDetailResponse = ReadProductOptionDetails.Response.toResponse(productOptionDetail);
                 productOptionDetailResponses.add(productOptionDetailResponse);
             }
 
@@ -175,8 +143,12 @@ public class ProductService {
         ReadProviders.Response providerResponse = ReadProviders.Response
                 .toResponse(providerDataProvider.findProviderById(product.getProviderId()));
 
+        // 상품 이미지
+        List<ReadProductImages.Response> productImages = ReadProductImages.Response
+                .toResponse(productDataProvider.findProductImages(productId));
+
         return ReadProductDetails.Response.toResponse(product, productOptionsResponses, categoryResponse,
-                providerResponse, reviewStatistic);
+                providerResponse, reviewStatistic, productImages);
     }
 
     public void readProductsValidate(List<ReadProductsValidate.Request> requests) {

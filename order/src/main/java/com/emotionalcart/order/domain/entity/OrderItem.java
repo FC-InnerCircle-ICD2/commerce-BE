@@ -76,8 +76,9 @@ public class OrderItem extends BaseEntity {
         item.productName = orderItem.getProductName();
         item.orderItemPrice = Money.of(orderItem.getPrice());
         item.quantity = orderItem.getQuantity();
+        item.categoryId = orderItem.getCategoryId();
         orderItem.getOrderItemOptions().stream().map(option -> OrderItemOption.createOrderItemOption(item,
-                                                                                                     option)).forEach(item::addOrderItemOption);
+                option)).forEach(item::addOrderItemOption);
         return item;
     }
 

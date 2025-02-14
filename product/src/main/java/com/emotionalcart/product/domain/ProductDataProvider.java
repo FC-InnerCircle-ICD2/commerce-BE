@@ -2,10 +2,14 @@ package com.emotionalcart.product.domain;
 
 import com.emotionalcart.core.exception.ErrorCode;
 import com.emotionalcart.core.exception.ProductException;
+import com.emotionalcart.core.feature.category.Category;
+import com.emotionalcart.product.domain.dto.ProductOptionDetailWithImages;
+import com.emotionalcart.product.domain.dto.ProductSearch;
 import com.emotionalcart.core.feature.product.Product;
 import com.emotionalcart.core.feature.product.ProductImage;
 import com.emotionalcart.core.feature.product.ProductOption;
 import com.emotionalcart.core.feature.product.ProductOptionDetail;
+import com.emotionalcart.core.feature.provider.Provider;
 import com.emotionalcart.core.feature.review.Review;
 import com.emotionalcart.core.feature.review.ReviewImage;
 import com.emotionalcart.core.feature.review.ReviewStatistic;
@@ -64,11 +68,15 @@ public class ProductDataProvider {
         reviewImageRepository.saveAll(reviewImages);
     }
 
-    // 상품 이미지 관련 메서드
-    public List<ProductImage> findAllProductImagesByProductOptionDetailId(Long productOptionDetailId) {
-        return productImageRepository
-                .findAllByProductOptionDetailIdAndIsDeletedIsFalseOrderByIsRepresentativeAscFileOrderAsc(
-                        productOptionDetailId)
+    // 메인 이미지만 조회
+    public List<ProductImage> findAllProductImages(List<Long> productIds) {
+        return productImageRepository.findAllByProductIdInAndIsDeletedIsFalseAndImageType(productIds, ProductImageType.MAIN)
+                .orElseThrow(() -> new ProductException(ErrorCode.NOT_FOUND_PRODUCT_IMAGE));
+    }
+
+    // 메인 + 상세 이미지 조회
+    public List<ProductImage> findProductImages(Long productId) {
+        return productImageRepository.findAllByProductIdAndIsDeletedIsFalse(productId)
                 .orElseThrow(() -> new ProductException(ErrorCode.NOT_FOUND_PRODUCT_IMAGE));
     }
 
@@ -98,10 +106,6 @@ public class ProductDataProvider {
 
     public List<ProductOption> findProductOptions(List<Long> productIds) {
         return productRepository.findProductOptions(productIds);
-    }
-
-    public List<ProductOptionDetailWithImages> findProductOptionDetails(Set<Long> optionIds) {
-        return productRepository.findProductOptionDetailsWithImages(optionIds);
     }
 
     public Map<Long, Double> findProductRatings(List<Long> productIds) {
