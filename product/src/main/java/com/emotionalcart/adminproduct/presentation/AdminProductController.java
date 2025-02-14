@@ -13,6 +13,7 @@ import org.springframework.web.bind.annotation.*;
 public class AdminProductController implements AdminProductControllerDocs {
     private final AdminProductService adminProductService;
 
+    @Override
     @PostMapping
     public ResponseEntity<CreateProduct.Response> createProduct(
             @Valid @ModelAttribute CreateProduct.Request request) {
