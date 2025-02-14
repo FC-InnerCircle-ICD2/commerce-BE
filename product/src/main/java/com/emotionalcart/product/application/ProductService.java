@@ -181,7 +181,6 @@ public class ProductService {
         Long productId = request.getProductId();
         Set<Long> allOptionIds = groupedProductDetails.getAllOptionIds(productId);
         Set<Long> allOptionDetailIds = groupedProductDetails.getAllOptionDetailIds(productId);
-        Set<Long> requiredOptionIds = groupedProductDetails.getRequiredOptionIds(productId);
         Set<Long> selectedOptionIds = request.getProductOptions().stream()
                 .map(ReadProductsValidate.Request.OptionRequest::getProductOptionId)
                 .collect(Collectors.toSet());
@@ -194,9 +193,6 @@ public class ProductService {
         }
         if (!allOptionDetailIds.containsAll(selectedOptionDetailIds)) {
             throw new ProductException(ErrorCode.NOT_FOUND_PRODUCT_OPTION);
-        }
-        if (!selectedOptionIds.containsAll(requiredOptionIds)) {
-            throw new ProductException(ErrorCode.REQUIRED_OPTION_MISSING);
         }
     }
 

@@ -60,8 +60,8 @@ class ProductServiceTest {
         List<ReadProductsValidate.Request.OptionRequest> optionRequests = List.of(ProductFixture.createOptionRequest(102L, 201L, 2));
         List<ReadProductsValidate.Request> requests = List.of(ProductFixture.createReadProductValidateRequest(1L, optionRequests));
         List<ProductDetail> productDetails = List.of(
-                new ProductDetail(1L, 10000, 101L, true, 201L, 1000, 10), // 필수 옵션
-                new ProductDetail(1L, 20000, 102L, false, 202L, null, 10) // 선택 옵션
+                new ProductDetail(1L, 10000, 101L, 201L, 1000, 10), // 필수 옵션
+                new ProductDetail(1L, 20000, 102L, 202L, null, 10) // 선택 옵션
         );
         Mockito.when(productDataProvider.findAllProductDetail(Set.of(1L)))
                 .thenReturn(productDetails);
@@ -79,8 +79,8 @@ class ProductServiceTest {
         List<ReadProductsValidate.Request.OptionRequest> optionRequests = List.of(ProductFixture.createOptionRequest(101L, 204L, 2));
         List<ReadProductsValidate.Request> requests = List.of(ProductFixture.createReadProductValidateRequest(1L, optionRequests));
         List<ProductDetail> productDetails = List.of(
-                new ProductDetail(1L, 10000, 101L, true, 201L, 1000, 10), // 필수 옵션
-                new ProductDetail(1L, 20000, 102L, false, 202L, null, 10) // 선택 옵션
+                new ProductDetail(1L, 10000, 101L , 201L, 1000, 10), // 필수 옵션
+                new ProductDetail(1L, 20000, 102L, 202L, null, 10) // 선택 옵션
         );
         Mockito.when(productDataProvider.findAllProductDetail(Set.of(1L)))
                 .thenReturn(productDetails);
@@ -98,7 +98,7 @@ class ProductServiceTest {
         List<ReadProductsValidate.Request.OptionRequest> optionRequests = List.of(ProductFixture.createOptionRequest(103L, 201L, 2));
         List<ReadProductsValidate.Request> requests = List.of(ProductFixture.createReadProductValidateRequest(1L, optionRequests));
         List<ProductDetail> productDetails = List.of(
-                new ProductDetail(1L, 10000, 101L, true, 201L, null, 10)
+                new ProductDetail(1L, 10000, 101L,  201L, null, 10)
         );
         Mockito.when(productDataProvider.findAllProductDetail(Set.of(1L)))
                 .thenReturn(productDetails);
@@ -116,7 +116,7 @@ class ProductServiceTest {
         List<ReadProductsValidate.Request.OptionRequest> optionRequests = List.of(ProductFixture.createOptionRequest(101L, 201L, 20));
         List<ReadProductsValidate.Request> requests = List.of(ProductFixture.createReadProductValidateRequest(1L, optionRequests));
         List<ProductDetail> productDetails = List.of(
-                new ProductDetail(1L, 100000, 101L, true, 201L, null, 10)
+                new ProductDetail(1L, 100000, 101L, 201L, null, 10)
         );
         Mockito.when(productDataProvider.findAllProductDetail(Set.of(1L)))
                 .thenReturn(productDetails);
@@ -134,7 +134,7 @@ class ProductServiceTest {
         List<ReadProductsValidate.Request.OptionRequest> optionRequests = List.of(ProductFixture.createOptionRequest(101L, 201L, 2));
         List<ReadProductsValidate.Request> requests = List.of(ProductFixture.createReadProductValidateRequest(1L, optionRequests));
         List<ProductDetail> productDetails = List.of(
-                new ProductDetail(1L, 10000, 101L, true, 201L, null, 10)
+                new ProductDetail(1L, 10000, 101L, 201L, null, 10)
         );
         Mockito.when(productDataProvider.findAllProductDetail(Set.of(1L)))
                 .thenReturn(productDetails);

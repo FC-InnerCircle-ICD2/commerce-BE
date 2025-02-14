@@ -9,7 +9,6 @@ public class ProductDetail {
     private Long productId;
     private Integer productPrice;
     private Long productOptionId;
-    private boolean isRequired;
     private Long productOptionDetailId;
     private Integer productAdditionalPrice;
     private Integer quantity;
@@ -17,7 +16,6 @@ public class ProductDetail {
     public ProductDetail(Long productId,
                          Integer price,
                          Long productOptionId,
-                         Boolean isRequired,
                          Long productOptionDetailId,
                          Integer productAdditionalPrice,
                          Integer quantity
@@ -25,7 +23,6 @@ public class ProductDetail {
         this.productId = productId;
         this.productPrice = price;
         this.productOptionId = productOptionId;
-        this.isRequired = isRequired;
         this.productOptionDetailId = productOptionDetailId;
         this.productAdditionalPrice = productAdditionalPrice;
         this.quantity = quantity;
