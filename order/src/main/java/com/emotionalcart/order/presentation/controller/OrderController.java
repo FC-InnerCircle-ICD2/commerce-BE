@@ -7,6 +7,7 @@ import com.emotionalcart.order.domain.dto.OrderDetail;
 import com.emotionalcart.order.domain.dto.UserOrder;
 import com.emotionalcart.order.presentation.controller.request.CreateOrderRequest;
 import com.emotionalcart.order.presentation.controller.response.CreatedOrderResponse;
+import com.emotionalcart.order.presentation.controller.response.GetOrderListResponse;
 import com.emotionalcart.order.presentation.controller.response.OrderDetailResponse;
 import com.emotionalcart.order.presentation.controller.response.UserOrderResponse;
 import jakarta.validation.Valid;
