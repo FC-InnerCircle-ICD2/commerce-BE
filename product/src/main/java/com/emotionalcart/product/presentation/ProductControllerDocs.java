@@ -67,9 +67,34 @@ public interface ProductControllerDocs {
             ReadProductReviews.Request request);
 
     @Operation(summary = "상품 리뷰 등록", description = "특정 상품의 리뷰를 등록합니다.")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "리뷰 등록 성공",
+                    content = @Content(mediaType = "application/json",
+                            schema = @Schema(implementation = CreateProductReview.Response.class),
+                            examples = @ExampleObject(name = "리뷰 등록 성공",
+                                    value = "{ \"reviewId\": 1 }"))),
+            @ApiResponse(responseCode = "404", description = "상품을 찾을 수 없습니다.", content = @Content(mediaType = "application/json", examples = @ExampleObject(value = """
+                    {
+                        "errorCode": "PRODUCT-0006",
+                        "errorMessage": "해당 상품을 찾을 수 없습니다."
+                    }
+                    """)))
+    })
     ResponseEntity<CreateProductReview.Response> createProductReview(
             @PathVariable Long productId,
-            @ModelAttribute @Valid CreateProductReview.Request request);
+            @ModelAttribute @Valid
+            @io.swagger.v3.oas.annotations.parameters.RequestBody(
+                    description = "리뷰 등록 요청 데이터",
+                    required = true,
+                    content = @Content(mediaType = "multipart/form-data",
+                            schema = @Schema(implementation = CreateProductReview.Request.class),
+                            examples = @ExampleObject(
+                                    name = "리뷰 등록 예제",
+                                    value = "{ \"productName\": \"아이패드 프로\", \"productOptionId\": \"128GB\", " +
+                                            "\"productOptionName\": \"저장 용량\", \"rating\": 5, \"content\": \"너무 좋아요!\", " +
+                                            "\"reviewImages\": [ \"파일1\", \"파일2\" ] }"
+                            )))
+            CreateProductReview.Request request);
 
     // 상품 상세 조회
     @GetMapping("/{productId}")
