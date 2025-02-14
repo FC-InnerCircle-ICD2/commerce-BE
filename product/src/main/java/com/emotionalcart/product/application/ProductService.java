@@ -61,12 +61,17 @@ public class ProductService {
         // TODO 유저 구매내역 확인
         Review review = request.toReviewEntity(productId);
         productDataProvider.saveProductReview(review);
+
         List<ReviewImage> reviewImages = uploadAndCreateReviewImages(review.getId(), request.getReviewImages());
         productDataProvider.saveProductReviewImages(reviewImages);
+
         product.getReviewStatistic().updateStatistics(request.getRating());
         return new CreateProductReview.Response(review.getId());
     }
 
+    /**
+     * 리뷰 이미지 entity 생성 및 s3 저장
+     */
     private List<ReviewImage> uploadAndCreateReviewImages(Long reviewId, List<MultipartFile> files) {
         if (files == null || files.isEmpty()) {
             return List.of();

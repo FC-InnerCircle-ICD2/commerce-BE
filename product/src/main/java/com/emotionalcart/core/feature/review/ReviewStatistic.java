@@ -51,6 +51,9 @@ public class ReviewStatistic extends BaseEntity {
         return new ReviewStatistic(productId, totalRating, averageRating, reviewCount);
     }
 
+    /**
+     * 리뷰 통계 데이터 업데이트
+     */
     public void updateStatistics(Integer newRating) {
         this.totalRating += newRating;
         this.reviewCount++;
