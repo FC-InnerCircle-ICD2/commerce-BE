@@ -6,6 +6,7 @@ import com.emotionalcart.order.domain.dto.CreatedOrder;
 import com.emotionalcart.order.domain.dto.OrderDetail;
 import com.emotionalcart.order.presentation.controller.request.CreateOrderRequest;
 import com.emotionalcart.order.presentation.controller.response.CreatedOrderResponse;
+import com.emotionalcart.order.presentation.controller.response.GetOrderListResponse;
 import com.emotionalcart.order.presentation.controller.response.OrderDetailResponse;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -38,6 +39,14 @@ public class OrderController implements OrderApiDocs {
     public ResponseEntity<OrderDetailResponse> getOrderDetail(@PathVariable Long orderId) {
         OrderDetail orderDetail = orderDetailService.getOrderDetail(orderId);
         return ResponseEntity.ok(OrderDetailResponse.from(orderDetail));
+    }
+
+    /**
+     * 사용자 주문 목록 조회
+     */
+    @GetMapping("/my-orders")
+    public ResponseEntity<GetOrderListResponse> getOrderList() {
+        return ResponseEntity.ok(GetOrderListResponse.from());
     }
 
 }
