@@ -1,28 +1,33 @@
 package com.emotionalcart.product.application;
 
-import com.emotionalcart.core.feature.product.*;
-import com.emotionalcart.core.feature.provider.Provider;
-import com.emotionalcart.core.feature.review.Review;
 import com.emotionalcart.core.exception.ErrorCode;
 import com.emotionalcart.core.exception.ProductException;
 import com.emotionalcart.core.feature.category.Category;
-import com.emotionalcart.product.domain.ProductDataProvider;
-import com.emotionalcart.product.domain.dto.ProductDetail;
-import com.emotionalcart.product.domain.support.*;
-import com.emotionalcart.product.domain.CategoryDataProvider;
-import com.emotionalcart.product.domain.ProviderDataProvider;
 import com.emotionalcart.core.feature.product.Product;
 import com.emotionalcart.core.feature.product.ProductOption;
 import com.emotionalcart.core.feature.product.ProductOptionDetail;
-
+import com.emotionalcart.core.feature.provider.Provider;
+import com.emotionalcart.core.feature.review.Review;
+import com.emotionalcart.core.feature.review.ReviewImage;
+import com.emotionalcart.product.domain.CategoryDataProvider;
+import com.emotionalcart.product.domain.ProductDataProvider;
+import com.emotionalcart.product.domain.ProviderDataProvider;
+import com.emotionalcart.product.domain.dto.ProductDetail;
+import com.emotionalcart.product.domain.support.*;
 import com.emotionalcart.product.presentation.dto.*;
+import com.emotionalcart.s3.S3Utils;
+import com.emotionalcart.s3.config.S3Constants;
 import jakarta.validation.constraints.NotNull;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.multipart.MultipartFile;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 @Service
@@ -32,9 +37,10 @@ public class ProductService {
     private final ProductDataProvider productDataProvider;
     private final CategoryDataProvider categoryDataProvider;
     private final ProviderDataProvider providerDataProvider;
+    private final S3Utils s3Utils;
 
     public Page<ReadProductReviews.Response> readProductReviews(@NotNull Long productId,
-            ReadProductReviews.Request request) {
+                                                                ReadProductReviews.Request request) {
         productDataProvider.findProduct(productId);
 
         Page<Review> reviews = productDataProvider.findAllReviews(productId, request.getPageable());
@@ -46,6 +52,46 @@ public class ProductService {
     private ReviewImages findAllReviewImages(List<Review> reviews) {
         Reviews from = Reviews.from(reviews);
         return ReviewImages.from(productDataProvider.findAllReviewImages(from.ids()));
+    }
+
+    @Transactional
+    public CreateProductReview.Response createProductReview(@NotNull Long productId, CreateProductReview.Request request) {
+        Product product = productDataProvider.findProduct(productId);
+        productDataProvider.findProductReview(productId, "userId123"); // TODO 실제 userId 반영
+        // TODO 유저 구매내역 확인
+        Review review = request.toReviewEntity(productId);
+        productDataProvider.saveProductReview(review);
+
+        List<ReviewImage> reviewImages = uploadAndCreateReviewImages(review.getId(), request.getReviewImages());
+        productDataProvider.saveProductReviewImages(reviewImages);
+
+        product.getReviewStatistic().updateStatistics(request.getRating());
+        return new CreateProductReview.Response(review.getId());
+    }
+
+    /**
+     * 리뷰 이미지 entity 생성 및 s3 저장
+     */
+    private List<ReviewImage> uploadAndCreateReviewImages(Long reviewId, List<MultipartFile> files) {
+        if (files == null || files.isEmpty()) {
+            return List.of();
+        }
+
+        return files.stream().map(file -> {
+            try {
+                String fileUrl = s3Utils.uploadFile(S3Constants.REVIEW_DIRECTORY, reviewId.toString(), file);
+                return ReviewImage.of(
+                        reviewId,
+                        file.getOriginalFilename(),
+                        fileUrl,
+                        file.getContentType(),
+                        file.getSize(),
+                        files.indexOf(file) + 1
+                );
+            } catch (Exception e) {
+                throw new ProductException(ErrorCode.S3_UPLOAD_FAILED);
+            }
+        }).toList();
     }
 
     public Page<ReadProducts.Response> readProducts(ReadProducts.Request request) {

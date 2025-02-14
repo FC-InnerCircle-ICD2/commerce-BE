@@ -1,17 +1,13 @@
 package com.emotionalcart.product.presentation;
 
 import com.emotionalcart.product.application.ProductService;
-import com.emotionalcart.product.presentation.dto.ReadProductDetails;
-import com.emotionalcart.product.presentation.dto.ReadProductsPrice;
+import com.emotionalcart.product.presentation.dto.*;
 import jakarta.validation.Valid;
-import com.emotionalcart.product.presentation.dto.ReadProductReviews;
 
-import com.emotionalcart.product.presentation.dto.ReadProducts;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-import com.emotionalcart.product.presentation.dto.ReadProductsValidate;
 
 import java.util.List;
 
@@ -23,10 +19,20 @@ public class ProductController implements ProductControllerDocs {
 
     // 상품 리뷰 조회
     @Override
+    @GetMapping("/{productId}/reviews")
     public ResponseEntity<Page<ReadProductReviews.Response>> readProductReviews(
             @PathVariable Long productId,
             ReadProductReviews.Request request) {
         return ResponseEntity.ok(productService.readProductReviews(productId, request));
+    }
+
+    // 상품 리뷰 등록
+    @Override
+    @PostMapping("/{productId}/review")
+    public ResponseEntity<CreateProductReview.Response> createProductReview(
+            @PathVariable Long productId,
+            @ModelAttribute @Valid CreateProductReview.Request request) {
+        return ResponseEntity.ok(productService.createProductReview(productId, request));
     }
 
     // 상품 상세 조회

@@ -19,7 +19,9 @@ public enum ErrorCode {
     NOT_FOUND_BANNER("PRODUCT-0012", "배너를 찾을 수 없습니다.", HttpStatus.NOT_FOUND),
     OUT_OF_STOCK("PRODUCT-0008", "상품의 재고가 부족합니다.", HttpStatus.CONFLICT),
     REQUIRED_OPTION_MISSING("PRODUCT-0009", "상품의 필수 옵션이 선택되지 않았습니다.", HttpStatus.CONFLICT),
-    NOT_FOUND_REVIEW_STATISTIC("PRODUCT-0013", "해당 상품의 리뷰 통계를 찾을 수 없습니다.", HttpStatus.NOT_FOUND);
+    NOT_FOUND_REVIEW_STATISTIC("PRODUCT-0013", "해당 상품의 리뷰 통계를 찾을 수 없습니다.", HttpStatus.NOT_FOUND),
+    DUPLICATE_REVIEW("PRODUCT-0014", "이미 등록된 리뷰가 있습니다.", HttpStatus.CONFLICT),
+    S3_UPLOAD_FAILED("PRODUCT-0015", "이미지 등록에 실패했습니다.", HttpStatus.INTERNAL_SERVER_ERROR);
 
     private final String errorCode;
     private final String message;

@@ -8,6 +8,7 @@ import com.emotionalcart.product.domain.ProductDataProvider;
 import com.emotionalcart.product.domain.ProviderDataProvider;
 import com.emotionalcart.product.domain.dto.ProductDetail;
 import com.emotionalcart.product.presentation.dto.ReadProductsValidate;
+import com.emotionalcart.s3.S3Utils;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -31,11 +32,14 @@ class ProductServiceTest {
     @Mock
     private ProviderDataProvider providerDataProvider;
 
+    @Mock
+    private S3Utils s3Utils;
+
     private ProductService productService;
 
     @BeforeEach
     void setUp() {
-        productService = new ProductService(productDataProvider, categoryDataProvider, providerDataProvider);
+        productService = new ProductService(productDataProvider, categoryDataProvider, providerDataProvider, s3Utils);
     }
 
     @Test
