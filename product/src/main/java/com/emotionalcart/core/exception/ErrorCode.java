@@ -23,6 +23,7 @@ public enum ErrorCode {
     REQUIRED_OPTION_MISSING("PRODUCT-0016", "상품의 필수 옵션이 선택되지 않았습니다.", HttpStatus.CONFLICT),
     OUT_OF_STOCK("PRODUCT-0017", "상품의 재고가 부족합니다.", HttpStatus.CONFLICT),
     PRODUCT_IMAGE_REQUIRED("PRODUCT_0018", "상품 이미지는 필수입니다.", HttpStatus.BAD_REQUEST),
+    CATEGORY_MUST_BE_DEPTH_2("PRODUCT_0019", "카테고리는 Depth 2 만 입력 가능합니다.", HttpStatus.BAD_REQUEST),
     ;
 
     private final String errorCode;

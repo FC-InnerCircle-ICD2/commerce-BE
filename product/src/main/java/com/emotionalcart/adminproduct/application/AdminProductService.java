@@ -1,6 +1,8 @@
 package com.emotionalcart.adminproduct.application;
 
+import com.emotionalcart.adminproduct.domain.AdminCategoryDataProvider;
 import com.emotionalcart.adminproduct.domain.AdminProductDataProvider;
+import com.emotionalcart.adminproduct.domain.AdminProviderDataProvider;
 import com.emotionalcart.adminproduct.presentation.dto.CreateProduct;
 import com.emotionalcart.core.exception.ErrorCode;
 import com.emotionalcart.core.exception.ProductException;
@@ -24,11 +26,15 @@ import java.util.stream.IntStream;
 @Transactional(readOnly = true)
 public class AdminProductService {
     private final AdminProductDataProvider adminProductDataProvider;
+    private final AdminProviderDataProvider adminProviderDataProvider;
+    private final AdminCategoryDataProvider adminCategoryDataProvider;
     private final S3Utils s3Utils;
 
     @Transactional
     public CreateProduct.Response createProduct(CreateProduct.Request request) {
-        // TODO category, provider 유효성 체크
+        // category, provider 유효성 체크
+        adminProviderDataProvider.findProviderById(request.getProviderId());
+        adminCategoryDataProvider.validateCategory(request.getCategoryId());
 
         Product product = request.toEntity();
 
