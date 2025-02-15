@@ -72,17 +72,19 @@ jobs:
 
       - name: Login to AWS ECR
         run: |
+          cd ./product
           aws ecr get-login-password --region ${{ env.AWS_REGION }} | docker login --username AWS --password-stdin 634565347325.dkr.ecr.ap-northeast-2.amazonaws.com
 
       - name: Build Docker Image
-        run: |     
+        run: |
           docker build -t ${{ env.ECR_REPOSITORY }} .
 
       - name: Push Docker Image to AWS ECR
         run: |
           docker tag ${{ env.ECR_REPOSITORY }}:latest ${{ secrets.ECR_URI }}/${{ env.ECR_REPOSITORY }}:latest
 
-      
+      - name: Push Docker Image to AWS ECR
+        run: |
           docker push ${{ secrets.ECR_URI }}/${{ env.ECR_REPOSITORY }}:latest
 
       - name: Fill in the new image ID in the Amazon ECS task definition
