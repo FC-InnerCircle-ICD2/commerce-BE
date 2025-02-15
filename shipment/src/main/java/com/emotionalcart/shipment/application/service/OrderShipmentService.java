@@ -24,7 +24,7 @@ public class OrderShipmentService {
     public void createShipment(CreateShipment createShipment) {
         List<Shipment> shipmentList = createShipment.getProviderIds().stream().map(providerId -> Shipment.of(providerId,
                                                                                                              createShipment.getOrderId(),
-                                                                                                             ShipmentStatus.READY,
+                                                                                                             ShipmentStatus.SHIP_REQUESTED,
                                                                                                              createShipment.getName(),
                                                                                                              createShipment.getPhoneNumber(),
                                                                                                              createShipment.getAddress(),

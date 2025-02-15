@@ -76,7 +76,7 @@ public class Shipment {
     public static Shipment requestShipment(Long orderId) {
         Shipment shipment = new Shipment();
         shipment.orderId = orderId;
-        shipment.status = ShipmentStatus.READY; // 초기 상태는 READY
+        shipment.status = ShipmentStatus.SHIP_REQUESTED; // 초기 상태는 READY
         shipment.requestedAt = LocalDateTime.now();
         return shipment;
     }
