@@ -109,7 +109,7 @@ public class ProductService {
         // DTO 변환
         return ReadProducts.Response.toResponse(productPage, productOptions, categories, providers, productImages);
     }
-      
+
     public ReadProductDetails.Response getProductDetail(Long productId) {
 
         // 상품 정보
@@ -169,8 +169,9 @@ public class ProductService {
         for (ReadProductsValidate.Request request : requests) {
             validateProductExists(groupedProductDetails, request.getProductId());
             validateOptions(groupedProductDetails, request);
-            validateStock(groupedProductDetails, request);
         }
+
+        // TODO 재고 검증
     }
 
     private void validateProductExists(ProductDetails groupedProductDetails, Long productId) {
@@ -198,19 +199,6 @@ public class ProductService {
         }
     }
 
-    private void validateStock(ProductDetails groupedProductDetails, ReadProductsValidate.Request request) {
-        List<ProductDetail> productDetails = groupedProductDetails.getDetailsByProductId(request.getProductId());
-        Map<Long, Integer> optionDetailStockMap = productDetails.stream()
-                .collect(Collectors.toMap(ProductDetail::getProductOptionDetailId, ProductDetail::getQuantity));
-
-        for (ReadProductsValidate.Request.OptionRequest option : request.getProductOptions()) {
-            Integer availableStock = optionDetailStockMap.get(option.getProductOptionDetailId());
-            if (availableStock == null || option.getQuantity() > availableStock) {
-                throw new ProductException(ErrorCode.OUT_OF_STOCK);
-            }
-        }
-    }
-
     public List<ReadProductsPrice.Response> readProductsPrice(List<ReadProductsPrice.Request> requests) {
         Set<Long> productIds = requests.stream()
                 .map(ReadProductsPrice.Request::getProductId)
@@ -230,7 +218,15 @@ public class ProductService {
         return filteredDetails.stream()
                 .collect(Collectors.groupingBy(ProductDetail::getProductId))
                 .entrySet().stream()
-                .map(entry -> ReadProductsPrice.toResponse(entry.getKey(), entry.getValue()))
+                .map(entry -> {
+                    Long productId = entry.getKey();
+                    List<ProductDetail> details = entry.getValue();
+                    Long providerId = details.stream()
+                            .map(ProductDetail::getProviderId)
+                            .findFirst()
+                            .orElseThrow(() -> new ProductException(ErrorCode.NOT_FOUND_PRODUCT));
+                    return ReadProductsPrice.toResponse(productId, providerId, details);
+                })
                 .collect(Collectors.toList());
     }
 
