@@ -2,10 +2,13 @@ package com.emotionalcart.product.presentation;
 
 import com.emotionalcart.product.application.ProductService;
 import com.emotionalcart.product.presentation.dto.*;
+import com.emotionalcart.product.presentation.dto.request.CreateProductReviewRequest;
+import com.emotionalcart.product.presentation.dto.response.CreateProductReviewResponse;
 import jakarta.validation.Valid;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -28,10 +31,10 @@ public class ProductController implements ProductControllerDocs {
 
     // 상품 리뷰 등록
     @Override
-    @PostMapping("/{productId}/review")
-    public ResponseEntity<CreateProductReview.Response> createProductReview(
+    @PostMapping(value = "/{productId}/review", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+    public ResponseEntity<CreateProductReviewResponse> createProductReview(
             @PathVariable Long productId,
-            @ModelAttribute @Valid CreateProductReview.Request request) {
+            @ModelAttribute @Valid CreateProductReviewRequest request) {
         return ResponseEntity.ok(productService.createProductReview(productId, request));
     }
 

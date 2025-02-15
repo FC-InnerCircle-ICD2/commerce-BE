@@ -3,7 +3,8 @@ package com.emotionalcart.adminproduct.application;
 import com.emotionalcart.adminproduct.domain.AdminCategoryDataProvider;
 import com.emotionalcart.adminproduct.domain.AdminProductDataProvider;
 import com.emotionalcart.adminproduct.domain.AdminProviderDataProvider;
-import com.emotionalcart.adminproduct.presentation.dto.CreateProduct;
+import com.emotionalcart.adminproduct.presentation.dto.CreateProductRequest;
+import com.emotionalcart.adminproduct.presentation.dto.CreateProductResponse;
 import com.emotionalcart.core.exception.ErrorCode;
 import com.emotionalcart.core.exception.ProductException;
 import com.emotionalcart.core.feature.product.Product;
@@ -31,7 +32,7 @@ public class AdminProductService {
     private final S3Utils s3Utils;
 
     @Transactional
-    public CreateProduct.Response createProduct(CreateProduct.Request request) {
+    public CreateProductResponse createProduct(CreateProductRequest request) {
         // category, provider 유효성 체크
         adminProviderDataProvider.findProviderById(request.getProviderId());
         adminCategoryDataProvider.validateCategory(request.getCategoryId());
@@ -55,7 +56,7 @@ public class AdminProductService {
         productImages.addAll(detailProductImages);
         savedProduct.setImages(productImages);
 
-        return new CreateProduct.Response(savedProduct.getId());
+        return new CreateProductResponse(savedProduct.getId());
     }
 
     /**

@@ -1,6 +1,8 @@
 package com.emotionalcart.product.presentation;
 
 import com.emotionalcart.product.presentation.dto.*;
+import com.emotionalcart.product.presentation.dto.request.CreateProductReviewRequest;
+import com.emotionalcart.product.presentation.dto.response.CreateProductReviewResponse;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.ExampleObject;
@@ -21,36 +23,7 @@ public interface ProductControllerDocs {
     @Operation(summary = "상품 리뷰 조회", description = "특정 상품의 리뷰 목록을 페이징하여 조회합니다.")
     @ApiResponses({
             @ApiResponse(responseCode = "200", description = "상품 리뷰 조회 성공", content = @Content(mediaType = "application/json",
-                    schema = @Schema(implementation = ReadProductReviews.Response.class),
-                    examples = @ExampleObject(value = """
-                            {
-                                "content": [
-                                    {
-                                        "id": 1,
-                                        "productName": "Nike Air Max",
-                                        "productOptionName": "270mm",
-                                        "rating": 5,
-                                        "content": "아주 만족스러운 제품입니다.",
-                                        "createdAt": "2024-01-29T12:00:00",
-                                        "reviewImages": [
-                                            {
-                                                "id": 101,
-                                                "url": "https://your-s3-bucket.s3.amazonaws.com/images/products/100/photo1.jpg",
-                                                "fileOrder": 1
-                                            }
-                                        ]
-                                    }
-                                ],
-                                "pageable": {
-                                    "pageNumber": 0,
-                                    "pageSize": 10
-                                },
-                                "totalElements": 1,
-                                "totalPages": 1,
-                                "last": true
-                            }
-                            """
-                    ))),
+                    schema = @Schema(implementation = ReadProductReviews.Response.class))),
             @ApiResponse(responseCode = "404", description = "상품을 찾을 수 없음",
                     content = @Content(mediaType = "application/json",
                             examples = @ExampleObject(value = """
@@ -70,7 +43,7 @@ public interface ProductControllerDocs {
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "리뷰 등록 성공",
                     content = @Content(mediaType = "application/json",
-                            schema = @Schema(implementation = CreateProductReview.Response.class),
+                            schema = @Schema(implementation = CreateProductReviewResponse.class),
                             examples = @ExampleObject(name = "리뷰 등록 성공",
                                     value = "{ \"reviewId\": 1 }"))),
             @ApiResponse(responseCode = "404", description = "상품을 찾을 수 없습니다.", content = @Content(mediaType = "application/json", examples = @ExampleObject(value = """
@@ -80,21 +53,10 @@ public interface ProductControllerDocs {
                     }
                     """)))
     })
-    ResponseEntity<CreateProductReview.Response> createProductReview(
+    ResponseEntity<CreateProductReviewResponse> createProductReview(
             @PathVariable Long productId,
-            @ModelAttribute @Valid
-            @io.swagger.v3.oas.annotations.parameters.RequestBody(
-                    description = "리뷰 등록 요청 데이터",
-                    required = true,
-                    content = @Content(mediaType = "multipart/form-data",
-                            schema = @Schema(implementation = CreateProductReview.Request.class),
-                            examples = @ExampleObject(
-                                    name = "리뷰 등록 예제",
-                                    value = "{ \"productName\": \"아이패드 프로\", \"productOptionId\": \"128GB\", " +
-                                            "\"productOptionName\": \"저장 용량\", \"rating\": 5, \"content\": \"너무 좋아요!\", " +
-                                            "\"reviewImages\": [ \"파일1\", \"파일2\" ] }"
-                            )))
-            CreateProductReview.Request request);
+            @Valid @ModelAttribute CreateProductReviewRequest createProductReviewRequest
+    );
 
     // 상품 상세 조회
     @GetMapping("/{productId}")

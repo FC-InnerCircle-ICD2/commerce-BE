@@ -1,8 +1,10 @@
 package com.emotionalcart.adminproduct.presentation;
 
-import com.emotionalcart.adminproduct.presentation.dto.CreateProduct;
+import com.emotionalcart.adminproduct.presentation.dto.CreateProductRequest;
+import com.emotionalcart.adminproduct.presentation.dto.CreateProductResponse;
 import com.emotionalcart.core.exception.GlobalExceptionHandler;
 import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.ExampleObject;
 import io.swagger.v3.oas.annotations.media.Schema;
@@ -21,7 +23,7 @@ public interface AdminProductControllerDocs {
             responses = {
                     @ApiResponse(responseCode = "200", description = "상품 등록 성공",
                             content = @Content(mediaType = "application/json",
-                                    schema = @Schema(implementation = CreateProduct.Response.class),
+                                    schema = @Schema(implementation = CreateProductResponse.class),
                                     examples = @ExampleObject(name = "상품 등록 성공", value = "{ \"productId\": 1 }")
                             )),
 
@@ -30,34 +32,8 @@ public interface AdminProductControllerDocs {
                                     schema = @Schema(implementation = GlobalExceptionHandler.ExceptionResponse.class)))
             }
     )
-    @io.swagger.v3.oas.annotations.parameters.RequestBody(
-            description = "상품 등록 요청 데이터",
-            required = true,
-            content = @Content(
-                    mediaType = "multipart/form-data",
-                    schema = @Schema(implementation = CreateProduct.Request.class),
-                    examples = @ExampleObject(
-                            name = "상품 등록 예시",
-                            description = "상품 등록 요청 예시 데이터",
-                            value = "{"
-                                    + "\"name\": \"아이패드 프로\","
-                                    + "\"description\": \"최신 M2 칩 탑재\","
-                                    + "\"price\": 1500000,"
-                                    + "\"providerId\": 4,"
-                                    + "\"categoryId\": 6,"
-                                    + "\"options\": [{"
-                                    + "   \"name\": \"저장 용량\","
-                                    + "   \"optionDetails\": [{"
-                                    + "       \"value\": \"128GB\","
-                                    + "       \"optionOrder\": 1,"
-                                    + "       \"additionalPrice\": 0"
-                                    + "   }]"
-                                    + "}],"
-                                    + "\"mainImage\": \"(파일 업로드)\","
-                                    + "\"detailImages\": [\"(파일 업로드)\", \"(파일 업로드)\"]"
-                                    + "}"
-                    )
-            )
-    )
-    ResponseEntity<CreateProduct.Response> createProduct(@Valid @ModelAttribute CreateProduct.Request request);
+    ResponseEntity<CreateProductResponse> createProduct(
+            @Parameter(description = "상품 등록 요청 데이터", required = true)
+            @Valid @ModelAttribute CreateProductRequest createProductRequest
+    );
 }
