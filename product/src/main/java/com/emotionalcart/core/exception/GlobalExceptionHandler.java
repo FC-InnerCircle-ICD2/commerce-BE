@@ -1,9 +1,9 @@
 package com.emotionalcart.core.exception;
 
 import lombok.extern.slf4j.Slf4j;
-import org.hibernate.boot.model.naming.IllegalIdentifierException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 import org.springframework.web.method.annotation.HandlerMethodValidationException;
@@ -50,6 +50,26 @@ public class GlobalExceptionHandler {
                              .body(response);
     }
 
+    /**
+     * @Valid 유효성 검증 실패 (DTO 유효성 검사 실패)
+     */
+    @ExceptionHandler(MethodArgumentNotValidException.class)
+    public ResponseEntity<ExceptionResponse> handleValidationException(MethodArgumentNotValidException ex) {
+        log.error("Validation Exception 발생: {}", ex.getMessage(), ex);
+
+        // 첫 번째 오류 메시지만 응답으로 반환
+        String errorMessage = ex.getBindingResult().getFieldErrors().stream()
+                .findFirst()
+                .map(error -> error.getField() + " " + error.getDefaultMessage())
+                .orElse("잘못된 요청입니다.");
+
+        ExceptionResponse response = new ExceptionResponse(
+                ErrorCode.BAD_REQUEST.getErrorCode(),
+                errorMessage
+        );
+
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(response);
+    }
 
     public record ExceptionResponse(String errorCode, String errorMessage) {
     }
