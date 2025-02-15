@@ -1,14 +1,20 @@
-# Use a base image with Java
 FROM openjdk:21-jdk-slim
+# or
+# FROM openjdk:8-jdk-alpine
+# FROM openjdk:11-jdk-alpine
 
-# Set the working directory
-WORKDIR /app
+CMD ["./gradlew", "clean", "bootJar"]
+# or Maven
+# CMD ["./mvnw", "clean", "package"]
 
-# Copy the build artifact from the build stage
-COPY build/libs/product-0.0.1-SNAPSHOT.jar app.jar
+VOLUME /tmp
 
-# Expose the port the app runs on
+ARG JAR_FILE=build/libs/*.jar
+# or Maven
+# ARG JAR_FILE_PATH=target/*.jar
+
+COPY ${JAR_FILE} app.jar
+
 EXPOSE 8080
 
-# Run the application
-ENTRYPOINT ["java", "-jar", "app.jar"]
+ENTRYPOINT ["java","-jar","/app.jar"]
