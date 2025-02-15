@@ -9,19 +9,18 @@ spring:
       client:
         registration:
           kakao:
-            client-name: Kakao
-            client-id: fc379f7f44f086c287618c49de7e366f
-            client-secret: a2MFseY5A70id14t2DFS5FSOoXXVMatv
+            client-name: kakao
+            client-id: ${KAKAO_CLIENT_ID}
+            client-secret: ${KAKAO_CLIENT_SECRET}
             redirect-uri: http://localhost:8082/login/oauth2/code/kakao
             authorization-grant-type: authorization_code
             scope:
-#              - account_email
               - profile_nickname
             client-authentication-method: client_secret_post
           naver:
             client-name: naver
-            client-id: RUPtW98ZDcOmwOIVRibH
-            client-secret: NB0KEonYg_
+            client-id: ${NAVER_CLIENT_ID}
+            client-secret: ${NAVER_CLIENT_SECRET}
             redirect-uri: http://localhost:8082/login/oauth2/code/naver
             authorization-grant-type: authorization_code
             scope:
@@ -40,9 +39,9 @@ spring:
             user-name-attribute: response
 
   datasource:
-    url: jdbc:mysql://localhost:3306/commerce
-    username: root
-    password: solhee1q2w3e4r!@
+    url: ${DATASOURCE_RUL:jdbc:mysql://localhost:3306/emotional_cart}
+    username: ${DATASOURCE_USERNAME:root}
+    password: ${DATASOURCE_PASSWORD:1234}
     driver-class-name: com.mysql.cj.jdbc.Driver
 
   jpa:
@@ -72,3 +71,8 @@ member:
     feign-endpoint: http://localhost:8081
 server:
   port: 8082
+
+aws:
+  s3:
+    access-key: test
+    secret-key: test

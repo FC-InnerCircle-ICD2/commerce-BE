@@ -1,4 +1,4 @@
-package com.emotionalcart.member.application.dto;
+package com.emotionalcart.member.presentation.dto;
 
 import com.emotionalcart.core.feature.enums.SocialType;
 import lombok.AllArgsConstructor;

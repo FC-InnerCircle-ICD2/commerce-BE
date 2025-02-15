@@ -55,17 +55,15 @@ public class Member extends BaseEntity {
     public static Member of(
             String socialId,
             String userName,
-            String nickName,
-            String phone,
-            SocialType socialType,
-            MemberState memberState
+            SocialType socialType
     ) {
-        return new Member(socialId,
+        return new Member(
+                socialId,
                 userName,
-                nickName,
-                phone,
+                null,
+                null,
                 socialType,
-                memberState
+                MemberState.ACTIVE
         );
     }
 }
