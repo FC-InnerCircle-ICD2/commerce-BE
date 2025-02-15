@@ -47,13 +47,11 @@ public class OrderShipmentService {
      */
     public Page<OrderShipmentResponse> getShipmentByProvider(String providerId, Pageable pageable) {
         Page<Shipment> shipmentPage = orderShipmentRepository.findByProviderId(providerId, pageable);
-        //        return shipmentPage.map(s -> OrderShipmentResponse.of(s.getOrderId(),
-        //                                                              s.getStatus().getDescription(),
-        //                                                              s.getTrackingNumber(),
-        //                                                              s.getShippedAt(),
-        //                                                              s.getDeliveredAt()));
-
-        return null;
+        return shipmentPage.map(s -> OrderShipmentResponse.of(s.getOrderId(),
+                                                              s.getStatus().getDescription(),
+                                                              s.getTrackingNumber(),
+                                                              s.getShippedAt(),
+                                                              s.getDeliveredAt()));
     }
 
 }
