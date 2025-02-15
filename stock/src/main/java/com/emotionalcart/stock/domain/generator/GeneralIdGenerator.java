@@ -1,4 +1,4 @@
-package com.emotionalcart.domain.generator;
+package com.emotionalcart.stock.domain.generator;
 
 import org.hibernate.engine.spi.SharedSessionContractImplementor;
 import org.hibernate.id.IdentifierGenerator;

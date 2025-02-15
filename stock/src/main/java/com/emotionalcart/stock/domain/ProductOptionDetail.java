@@ -1,6 +1,6 @@
 package com.emotionalcart.stock.domain;
 
-import com.emotionalcart.generator.IdGenerator;
+import com.emotionalcart.stock.domain.generator.IdGenerator;
 import jakarta.persistence.*;
 import lombok.AccessLevel;
 import lombok.Getter;

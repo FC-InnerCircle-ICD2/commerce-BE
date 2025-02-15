@@ -1,4 +1,4 @@
-package com.emotionalcart.domain;
+package com.emotionalcart.stock.domain;
 
 public enum OptionType {
     DROPDOWN,

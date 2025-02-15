@@ -1,4 +1,4 @@
-package com.emotionalcart.domain.generator;
+package com.emotionalcart.stock.domain.generator;
 
 import org.hibernate.annotations.IdGeneratorType;
 
