@@ -7,7 +7,7 @@ on:
     inputs:
       branch:
         required: false
-        default: 'develop'
+        default: 'deploy'
         type: string
         description: "빌드할 브랜치명"  
 # develop 브랜치에 푸쉬 되었을 때 워크플로우가 실행됩니다.
@@ -55,22 +55,35 @@ jobs:
           aws s3 cp s3://innercircle-ecommerce-environment-file/product-service-dev.env .
           mv ./product-service-dev.env ./.env.dev
 
-      - name: Build, tag, and push image to Amazon ECR
-        id: build-image
-        env:
-          ECR_REGISTRY: ${{ steps.login-ecr.outputs.registry }}
-          IMAGE_TAG: ${{ github.sha }}
-        run: |
+      #- name: Build, tag, and push image to Amazon ECR
+      #  id: build-image
+      #  env:
+      #    ECR_REGISTRY: ${{ steps.login-ecr.outputs.registry }}
+      #    ECR_REPOSITORY: ${{ env.ECR_REPOSITORY }}
+      #    IMAGE_TAG: ${{ github.sha }}
+      #  run: |
           # Build a docker container and
           # push it to ECR so that it can
           # be deployed to ECS.
           # 도커 빌드 명령어
-          #docker build --platform linux/amd64 -t ecr 634565347325.dkr.ecr.ap-northeast-2.amazonaws.com/ecr ecommerce-product:latest -f Dockerfile .
-          #docker push ecr 634565347325.dkr.ecr.ap-northeast-2.amazonaws.com/ecr ecommerce-product:latest
-          docker build -t $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG Dockerfile .
-          docker push $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG
-          #echo "634565347325.dkr.ecr.ap-northeast-2.amazonaws.com/ecommerce-product:latest" >> $GITHUB_OUTPUT
-          echo "::set-output name=image::$ECR_REGISTRY/$ECR_REPOSITORY_NAME:$IMAGE_TAG"
+          #docker build -t $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG Dockerfile .
+          #docker push $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG
+          #echo "::set-output name=image::$ECR_REGISTRY/$ECR_REPOSITORY_NAME:$IMAGE_TAG"
+
+      - name: Login to AWS ECR
+        run: |
+          aws ecr get-login-password --region ${{ env.AWS_REGION }} | docker login --username AWS --password-stdin 634565347325.dkr.ecr.ap-northeast-2.amazonaws.com
+
+      - name: Build Docker Image
+        run: |     
+          docker build -t ${{ env.ECR_REPOSITORY }} .
+
+      - name: Push Docker Image to AWS ECR
+        run: |
+          docker tag ${{ env.ECR_REPOSITORY }}:latest ${{ secrets.ECR_URI }}/${{ env.ECR_REPOSITORY }}:latest
+
+      
+          docker push ${{ secrets.ECR_URI }}/${{ env.ECR_REPOSITORY }}:latest
 
       - name: Fill in the new image ID in the Amazon ECS task definition
         id: task-def
