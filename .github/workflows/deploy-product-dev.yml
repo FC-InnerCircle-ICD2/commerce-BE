@@ -76,6 +76,7 @@ jobs:
 
       - name: Build Docker Image
         run: | 
+          cd product
           docker build -t ${{ env.ECR_REPOSITORY }} .
 
       - name: Push Docker Image to AWS ECR
