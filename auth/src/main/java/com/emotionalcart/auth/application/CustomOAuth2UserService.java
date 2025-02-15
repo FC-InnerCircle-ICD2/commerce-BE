@@ -54,17 +54,13 @@ public class CustomOAuth2UserService extends DefaultOAuth2UserService {
             throw new OAuth2AuthenticationException("Unsupported social type: " + oAuth2Response.getProvider());
         }
 
-        MemberRequest memReq = new MemberRequest();
-        memReq.setSocialId(socialId);
-        memReq.setSocialType(socialType);
-        memReq.setName(oAuth2Response.getName());
+        MemberRequest memberRequest = new MemberRequest();
+        memberRequest.setSocialId(socialId);
+        memberRequest.setSocialType(socialType);
+        memberRequest.setName(oAuth2Response.getName());
 
-        // MemberResponse 작성
-        MemberResponse memberResponse = memberFeignClient.findOrCreate(memReq);
-
-        memberResponse.setName(oAuth2Response.getName());
-        memberResponse.setUserName(oAuth2Response.getName());
-        memberResponse.setRole("COMMERCE_MEMBER");
+        // Member 조회
+        MemberResponse memberResponse = memberFeignClient.findOrCreate(memberRequest);
 
         return new CustomOAuth2User(memberResponse);
     }

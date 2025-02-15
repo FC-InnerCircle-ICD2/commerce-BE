@@ -1,8 +1,8 @@
 package com.emotionalcart.member.presentation;
 
 import com.emotionalcart.member.application.MemberService;
-import com.emotionalcart.member.application.dto.MemberRequest;
-import com.emotionalcart.member.presentation.dto.AuthMembers;
+import com.emotionalcart.member.presentation.dto.MemberRequest;
+import com.emotionalcart.member.presentation.dto.MemberResponse;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -15,7 +15,7 @@ public class MemberController {
     private final MemberService memberService;
 
     @PostMapping("/find-or-create")
-    public ResponseEntity<AuthMembers.Response>findOrCreate(@RequestBody MemberRequest request) {
-        return ResponseEntity.ok(memberService.findOrCreate(request.getSocialId(), request.getName(), request.getSocialType()));
+    public ResponseEntity<MemberResponse>findOrCreate(@RequestBody MemberRequest request) {
+        return ResponseEntity.ok(memberService.findOrCreate(request));
     }
 }

@@ -1,6 +1,8 @@
-package com.emotionalcart.auth.application.dto;
+package com.emotionalcart.member.presentation.dto;
 
-import lombok.*;
+import lombok.AllArgsConstructor;
+import lombok.Data;
+import lombok.NoArgsConstructor;
 
 @Data
 @AllArgsConstructor

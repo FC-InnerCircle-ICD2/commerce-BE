@@ -45,7 +45,7 @@ public class JWTFilter extends OncePerRequestFilter {
 
         // 사용자 정보를 담아서 생성
         MemberResponse memberResponse = new MemberResponse();
-        memberResponse.setUserName(userName);
+        memberResponse.setName(userName);
         memberResponse.setRole("COMMERCE_MEMBER");
 
         // CustomOAuth2User 객체 생성
