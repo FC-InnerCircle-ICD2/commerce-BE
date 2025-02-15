@@ -1,0 +1,86 @@
+#워크플로우 이름
+name: deploy-product-dev
+
+run-name: product-dev deploy by ${{ github.actor }} - ${{ github.run_number }}
+on: 
+  workflow_dispatch:
+    inputs:
+      branch:
+        required: false
+        default: 'develop'
+        type: string
+        description: "빌드할 브랜치명"  
+# develop 브랜치에 푸쉬 되었을 때 워크플로우가 실행됩니다.
+# on:
+#   push:
+#     branches:
+#       - develop # 해당 브랜치에 머지되면 이 워크플로우가 트리거 된다.
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+
+    # 변수 설정
+    env:
+      AWS_REGION: ap-northeast-2
+      ECR_REPOSITORY: ecommerce-product
+      ECS_SERVICE: ecommerce-service
+      ECS_CLUSTER: ecommerce-cluster
+      ECS_TASK_DEFINITION: ./develop-tdf.json # 실행할 TDF, 본인은 프로젝트 안에 tdf를 작성해두어서 경로를 이렇게 설정
+      CONTAINER_NAME: ecommerce-product-was1
+
+    permissions:
+      contents: read
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v3
+
+      # AWS Config
+      - name: Configure AWS credentials
+        uses: aws-actions/configure-aws-credentials@v1
+        with:
+          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          aws-region: ${{ env.AWS_REGION }}
+
+      - name: Login to Amazon ECR
+        id: login-ecr
+        uses: aws-actions/amazon-ecr-login@v1
+        
+        # 프로젝트에 주입할 환경변수를 S3 버킷에서 가져와서 프로젝트에 주입
+        # 가져와서 이름을 변경함
+      - name: Download Environment File from S3 bucket
+        run: |
+          aws s3 cp s3://innercircle-ecommerce-environment-file/product-service-dev.env .
+          mv ./innercircle-ecommerce-environment-file/product-service-dev.env ./.env.dev
+
+      - name: Build, tag, and push image to Amazon ECR
+        id: build-image
+        env:
+          ECR_REGISTRY: ${{ steps.login-ecr.outputs.registry }}
+          IMAGE_TAG: ${{ github.sha }}
+        run: |
+          # Build a docker container and
+          # push it to ECR so that it can
+          # be deployed to ECS.
+          # 도커 빌드 명령어
+          docker build --platform linux/amd64 -t ecr 634565347325.dkr.ecr.ap-northeast-2.amazonaws.com/ecr ecommerce-product:latest -f Dockerfile .
+          docker push ecr 634565347325.dkr.ecr.ap-northeast-2.amazonaws.com/ecr ecommerce-product:latest
+          echo "634565347325.dkr.ecr.ap-northeast-2.amazonaws.com/ecommerce-product:latest" >> $GITHUB_OUTPUT
+
+      - name: Fill in the new image ID in the Amazon ECS task definition
+        id: task-def
+        uses: aws-actions/amazon-ecs-render-task-definition@v1
+        with:
+          task-definition: ${{ env.ECS_TASK_DEFINITION }}
+          container-name: ${{ env.CONTAINER_NAME }}
+          image: ${{ steps.build-image.outputs.image }}
+
+      - name: Deploy Amazon ECS task definition
+        uses: aws-actions/amazon-ecs-deploy-task-definition@v1
+        with:
+          task-definition: ${{ steps.task-def.outputs.task-definition }}
+          service: ${{ env.ECS_SERVICE }}
+          cluster: ${{ env.ECS_CLUSTER }}
+          wait-for-service-stability: true
