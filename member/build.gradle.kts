@@ -1,6 +1,6 @@
 plugins {
     id("java")
-    id("org.springframework.boot") version "3.2.5"
+    id("org.springframework.boot") version "3.4.0"
     id("io.spring.dependency-management") version "1.1.5"
 }
 
@@ -18,6 +18,7 @@ dependencies {
     implementation("org.springframework.boot:spring-boot-starter-validation")
     implementation("org.springframework.boot:spring-boot-starter-web")
     implementation("org.springframework.boot:spring-boot-starter-oauth2-client")
+    implementation("org.springframework.cloud:spring-cloud-starter-openfeign")
 
     compileOnly("org.projectlombok:lombok")
     runtimeOnly("com.mysql:mysql-connector-j")  // MySQL 드라이버
@@ -25,6 +26,12 @@ dependencies {
     developmentOnly("org.springframework.boot:spring-boot-devtools")
     testImplementation(platform("org.junit:junit-bom"))
     testImplementation("org.junit.jupiter:junit-jupiter")
+}
+
+dependencyManagement {
+    imports {
+        mavenBom("org.springframework.cloud:spring-cloud-dependencies:2024.0.0")
+    }
 }
 
 tasks.test {

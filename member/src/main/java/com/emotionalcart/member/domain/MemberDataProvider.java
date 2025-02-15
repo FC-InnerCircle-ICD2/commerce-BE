@@ -1,5 +1,7 @@
 package com.emotionalcart.member.domain;
 
+import com.emotionalcart.core.exception.ErrorCode;
+import com.emotionalcart.core.exception.MemberException;
 import com.emotionalcart.core.feature.Member;
 import com.emotionalcart.core.feature.enums.SocialType;
 import com.emotionalcart.member.infrasturcture.MemberRepository;
@@ -22,5 +24,10 @@ public class MemberDataProvider {
                     );
                     return memberRepository.save(newMember);
                 });
+    }
+
+    public Member findMember(Long userId) {
+        return memberRepository.findById(userId)
+                .orElseThrow(() -> new MemberException(ErrorCode.NOT_FOUND_MEMBER));
     }
 }
