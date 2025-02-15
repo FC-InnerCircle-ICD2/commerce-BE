@@ -15,6 +15,8 @@ import com.emotionalcart.product.domain.ProviderDataProvider;
 import com.emotionalcart.product.domain.dto.ProductDetail;
 import com.emotionalcart.product.domain.support.*;
 import com.emotionalcart.product.presentation.dto.*;
+import com.emotionalcart.product.presentation.dto.request.CreateProductReviewRequest;
+import com.emotionalcart.product.presentation.dto.response.CreateProductReviewResponse;
 import com.emotionalcart.s3.S3Utils;
 import com.emotionalcart.s3.config.S3Constants;
 import jakarta.validation.constraints.NotNull;
@@ -55,7 +57,7 @@ public class ProductService {
     }
 
     @Transactional
-    public CreateProductReview.Response createProductReview(@NotNull Long productId, CreateProductReview.Request request) {
+    public CreateProductReviewResponse createProductReview(@NotNull Long productId, CreateProductReviewRequest request) {
         Product product = productDataProvider.findProduct(productId);
         productDataProvider.findProductReview(productId, "userId123"); // TODO 실제 userId 반영
         // TODO 유저 구매내역 확인
@@ -66,7 +68,7 @@ public class ProductService {
         productDataProvider.saveProductReviewImages(reviewImages);
 
         product.getReviewStatistic().updateStatistics(request.getRating());
-        return new CreateProductReview.Response(review.getId());
+        return new CreateProductReviewResponse(review.getId());
     }
 
     /**
