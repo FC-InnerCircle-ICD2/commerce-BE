@@ -2,7 +2,7 @@ package com.emotionalcart.core.config;
 
 import com.emotionalcart.auth.application.CustomOAuth2UserService;
 import com.emotionalcart.core.config.jwt.JWTFilter;
-import com.emotionalcart.core.config.jwt.JWTUtil;
+import com.emotionalcart.core.config.jwt.JwtUtil;
 import com.emotionalcart.auth.presentation.handler.CustomSuccessHandler;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
@@ -21,7 +21,7 @@ public class SecurityConfig {
 
     private final CustomOAuth2UserService customOAuth2UserService;
     private final CustomSuccessHandler customSuccessHandler;
-    private final JWTUtil jwtUtil;
+    private final JwtUtil jwtUtil;
 
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {

@@ -9,12 +9,16 @@ import java.nio.charset.StandardCharsets;
 import java.util.Date;
 
 @Component
-public class JWTUtil {
+public class JwtUtil {
     private static final String jwtSecretKey = "vmfhaltmskdlstkfkdgodyroqkfwkdbalroqkfwkdbalaaaaaaaaaaaaaaaabbbbb";
     private SecretKey secretKey;
 
-    public JWTUtil() {
+    public JwtUtil() {
         secretKey = new SecretKeySpec(jwtSecretKey.getBytes(StandardCharsets.UTF_8), Jwts.SIG.HS256.key().build().getAlgorithm());
+    }
+
+    public Long getUserId(String token) {
+        return Jwts.parser().verifyWith(secretKey).build().parseSignedClaims(token).getPayload().get("userId", Long.class);
     }
 
     public String getUserName(String token) {

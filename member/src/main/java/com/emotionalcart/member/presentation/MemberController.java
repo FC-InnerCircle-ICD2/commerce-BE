@@ -15,7 +15,7 @@ public class MemberController {
     private final MemberService memberService;
 
     @PostMapping("/find-or-create")
-    public ResponseEntity<MemberResponse>findOrCreate(@RequestBody MemberRequest request) {
+    public ResponseEntity<MemberResponse> findOrCreate(@RequestBody MemberRequest request) {
         return ResponseEntity.ok(memberService.findOrCreate(request));
     }
 }
