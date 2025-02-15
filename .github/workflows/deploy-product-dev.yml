@@ -53,7 +53,7 @@ jobs:
       - name: Download Environment File from S3 bucket
         run: |
           aws s3 cp s3://innercircle-ecommerce-environment-file/product-service-dev.env .
-          mv ./product-service-dev.env ./.env.dev
+          mv ./product/product-service-dev.env ./.env.dev
 
       #- name: Build, tag, and push image to Amazon ECR
       #  id: build-image
