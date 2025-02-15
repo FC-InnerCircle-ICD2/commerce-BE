@@ -22,6 +22,7 @@ public class OrderStatisticsController implements OrderStatisticsDocs {
 
     /**
      * 카테고리 별 판매량 많은 상품 조회
+     * x
      *
      * @param categoryId 카테고리 식별자
      * @param request    페이징
