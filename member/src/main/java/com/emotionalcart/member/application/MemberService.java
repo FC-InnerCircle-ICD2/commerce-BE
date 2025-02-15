@@ -1,7 +1,7 @@
 package com.emotionalcart.member.application;
 
 import com.emotionalcart.core.feature.Member;
-import com.emotionalcart.member.infrasturcture.auth.AuthFeignClient;
+import com.emotionalcart.member.infrasturcture.auth.http.AuthFeignClient;
 import com.emotionalcart.member.presentation.dto.MemberRequest;
 import com.emotionalcart.member.domain.MemberDataProvider;
 import com.emotionalcart.member.presentation.dto.MemberResponse;
@@ -29,7 +29,7 @@ public class MemberService {
     }
 
     public ReadMemberResponse readMember(String authorizationHeader) {
-        Long memberId = authFeignClient.decodeJwtToken(authorizationHeader).getBody();
+        Long memberId = authFeignClient.decodeJwtToken(authorizationHeader).getUserId();
         Member member = memberDataProvider.findMember(memberId);
         return new ReadMemberResponse(member.getId(), "COMMERCE_MEMBER", member.getUserName());
     }

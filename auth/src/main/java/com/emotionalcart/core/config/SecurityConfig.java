@@ -1,9 +1,11 @@
 package com.emotionalcart.core.config;
 
 import com.emotionalcart.auth.application.CustomOAuth2UserService;
-import com.emotionalcart.core.config.jwt.JWTFilter;
+import com.emotionalcart.auth.presentation.handler.CustomAuthenticationEntryPoint;
+import com.emotionalcart.core.config.jwt.JwtFilter;
 import com.emotionalcart.core.config.jwt.JwtUtil;
 import com.emotionalcart.auth.presentation.handler.CustomSuccessHandler;
+import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -21,6 +23,7 @@ public class SecurityConfig {
 
     private final CustomOAuth2UserService customOAuth2UserService;
     private final CustomSuccessHandler customSuccessHandler;
+    private final CustomAuthenticationEntryPoint customAuthenticationEntryPoint;
     private final JwtUtil jwtUtil;
 
     @Bean
@@ -35,19 +38,25 @@ public class SecurityConfig {
                 //HTTP Basic 인증 방식 disable
                 .httpBasic(AbstractHttpConfigurer::disable)
 
-                .addFilterBefore(new JWTFilter(jwtUtil), UsernamePasswordAuthenticationFilter.class)
+                //경로별 인가 작업(권한 및 인증 설정
+                .authorizeHttpRequests((auth) -> auth
+                        .requestMatchers("/api/v1/auth/**").permitAll()
+                        .anyRequest().authenticated())
+
+                .exceptionHandling(exception -> exception
+                        .authenticationEntryPoint(customAuthenticationEntryPoint)
+                )
 
                 //oauth2
                 .oauth2Login((oauth2) -> oauth2
                         .userInfoEndpoint((userInfoEndpointConfig) -> userInfoEndpointConfig
-                                .userService(customOAuth2UserService))
+                                .userService(customOAuth2UserService)
+                        )
                         .successHandler(customSuccessHandler)
+                        .defaultSuccessUrl("/", true)
                 )
 
-                //경로별 인가 작업(권한 및 인증 설정
-                .authorizeHttpRequests((auth) -> auth
-                        .requestMatchers("/").permitAll()
-                        .anyRequest().authenticated())
+                .addFilterBefore(new JwtFilter(jwtUtil), UsernamePasswordAuthenticationFilter.class)
 
                 // 세션을 Stateless 설정
                 .sessionManagement(session -> session

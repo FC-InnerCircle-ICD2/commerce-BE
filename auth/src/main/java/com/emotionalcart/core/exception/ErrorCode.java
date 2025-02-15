@@ -9,8 +9,9 @@ public enum ErrorCode {
     INTERNAL_SERVER_ERROR(HttpStatus.INTERNAL_SERVER_ERROR, "AUTH-0001", "알 수 없는 오류가 발생했습니다."),
 
     // 인증 && 인가
-    MISSING_TOKEN(HttpStatus.UNAUTHORIZED, "AUTH-0002", "헤더에 토큰이 존재하지 않습니다."),
+    UNAUTHORIZED(HttpStatus.FORBIDDEN, "AUTH-0002", "인증 정보가 없습니다"),
     TOKEN_EXPIRED(HttpStatus.UNAUTHORIZED, "AUTH-0003", "토큰이 만료되었습니다."),
+    INVALID_TOKEN(HttpStatus.UNAUTHORIZED, "AUTH-0004", "유효하지 않은 토큰입니다."),
 
     // 유저
     ;

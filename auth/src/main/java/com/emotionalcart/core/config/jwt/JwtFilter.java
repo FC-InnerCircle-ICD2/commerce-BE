@@ -15,7 +15,7 @@ import org.springframework.web.filter.OncePerRequestFilter;
 import java.io.IOException;
 
 @RequiredArgsConstructor
-public class JWTFilter extends OncePerRequestFilter {
+public class JwtFilter extends OncePerRequestFilter {
 
     private final JwtUtil jwtUtil;
 
@@ -25,8 +25,7 @@ public class JWTFilter extends OncePerRequestFilter {
         // Authorization 헤더에서 토큰 추출
         String authorizationHeader = request.getHeader("Authorization");
         if (authorizationHeader == null || !authorizationHeader.startsWith("Bearer ")) {
-            // 헤더가 없거나 형식이 잘못된 경우 다음 필터로 진행
-            filterChain.doFilter(request, response);
+            response.sendError(HttpServletResponse.SC_UNAUTHORIZED, "Missing or invalid Authorization header");
             return;
         }
 
@@ -35,8 +34,7 @@ public class JWTFilter extends OncePerRequestFilter {
 
         // 토큰 유효성 검증
         if (jwtUtil.isExpired(token)) {
-            // 토큰이 만료된 경우, 다음 필터로 진행
-            filterChain.doFilter(request, response);
+            response.sendError(HttpServletResponse.SC_UNAUTHORIZED, "Token expired");
             return;
         }
 

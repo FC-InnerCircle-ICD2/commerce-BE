@@ -1,5 +1,8 @@
 package com.emotionalcart.core.config.jwt;
 
+import com.emotionalcart.core.exception.AuthException;
+import com.emotionalcart.core.exception.ErrorCode;
+import io.jsonwebtoken.JwtException;
 import io.jsonwebtoken.Jwts;
 import org.springframework.stereotype.Component;
 
@@ -18,28 +21,37 @@ public class JwtUtil {
     }
 
     public Long getUserId(String token) {
-        return Jwts.parser().verifyWith(secretKey).build().parseSignedClaims(token).getPayload().get("userId", Long.class);
+        try {
+            return Jwts.parser().verifyWith(secretKey).build().parseSignedClaims(token).getPayload().get("userId", Long.class);
+        } catch (JwtException e) {
+            throw new AuthException(ErrorCode.INVALID_TOKEN);
+        }
     }
 
     public String getUserName(String token) {
-
-        return Jwts.parser().verifyWith(secretKey).build().parseSignedClaims(token).getPayload().get("username", String.class);
-    }
-
-    public String getName(String token) {
-
-        return Jwts.parser().verifyWith(secretKey).build().parseSignedClaims(token).getPayload().get("username", String.class);
+        try {
+            return Jwts.parser().verifyWith(secretKey).build().parseSignedClaims(token).getPayload().get("username", String.class);
+        } catch (JwtException e) {
+            throw new AuthException(ErrorCode.INVALID_TOKEN);
+        }
     }
 
     public String getRole(String token) {
-
-        return Jwts.parser().verifyWith(secretKey).build().parseSignedClaims(token).getPayload().get("role", String.class);
+        try {
+            return Jwts.parser().verifyWith(secretKey).build().parseSignedClaims(token).getPayload().get("role", String.class);
+        } catch (JwtException e) {
+            throw new AuthException(ErrorCode.INVALID_TOKEN);
+        }
     }
 
     public Boolean isExpired(String token) {
-
-        return Jwts.parser().verifyWith(secretKey).build().parseSignedClaims(token).getPayload().getExpiration().before(new Date());
+        try {
+            return Jwts.parser().verifyWith(secretKey).build().parseSignedClaims(token).getPayload().getExpiration().before(new Date());
+        } catch (JwtException e) {
+            throw new AuthException(ErrorCode.INVALID_TOKEN);
+        }
     }
+
 
     public String createJwt(Long userId, String username, String role, Long expiredMs) {
 
