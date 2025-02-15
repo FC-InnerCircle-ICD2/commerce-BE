@@ -79,6 +79,7 @@ public class QueryDslProductRepositoryImpl implements QueryDslProductRepository 
                         Projections.constructor(
                                 ProductDetail.class,
                                 product.id,
+                                product.providerId,
                                 product.price,
                                 productOption.id,
                                 productOptionDetail.id,

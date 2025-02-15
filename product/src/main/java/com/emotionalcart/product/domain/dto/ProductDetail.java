@@ -7,25 +7,25 @@ import lombok.Setter;
 @Setter
 public class ProductDetail {
     private Long productId;
+    private Long providerId;
     private Integer productPrice;
     private Long productOptionId;
     private Long productOptionDetailId;
     private Integer productAdditionalPrice;
-    private Integer quantity;
 
     public ProductDetail(Long productId,
+                         Long providerId,
                          Integer price,
                          Long productOptionId,
                          Long productOptionDetailId,
-                         Integer productAdditionalPrice,
-                         Integer quantity
+                         Integer productAdditionalPrice
     ) {
         this.productId = productId;
+        this.providerId = providerId;
         this.productPrice = price;
         this.productOptionId = productOptionId;
         this.productOptionDetailId = productOptionDetailId;
         this.productAdditionalPrice = productAdditionalPrice;
-        this.quantity = quantity;
     }
 }
 

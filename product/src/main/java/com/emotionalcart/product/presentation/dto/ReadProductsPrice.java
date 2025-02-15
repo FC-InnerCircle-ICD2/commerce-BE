@@ -28,11 +28,13 @@ public class ReadProductsPrice {
     @Setter
     public static class Response {
         private Long productId;
+        private Long providerId;
         private Integer price;
         private List<ProductOption> productOptions;
 
-        private Response(Long productId, Integer price, List<ProductOption> productOptions) {
+        private Response(Long productId, Long providerId, Integer price, List<ProductOption> productOptions) {
             this.productId = productId;
+            this.providerId = providerId;
             this.price = price;
             this.productOptions = productOptions;
         }
@@ -60,12 +62,12 @@ public class ReadProductsPrice {
         }
     }
 
-    public static Response toResponse(Long productId, List<ProductDetail> productDetails) {
+    public static Response toResponse(Long productId, Long providerId, List<ProductDetail> productDetails) {
         Integer productPrice = productDetails.getFirst().getProductPrice();
         List<ReadProductsPrice.Response.ProductOption> productOptions = productDetails.stream()
                 .map(Response.ProductOption::fromProductDetail)
                 .toList();
 
-        return new Response(productId, productPrice, productOptions);
+        return new Response(productId, providerId, productPrice, productOptions);
     }
 }
