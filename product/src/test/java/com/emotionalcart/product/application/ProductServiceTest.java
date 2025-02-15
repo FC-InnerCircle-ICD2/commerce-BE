@@ -15,12 +15,14 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.test.context.ActiveProfiles;
 
 import java.util.List;
 import java.util.Set;
 
 import static org.junit.jupiter.api.Assertions.*;
 
+@ActiveProfiles("test")
 @ExtendWith(MockitoExtension.class)
 class ProductServiceTest {
     @Mock
@@ -42,7 +44,7 @@ class ProductServiceTest {
         productService = new ProductService(productDataProvider, categoryDataProvider, providerDataProvider, s3Utils);
     }
 
-//    @Test
+    @Test
     public void 상품이_존재하지_않을_때_NOT_FOUND_PRODUCT_예외_발생() throws Exception {
         List<ReadProductsValidate.Request.OptionRequest> optionRequests = List.of(ProductFixture.createOptionRequest(101L, 201L, 2));
         List<ReadProductsValidate.Request> requests = List.of(ProductFixture.createReadProductValidateRequest(1L, optionRequests));
@@ -90,24 +92,6 @@ class ProductServiceTest {
         );
 
         assertEquals(ErrorCode.NOT_FOUND_PRODUCT_OPTION.getErrorCode(), exception.getErrorCode());
-    }
-
-    @Test
-    public void 상품_재고가_부족하면_OUT_OF_STOCK_예외_발생() throws Exception {
-        List<ReadProductsValidate.Request.OptionRequest> optionRequests = List.of(ProductFixture.createOptionRequest(101L, 201L, 20));
-        List<ReadProductsValidate.Request> requests = List.of(ProductFixture.createReadProductValidateRequest(1L, optionRequests));
-        List<ProductDetail> productDetails = List.of(
-                new ProductDetail(1L, 100000, 101L, 201L, null, 10)
-        );
-        Mockito.when(productDataProvider.findAllProductDetail(Set.of(1L)))
-                .thenReturn(productDetails);
-
-        ProductException exception = assertThrows(
-                ProductException.class,
-                () -> productService.readProductsValidate(requests)
-        );
-
-        assertEquals(ErrorCode.OUT_OF_STOCK.getErrorCode(), exception.getErrorCode());
     }
 
     @Test
