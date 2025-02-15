@@ -65,9 +65,12 @@ jobs:
           # push it to ECR so that it can
           # be deployed to ECS.
           # 도커 빌드 명령어
-          docker build --platform linux/amd64 -t ecr 634565347325.dkr.ecr.ap-northeast-2.amazonaws.com/ecr ecommerce-product:latest -f Dockerfile .
-          docker push ecr 634565347325.dkr.ecr.ap-northeast-2.amazonaws.com/ecr ecommerce-product:latest
-          echo "634565347325.dkr.ecr.ap-northeast-2.amazonaws.com/ecommerce-product:latest" >> $GITHUB_OUTPUT
+          #docker build --platform linux/amd64 -t ecr 634565347325.dkr.ecr.ap-northeast-2.amazonaws.com/ecr ecommerce-product:latest -f Dockerfile .
+          #docker push ecr 634565347325.dkr.ecr.ap-northeast-2.amazonaws.com/ecr ecommerce-product:latest
+          docker build -t $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG Dockerfile .
+          docker push $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG
+          #echo "634565347325.dkr.ecr.ap-northeast-2.amazonaws.com/ecommerce-product:latest" >> $GITHUB_OUTPUT
+          echo "::set-output name=image::$ECR_REGISTRY/$ECR_REPOSITORY_NAME:$IMAGE_TAG"
 
       - name: Fill in the new image ID in the Amazon ECS task definition
         id: task-def
