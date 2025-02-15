@@ -1,6 +1,8 @@
 package com.emotionalcart.adminproduct.domain;
 
 import com.emotionalcart.adminproduct.infrastructure.repository.AdminProductRepository;
+import com.emotionalcart.core.exception.ErrorCode;
+import com.emotionalcart.core.exception.ProductException;
 import com.emotionalcart.core.feature.product.Product;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
@@ -14,4 +16,8 @@ public class AdminProductDataProvider {
         return productRepository.save(product);
     }
 
+    public Product findProductById(Long productId){
+        return productRepository.findByIdAndIsDeletedIsFalse(productId)
+                .orElseThrow(() -> new ProductException(ErrorCode.NOT_FOUND_PRODUCT));
+    }
 }
