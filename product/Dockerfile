@@ -3,7 +3,7 @@ FROM openjdk:21-jdk-slim
 # FROM openjdk:8-jdk-alpine
 # FROM openjdk:11-jdk-alpine
 
-CMD ["./gradlew", "clean", "bootJar"]
+CMD ["./gradlew", "clean", "build"]
 # or Maven
 # CMD ["./mvnw", "clean", "package"]
 
