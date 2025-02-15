@@ -2,7 +2,6 @@ package com.emotionalcart.shipment.presentation.controller;
 
 import com.emotionalcart.shipment.application.service.OrderShipmentService;
 import com.emotionalcart.shipment.presentation.controller.request.OrderShipmentRequest;
-import com.emotionalcart.shipment.presentation.controller.response.OrderShipmentResponse;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
