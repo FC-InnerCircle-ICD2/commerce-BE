@@ -1,6 +1,6 @@
-package com.emotionalcart.adminorder.presentation.controller;
+package com.emotionalcart.order.presentation.admin.controller;
 
-import com.emotionalcart.adminorder.presentation.controller.response.AdminOrder;
+import com.emotionalcart.order.domain.dto.AdminOrder;
 import io.swagger.v3.oas.annotations.Operation;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;

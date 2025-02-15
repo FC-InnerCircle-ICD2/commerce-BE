@@ -1,4 +1,4 @@
-package com.emotionalcart.adminorder.domain.repository;
+package com.emotionalcart.order.domain.repository;
 
 import com.emotionalcart.order.domain.entity.Orders;
 import org.springframework.data.jpa.repository.JpaRepository;

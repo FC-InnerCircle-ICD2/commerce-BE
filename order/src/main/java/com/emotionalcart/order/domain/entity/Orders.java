@@ -1,5 +1,6 @@
 package com.emotionalcart.order.domain.entity;
 
+import com.emotionalcart.order.domain.dto.AdminOrder;
 import com.emotionalcart.order.domain.dto.CreateOrder;
 import com.emotionalcart.order.domain.dto.CreateOrderItem;
 import com.emotionalcart.order.domain.dto.DeliveryInfo;
@@ -104,6 +105,10 @@ public class Orders extends BaseEntity {
         orders.createOrderItems(createOrder.getOrderItems());
         orders.createOrderRecipient(createOrder.getDeliveryInfo());
         return orders;
+    }
+
+    public static AdminOrder toDto(Long id, String methodName, String statusName, LocalDateTime orderAt, double totalPrice) {
+        return AdminOrder.of(id, methodName, statusName, orderAt, totalPrice);
     }
 
     private void createOrderRecipient(@NotNull(message = "배송 정보를 입력해주세요.") DeliveryInfo deliveryInfo) {

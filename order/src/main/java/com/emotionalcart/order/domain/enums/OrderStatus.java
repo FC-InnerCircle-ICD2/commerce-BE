@@ -50,6 +50,7 @@ public enum OrderStatus {
      * 환불
      */
     REFUNDED("환불");
+
     private final String statusName;
 
 }

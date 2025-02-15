@@ -1,7 +1,7 @@
-package com.emotionalcart.adminorder.presentation.controller;
+package com.emotionalcart.order.presentation.admin.controller;
 
-import com.emotionalcart.adminorder.application.AdminOrderService;
-import com.emotionalcart.adminorder.presentation.controller.response.AdminOrder;
+import com.emotionalcart.order.application.AdminOrderService;
+import com.emotionalcart.order.domain.dto.AdminOrder;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
