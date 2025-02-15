@@ -48,7 +48,7 @@ public class JwtUtil {
         try {
             return Jwts.parser().verifyWith(secretKey).build().parseSignedClaims(token).getPayload().getExpiration().before(new Date());
         } catch (JwtException e) {
-            throw new AuthException(ErrorCode.INVALID_TOKEN);
+            throw new AuthException(ErrorCode.TOKEN_EXPIRED);
         }
     }
 
