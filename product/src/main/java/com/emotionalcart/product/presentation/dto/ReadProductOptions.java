@@ -4,12 +4,15 @@ import java.util.List;
 
 import com.emotionalcart.core.feature.product.ProductOption;
 
+import com.fasterxml.jackson.databind.annotation.JsonSerialize;
+import com.fasterxml.jackson.databind.ser.std.ToStringSerializer;
 import lombok.Data;
 
 public class ReadProductOptions {
 
     @Data
     public static class Response {
+        @JsonSerialize(using = ToStringSerializer.class)
         private Long id;
         private String name;
         private List<ReadProductOptionDetails.Response> optionDetails;

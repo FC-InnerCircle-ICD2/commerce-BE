@@ -7,12 +7,15 @@ import java.util.stream.Collectors;
 import com.emotionalcart.core.feature.product.ProductImage;
 
 import com.emotionalcart.core.feature.product.ProductImageType;
+import com.fasterxml.jackson.databind.annotation.JsonSerialize;
+import com.fasterxml.jackson.databind.ser.std.ToStringSerializer;
 import lombok.Data;
 
 public class ReadProductImages {
 
     @Data
     public static class Response {
+        @JsonSerialize(using = ToStringSerializer.class)
         private Long id;
         private Integer fileOrder;
         private String url;
