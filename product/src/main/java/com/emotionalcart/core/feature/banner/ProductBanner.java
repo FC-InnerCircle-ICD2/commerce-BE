@@ -33,13 +33,11 @@ public class ProductBanner extends BaseEntity {
     private String linkType; //internal/external
 
     public ProductBanner(
-            Long id,
             Product product,
             Banner banner,
             String linkUrl,
             String linkType
     ) {
-        this.id = id;
         this.product = product;
         this.banner = banner;
         this.linkUrl = linkUrl;
