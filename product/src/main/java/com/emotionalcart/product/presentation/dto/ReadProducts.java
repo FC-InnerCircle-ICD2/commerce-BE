@@ -8,6 +8,8 @@ import com.emotionalcart.core.feature.provider.Provider;
 import com.emotionalcart.product.domain.dto.ProductSearch;
 import com.emotionalcart.product.domain.support.ProductImages;
 import com.emotionalcart.product.domain.support.ProductOptions;
+import com.fasterxml.jackson.databind.annotation.JsonSerialize;
+import com.fasterxml.jackson.databind.ser.std.ToStringSerializer;
 import lombok.*;
 import com.emotionalcart.core.feature.product.ProductOption;
 import com.emotionalcart.core.feature.product.Product;
@@ -46,6 +48,7 @@ public class ReadProducts {
 
     @Data
     public static class Response {
+        @JsonSerialize(using = ToStringSerializer.class)
         private Long productId;
         private String name;
         private String description;
@@ -91,6 +94,7 @@ public class ReadProducts {
     @Data
     public static class ProductOptionResponse {
         @Getter
+        @JsonSerialize(using = ToStringSerializer.class)
         private Long id;
         private String name;
         private List<ProductOptionDetailResponse> optionDetails;
@@ -112,6 +116,7 @@ public class ReadProducts {
 
     @Data
     public static class ProductOptionDetailResponse {
+        @JsonSerialize(using = ToStringSerializer.class)
         private Long id;
         private String value;
         private Integer quantity;
