@@ -2,7 +2,6 @@ package com.emotionalcart.order.presentation.controller;
 
 import com.emotionalcart.order.presentation.controller.request.CreateOrderRequest;
 import com.emotionalcart.order.presentation.controller.response.CreatedOrderResponse;
-import com.emotionalcart.order.presentation.controller.response.GetOrderListResponse;
 import com.emotionalcart.order.presentation.controller.response.OrderDetailResponse;
 import com.emotionalcart.order.presentation.controller.response.UserOrderResponse;
 import io.swagger.v3.oas.annotations.Operation;
@@ -24,10 +23,6 @@ public interface OrderApiDocs {
     ResponseEntity<OrderDetailResponse> getOrderDetail(@PathVariable Long orderId);
 
     @Operation(summary = "사용자 주문 목록 조회 API")
-<<<<<<< HEAD
     ResponseEntity<Page<UserOrderResponse>> getOrderList(Long userId, Pageable request);
-=======
-    ResponseEntity<GetOrderListResponse> getOrderList();
->>>>>>> b52254f (feat : 주문목록 객체 생성)
 
 }

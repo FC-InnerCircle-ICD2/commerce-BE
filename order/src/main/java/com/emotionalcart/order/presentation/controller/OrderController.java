@@ -7,7 +7,6 @@ import com.emotionalcart.order.domain.dto.OrderDetail;
 import com.emotionalcart.order.domain.dto.UserOrder;
 import com.emotionalcart.order.presentation.controller.request.CreateOrderRequest;
 import com.emotionalcart.order.presentation.controller.response.CreatedOrderResponse;
-import com.emotionalcart.order.presentation.controller.response.GetOrderListResponse;
 import com.emotionalcart.order.presentation.controller.response.OrderDetailResponse;
 import com.emotionalcart.order.presentation.controller.response.UserOrderResponse;
 import jakarta.validation.Valid;
@@ -50,14 +49,9 @@ public class OrderController implements OrderApiDocs {
      * 사용자 주문 목록 조회
      */
     @GetMapping("/my-orders")
-<<<<<<< HEAD
     public ResponseEntity<Page<UserOrderResponse>> getOrderList(@AuthenticationPrincipal Long userId, Pageable request) {
         Page<UserOrder> userOrders = orderDetailService.getOrderListByUserId(userId, request);
         return ResponseEntity.ok().body(userOrders.map(UserOrderResponse::from));
-=======
-    public ResponseEntity<GetOrderListResponse> getOrderList() {
-        return ResponseEntity.ok(GetOrderListResponse.from());
->>>>>>> b52254f (feat : 주문목록 객체 생성)
     }
 
 }
