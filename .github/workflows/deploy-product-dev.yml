@@ -51,18 +51,13 @@ jobs:
         with:
           distribution: 'temurin'
           java-version: '21'
-          
-      - name: Verify gradlew File Exists
-        run: |
-          ls -lah product/
 
       - name: Grant execute permission to Gradle wrapper
         run: |
-          chmod +x product/gradlew
+          chmod +x gradlew
 
       - name: Build with Gradle (Skip Tests for Faster Build)
         run: |
-          cd product
           ./gradlew clean build -x test
 
       - name: Verify JAR File Exists
