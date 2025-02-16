@@ -95,17 +95,21 @@ jobs:
           aws ecr get-login-password --region ${{ env.AWS_REGION }} | docker login --username AWS --password-stdin ${{ secrets.ECR_URI }}
 
       - name: Build Docker Image
+        id: build-image
         run: | 
           cd product
           docker build -t ${{ env.ECR_REPOSITORY }} .
-
-      - name: Push Docker Image to AWS ECR
-        run: |
           docker tag ${{ env.ECR_REPOSITORY }}:latest ${{ secrets.ECR_URI }}/${{ env.ECR_REPOSITORY }}:latest
-
-      - name: Push Docker Image to AWS ECR
-        run: |
           docker push ${{ secrets.ECR_URI }}/${{ env.ECR_REPOSITORY }}:latest
+          echo ${{ secrets.ECR_URI }}/${{ env.ECR_REPOSITORY }}:latest" >> $GITHUB_OUTPUT
+
+      #- name: Push Docker Image to AWS ECR
+      #  run: |
+      #    docker tag ${{ env.ECR_REPOSITORY }}:latest ${{ secrets.ECR_URI }}/${{ env.ECR_REPOSITORY }}:latest
+
+      #- name: Push Docker Image to AWS ECR
+      #  run: |
+      #    docker push ${{ secrets.ECR_URI }}/${{ env.ECR_REPOSITORY }}:latest
 
       - name: Fill in the new image ID in the Amazon ECS task definition
         id: task-def
