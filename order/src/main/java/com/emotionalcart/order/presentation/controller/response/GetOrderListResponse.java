@@ -44,6 +44,12 @@ public class GetOrderListResponse {
         @Schema(description = "상품 ID", example = "4002396260259129221")
         private String productId;
 
+        @Schema(description = "업체 ID", example = "123141511413412")
+        private String providerId;
+
+        @Schema(description = "업체 명", example = "쿠팡")
+        private String providerName;
+
         @Schema(description = "상품명", example = "블랙 자켓")
         private String productName;
 
