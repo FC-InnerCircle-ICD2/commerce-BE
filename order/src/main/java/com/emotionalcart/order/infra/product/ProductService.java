@@ -44,4 +44,10 @@ public class ProductService {
         productFeignClient.updateProductStock(productStockRequest);
     }
 
+    public ProductDetail getProductDetail(Long productId) {
+        ResponseEntity<ProductDetailResponse> response = productFeignClient.getProductDetail(productId);
+        ProductDetailResponse responseBody = response.getBody();
+        return ProductDetail.from(responseBody);
+    }
+
 }

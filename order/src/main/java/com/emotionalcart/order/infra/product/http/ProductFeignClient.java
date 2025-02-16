@@ -1,12 +1,11 @@
 package com.emotionalcart.order.infra.product.http;
 
 import com.emotionalcart.order.infra.config.FeignClientConfig;
-import com.emotionalcart.order.infra.product.dto.ProductPriceRequest;
-import com.emotionalcart.order.infra.product.dto.ProductPriceResponse;
-import com.emotionalcart.order.infra.product.dto.ProductStockRequest;
-import com.emotionalcart.order.infra.product.dto.ProductValidationRequest;
+import com.emotionalcart.order.infra.product.dto.*;
 import org.springframework.cloud.openfeign.FeignClient;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 
@@ -41,5 +40,11 @@ public interface ProductFeignClient {
      */
     @PostMapping("/stock")
     ResponseEntity<Void> updateProductStock(@RequestBody List<ProductStockRequest> productStockRequest);
+
+    /**
+     * 상품 목록 조회
+     */
+    @GetMapping("/{productId}")
+    ResponseEntity<ProductDetailResponse> getProductDetail(@PathVariable Long productId);
 
 }
