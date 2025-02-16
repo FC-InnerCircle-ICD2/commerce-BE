@@ -101,7 +101,7 @@ jobs:
           docker build -t ${{ env.ECR_REPOSITORY }} .
           docker tag ${{ env.ECR_REPOSITORY }}:latest ${{ secrets.ECR_URI }}/${{ env.ECR_REPOSITORY }}:latest
           docker push ${{ secrets.ECR_URI }}/${{ env.ECR_REPOSITORY }}:latest
-          echo ${{ secrets.ECR_URI }}/${{ env.ECR_REPOSITORY }}:latest" >> $GITHUB_OUTPUT
+          echo "${{ secrets.ECR_URI }}/${{ env.ECR_REPOSITORY }}:latest" >> $GITHUB_OUTPUT
 
       #- name: Push Docker Image to AWS ECR
       #  run: |
