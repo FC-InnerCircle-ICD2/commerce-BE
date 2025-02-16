@@ -111,7 +111,9 @@ public class CreateOrder extends SelfValidation<CreateOrder> {
      * @return 주문 상품의 금액과 수량 목록
      */
     public List<PriceAndQuantity> getOrderItemsPriceAndQuantity() {
-        return this.orderItems.stream().map(item -> PriceAndQuantity.of(item.getPrice(), item.getQuantity())).toList();
+        return this.orderItems.stream().map(item -> PriceAndQuantity.of(item.getPrice(),
+                                                                        item.getAdditionalPrice(),
+                                                                        item.getQuantity())).toList();
     }
 
     public CreateOrderItem createOrderItem(@NotNull(message = "상품을 선택해주세요.") Long productId,
