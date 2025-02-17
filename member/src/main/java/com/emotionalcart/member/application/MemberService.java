@@ -1,8 +1,8 @@
 package com.emotionalcart.member.application;
 
 import com.emotionalcart.core.feature.Member;
-import com.emotionalcart.member.presentation.dto.MemberRequest;
 import com.emotionalcart.member.domain.MemberDataProvider;
+import com.emotionalcart.member.presentation.dto.MemberRequest;
 import com.emotionalcart.member.presentation.dto.MemberResponse;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -19,9 +19,10 @@ public class MemberService {
         Member member = memberDataProvider.findOrCreate(request.getSocialId(), request.getName(), request.getSocialType());
 
         return new MemberResponse(
-                member.getId(),
-                "COMMERCE_MEMBER",
-                member.getUserName()
+            member.getId(),
+            member.getMemberRoles().stream().map(Enum::name).toList(),
+            member.getUserName()
         );
     }
+
 }

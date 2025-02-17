@@ -1,13 +1,18 @@
 package com.emotionalcart.core.feature;
 
 import com.emotionalcart.core.base.BaseEntity;
-import com.emotionalcart.core.feature.enums.SocialType;
+import com.emotionalcart.core.feature.enums.MemberRole;
 import com.emotionalcart.core.feature.enums.MemberState;
+import com.emotionalcart.core.feature.enums.SocialType;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotNull;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+
+import java.util.Set;
+
+import static jakarta.persistence.FetchType.LAZY;
 
 @Entity
 @Getter
@@ -36,13 +41,18 @@ public class Member extends BaseEntity {
     @NotNull
     private MemberState memberState;
 
+    @ElementCollection(fetch = LAZY)
+    @Enumerated(EnumType.STRING)
+    @CollectionTable(name = "member_roles", joinColumns = @JoinColumn(name = "id"))
+    private final Set<MemberRole> memberRoles = Set.of(MemberRole.COMMERCE_MEMBER);
+
     private Member(
-            String socialId,
-            String userName,
-            String nickName,
-            String phone,
-            SocialType socialType,
-            MemberState memberState
+        String socialId,
+        String userName,
+        String nickName,
+        String phone,
+        SocialType socialType,
+        MemberState memberState
     ) {
         this.socialId = socialId;
         this.userName = userName;
@@ -53,17 +63,18 @@ public class Member extends BaseEntity {
     }
 
     public static Member of(
-            String socialId,
-            String userName,
-            SocialType socialType
+        String socialId,
+        String userName,
+        SocialType socialType
     ) {
         return new Member(
-                socialId,
-                userName,
-                null,
-                null,
-                socialType,
-                MemberState.ACTIVE
+            socialId,
+            userName,
+            null,
+            null,
+            socialType,
+            MemberState.ACTIVE
         );
     }
+
 }

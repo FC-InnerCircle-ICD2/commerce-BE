@@ -1,6 +1,9 @@
 spring:
   application:
     name: order-service
+  profiles:
+    include:
+      - common
   datasource:
     driver-class-name: com.mysql.cj.jdbc.Driver
     url: ${DATASOURCE_URL:jdbc:mysql://localhost:3306/emotional_cart}?serverTimezone=UTC&useSSL=false&allowPublicKeyRetrieval=true&rewriteBatchedStatements=true

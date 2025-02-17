@@ -9,6 +9,10 @@ import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
+import java.util.Set;
+
+import static jakarta.persistence.FetchType.LAZY;
+
 @Entity
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
@@ -21,7 +25,7 @@ public class Member extends BaseEntity {
     @NotNull
     private String socialId;
 
-//    @NotNull
+    //    @NotNull
     private String memberName;
 
     private String nickName;
@@ -36,13 +40,18 @@ public class Member extends BaseEntity {
     @NotNull
     private MemberState memberState;
 
+    @ElementCollection(fetch = LAZY)
+    @Enumerated(EnumType.STRING)
+    @CollectionTable(name = "member_roles", joinColumns = @JoinColumn(name = "id"))
+    private Set<MemberRole> memberRoles;
+
     private Member(
-            String socialId,
-            String memberName,
-            String nickName,
-            String phone,
-            SocialType socialType,
-            MemberState memberState
+        String socialId,
+        String memberName,
+        String nickName,
+        String phone,
+        SocialType socialType,
+        MemberState memberState
     ) {
         this.socialId = socialId;
         this.memberName = memberName;
@@ -53,19 +62,20 @@ public class Member extends BaseEntity {
     }
 
     public static Member of(
-            String socialId,
-            String memberName,
-            String nickName,
-            String phone,
-            SocialType socialType,
-            MemberState memberState
+        String socialId,
+        String memberName,
+        String nickName,
+        String phone,
+        SocialType socialType,
+        MemberState memberState
     ) {
         return new Member(socialId,
-                memberName,
-                nickName,
-                phone,
-                socialType,
-                memberState
+                          memberName,
+                          nickName,
+                          phone,
+                          socialType,
+                          memberState
         );
     }
+
 }

@@ -3,6 +3,7 @@ package com.emotionalcart.auth.domain;
 import com.emotionalcart.auth.application.dto.MemberResponse;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.oauth2.core.user.OAuth2User;
 
 import java.util.ArrayList;
@@ -20,21 +21,14 @@ public class CustomOAuth2User implements OAuth2User {
         Map<String, Object> attributes = new HashMap<>();
         attributes.put("userId", memberResponse.getUserId());
         attributes.put("userName", memberResponse.getName());
-        attributes.put("role", memberResponse.getRole());
+        attributes.put("role", memberResponse.getRoles());
         return attributes;
     }
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
         Collection<GrantedAuthority> collection = new ArrayList<>();
-
-        collection.add(new GrantedAuthority() {
-            @Override
-            public String getAuthority() {
-                return memberResponse.getRole();
-            }
-        });
-
+        memberResponse.getRoles().stream().map(m -> new SimpleGrantedAuthority("ROLE_" + m)).forEach(collection::add);
         return collection;
     }
 
@@ -46,4 +40,5 @@ public class CustomOAuth2User implements OAuth2User {
     public String getName() {
         return memberResponse.getName();
     }
+
 }

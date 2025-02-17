@@ -1,4 +1,4 @@
-package com.emotionalcart.core.config;
+package com.emotionalcart.stock.infra;
 
 import com.emotionalcart.common.jwt.JwtAccessDeniedHandler;
 import com.emotionalcart.common.jwt.JwtAuthenticationTokenFilter;
@@ -6,8 +6,6 @@ import com.emotionalcart.common.security.AppProperties;
 import com.emotionalcart.common.security.CustomAuthenticationEntryPoint;
 import com.emotionalcart.common.security.DefaultSecurityConfig;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.security.config.annotation.web.builders.HttpSecurity;
-import org.springframework.security.config.annotation.web.configurers.AuthorizeHttpRequestsConfigurer;
 
 @Configuration
 public class SecurityConfig extends DefaultSecurityConfig {
@@ -17,12 +15,6 @@ public class SecurityConfig extends DefaultSecurityConfig {
                           JwtAuthenticationTokenFilter jwtAuthenticationTokenFilter,
                           JwtAccessDeniedHandler jwtAccessDeniedHandler) {
         super(appProperties, entryPoint, jwtAuthenticationTokenFilter, jwtAccessDeniedHandler);
-    }
-
-    @Override
-    protected AuthorizeHttpRequestsConfigurer<HttpSecurity>.AuthorizedUrl getAuthorizedUrl(
-        AuthorizeHttpRequestsConfigurer<HttpSecurity>.AuthorizationManagerRequestMatcherRegistry request) {
-        return request.requestMatchers("/api/v1/members/auth/**", "/error");
     }
 
 }
