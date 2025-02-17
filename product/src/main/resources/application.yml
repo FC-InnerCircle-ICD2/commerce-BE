@@ -7,7 +7,9 @@ spring:
     multipart:
       max-file-size: 10MB
       max-request-size: 10MB
-
+  profiles:
+    include:
+      - common
   datasource:
     url: ${DATASOURCE_URL}
     username: ${DATASOURCE_USERNAME}

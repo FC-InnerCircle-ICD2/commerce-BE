@@ -1,12 +1,18 @@
 package com.emotionalcart.auth.application.dto;
 
-import lombok.*;
+import lombok.AllArgsConstructor;
+import lombok.Data;
+import lombok.NoArgsConstructor;
+
+import java.util.List;
 
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
 public class MemberResponse {
+
     private Long userId;
-    private String role;
+    private List<String> roles;
     private String name;
+
 }

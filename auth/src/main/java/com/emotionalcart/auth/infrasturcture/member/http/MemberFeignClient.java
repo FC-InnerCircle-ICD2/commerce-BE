@@ -7,9 +7,10 @@ import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 
-@FeignClient(name = "member-service", url = "${member.find.feign-endpoint}", path = "/v1/members")
+@FeignClient(name = "member-service", url = "${member.find.feign-endpoint}", path = "/api/v1/members/auth")
 public interface MemberFeignClient {
 
     @PostMapping(value = "/find-or-create", consumes = MediaType.APPLICATION_JSON_VALUE)
     MemberResponse findOrCreate(@RequestBody MemberRequest request);
+
 }
