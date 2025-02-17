@@ -101,7 +101,7 @@ jobs:
           docker build -t ${{ env.ECR_REPOSITORY }} .
           docker tag ${{ env.ECR_REPOSITORY }}:latest ${{ secrets.ECR_URI }}/${{ env.ECR_REPOSITORY }}:latest
           docker push ${{ secrets.ECR_URI }}/${{ env.ECR_REPOSITORY }}:latest
-          echo "${{ secrets.ECR_URI }}/${{ env.ECR_REPOSITORY }}:latest" >> $GITHUB_OUTPUT
+        #echo "${{ secrets.ECR_URI }}/${{ env.ECR_REPOSITORY }}:latest" >> $GITHUB_OUTPUT
 
       #- name: Push Docker Image to AWS ECR
       #  run: |
@@ -111,18 +111,36 @@ jobs:
       #  run: |
       #    docker push ${{ secrets.ECR_URI }}/${{ env.ECR_REPOSITORY }}:latest
 
-      - name: Fill in the new image ID in the Amazon ECS task definition
+      - name: 최신 태스크 정의 가져오기
         id: task-def
-        uses: aws-actions/amazon-ecs-render-task-definition@v1
-        with:
-          task-definition: ${{ env.ECS_TASK_DEFINITION }}
-          container-name: ${{ env.CONTAINER_NAME }}
-          image: ${{ steps.build-image.outputs.image }}
+        run: |
+          aws ecs describe-task-definition --task-definition ${{ env.ECS_TASK_DEFINITION }} --query taskDefinition > task-definition.json
+     
+      - name: 새 태스크 정의 등록
+        id: register-task-def
+        run: |
+          IMAGE_URI="${{ secrets.ECR_URI }}/${{ env.ECR_REPOSITORY }}:latest"
+          NEW_TASK_DEF=$(jq --arg IMAGE_URI "$IMAGE_URI" '.containerDefinitions[0].image = $IMAGE_URI' task-definition.json)
+          echo "$NEW_TASK_DEF" > task-definition.json
+          TASK_REVISION=$(aws ecs register-task-definition --cli-input-json file://task-definition.json --query 'taskDefinition.revision')
+          echo "TASK_REVISION=$TASK_REVISION" >> $GITHUB_ENV     
+          
+      # - name: Fill in the new image ID in the Amazon ECS task definition
+      #   id: register-task-def
+      #   uses: aws-actions/amazon-ecs-render-task-definition@v1
+      #   with:
+      #     task-definition: ${{ env.ECS_TASK_DEFINITION }}
+      #     container-name: ${{ env.CONTAINER_NAME }}
+      #     image: ${{ steps.build-image.outputs.image }}
 
-      - name: Deploy Amazon ECS task definition
-        uses: aws-actions/amazon-ecs-deploy-task-definition@v1
-        with:
-          task-definition: ${{ steps.task-def.outputs.task-definition }}
-          service: ${{ env.ECS_SERVICE }}
-          cluster: ${{ env.ECS_CLUSTER }}
-          wait-for-service-stability: true
+      - name: ECS 서비스 업데이트
+        run: |
+          aws ecs update-service --cluster ${{ env.ECS_CLUSTER }} --service ${{ secrets.ECS_SERVICE }} --task-definition ${{ env.ECS_TASK_DEFINITION }}:$TASK_REVISION --force-new-deployment
+          
+      # - name: Deploy Amazon ECS task definition
+      #   uses: aws-actions/amazon-ecs-deploy-task-definition@v1
+      #   with:
+      #     task-definition: ${{ steps.task-def.outputs.task-definition }}
+          # service: ${{ env.ECS_SERVICE }}
+          # cluster: ${{ env.ECS_CLUSTER }}
+          # wait-for-service-stability: true
