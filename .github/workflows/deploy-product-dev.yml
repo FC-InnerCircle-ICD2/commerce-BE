@@ -21,6 +21,15 @@ jobs:
   deploy:
     runs-on: ubuntu-latest
 
+    # 변수 설정
+    env:
+      AWS_REGION: ap-northeast-2
+      ECR_REPOSITORY: ecommerce-product
+      ECS_SERVICE: product-service
+      ECS_CLUSTER: ecommerce-cluster
+      ECS_TASK_DEFINITION: ./product-dev-tdf.json
+      CONTAINER_NAME: ecommerce-product-was1
+
     permissions:
       contents: read
 
