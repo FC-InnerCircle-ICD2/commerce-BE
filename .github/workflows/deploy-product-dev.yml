@@ -24,10 +24,9 @@ jobs:
     env:
       AWS_REGION: ap-northeast-2
       ECR_REPOSITORY: ecommerce-product
-      ECS_SERVICE: ecommerce-service
+      ECS_SERVICE: product-service
       ECS_CLUSTER: ecommerce-cluster
-      ECS_TASK_DEFINITION: product-dev-tdf
-      #ECS_TASK_DEFINITION: ./product-dev-tdf.json # 실행할 TDF, 본인은 프로젝트 안에 tdf를 작성해두어서 경로를 이렇게 설정
+      ECS_TASK_DEFINITION: ./product-dev-tdf.json
       CONTAINER_NAME: ecommerce-product-was1
 
     permissions:
