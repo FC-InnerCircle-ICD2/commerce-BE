@@ -124,7 +124,8 @@ jobs:
       with:
         task-definition: ${{ env.ECS_TASK_DEFINITION }}
         container-name: ${{ env.CONTAINER_NAME }}
-        image: ${{ steps.docker-env.outputs.image }}
+        image: ${{ secrets.ECR_URI }}/${{ env.ECR_REPOSITORY }}:latest
+      # image: ${{ steps.docker-env.outputs.image }}
           
       # - name: Fill in the new image ID in the Amazon ECS task definition
       #   id: register-task-def
