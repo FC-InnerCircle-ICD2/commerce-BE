@@ -27,7 +27,9 @@ public class Money {
      */
     public static Money sum(List<PriceAndQuantity> priceAndQuantities) {
         BigDecimal sum = priceAndQuantities.stream()
-            .map(orderItem -> BigDecimal.valueOf(orderItem.getPrice()).multiply(BigDecimal.valueOf(orderItem.getQuantity())))
+            .map(orderItem -> BigDecimal.valueOf(orderItem.getPrice())
+                .multiply(BigDecimal.valueOf(orderItem.getQuantity()))
+                .add(BigDecimal.valueOf(orderItem.getAdditionalPrice())))
             .reduce(BigDecimal.ZERO, BigDecimal::add);
         Money money = new Money();
         money.amount = sum;
