@@ -24,6 +24,7 @@ public enum ErrorCode {
     OUT_OF_STOCK("PRODUCT-0017", "상품의 재고가 부족합니다.", HttpStatus.CONFLICT),
     PRODUCT_IMAGE_REQUIRED("PRODUCT_0018", "상품 이미지는 필수입니다.", HttpStatus.BAD_REQUEST),
     CATEGORY_MUST_BE_DEPTH_2("PRODUCT_0019", "카테고리는 Depth 2 만 입력 가능합니다.", HttpStatus.BAD_REQUEST),
+    NOT_FOUND_PRODUCT_BANNER("PRODUCT-0020","상품배너를 찾을 수 없습니다.", HttpStatus.NOT_FOUND ),
     ;
 
     private final String errorCode;
