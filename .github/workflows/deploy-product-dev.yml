@@ -71,7 +71,7 @@ jobs:
     - name: Download Environment File from S3 bucket
       run: |
         aws s3 cp s3://innercircle-ecommerce-environment-file/common-dev.env .
-        mv ./common-dev.env.env ./product/.env
+        mv ./common-dev.env ./product/.env
 
 #    - name: Set Up Docker Environments
 #      id: docker-env
