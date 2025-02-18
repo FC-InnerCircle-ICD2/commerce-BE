@@ -1,5 +1,14 @@
-#워크플로우 이름
-name: deploy-product-dev
+name: Deploy to Amazon ECS
+
+env:
+  AWS_REGION: ap-northeast-2                   # set this to your preferred AWS region, e.g. us-west-1
+  ECR_REPOSITORY: product-service           # set this to your Amazon ECR repository name
+  ECS_SERVICE: product-service                 # set this to your Amazon ECS service name
+  ECS_CLUSTER: ecommerce-ecs-cluster                 # set this to your Amazon ECS cluster name
+  ECS_TASK_DEFINITION: .aws/product-service.json # set this to the path to your Amazon ECS task definition
+  # file, e.g. .aws/task-definition.json
+  CONTAINER_NAME: product-service-container           # set this to the name of the container in the
+  # containerDefinitions section of your task definition
 
 run-name: product-dev deploy by ${{ github.actor }} - ${{ github.run_number }}
 on: 
@@ -20,15 +29,6 @@ on:
 jobs:
   deploy:
     runs-on: ubuntu-latest
-
-    # 변수 설정
-    env:
-      AWS_REGION: ap-northeast-2
-      ECR_REPOSITORY: ecommerce-product
-      ECS_SERVICE: product-service
-      ECS_CLUSTER: ecommerce-cluster
-      ECS_TASK_DEFINITION: ./product-dev-tdf.json
-      CONTAINER_NAME: ecommerce-product-was1
 
     permissions:
       contents: read
@@ -54,15 +54,6 @@ jobs:
         java-version: '21'
         distribution: 'corretto'
 
-    - name: Set Up Docker Environments
-      id: docker-env
-      env:
-        ECR_REGISTRY: ${{ steps.login-ecr.outputs.registry }}
-        IMAGE_TAG: ${{ github.sha }}
-      run: |
-        echo "image=$ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG" >> $GITHUB_OUTPUT
-
-
     - name: Grant execute permission to Gradle wrapper
       run: |
         chmod +x gradlew
@@ -74,49 +65,35 @@ jobs:
     - name: Verify JAR File Exists
       run: |
         ls -lah product/build/libs/
-        
-    # 프로젝트에 주입할 환경변수를 S3 버킷에서 가져와서 프로젝트에 주입
-    # 가져와서 이름을 변경함
+
+      # 프로젝트에 주입할 환경변수를 S3 버킷에서 가져와서 프로젝트에 주입
+      # 가져와서 이름을 변경함
     - name: Download Environment File from S3 bucket
       run: |
-        aws s3 cp s3://innercircle-ecommerce-environment-file/product-service-dev.env .
-        mv ./product-service-dev.env ./product/.env
+        aws s3 cp s3://innercircle-ecommerce-environment-file/common-dev.env .
+        mv ./common-dev.env.env ./product/.env
 
-      #- name: Build, tag, and push image to Amazon ECR
-      #  id: build-image
-      #  env:
-      #    ECR_REGISTRY: ${{ steps.login-ecr.outputs.registry }}
-      #    ECR_REPOSITORY: ${{ env.ECR_REPOSITORY }}
-      #    IMAGE_TAG: ${{ github.sha }}
-      #  run: |
-          # Build a docker container and
-          # push it to ECR so that it can
-          # be deployed to ECS.
-          # 도커 빌드 명령어
-          #docker build -t $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG Dockerfile .
-          #docker push $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG
-          #echo "::set-output name=image::$ECR_REGISTRY/$ECR_REPOSITORY_NAME:$IMAGE_TAG"
+#    - name: Set Up Docker Environments
+#      id: docker-env
+#      env:
+#        ECR_REGISTRY: ${{ steps.login-ecr.outputs.registry }}
+#        IMAGE_TAG: ${{ github.sha }}
+#      run: |
+#        echo "image=$ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG" >> $GITHUB_OUTPUT
 
-    - name: Build Docker Image
+    - name: Build, tag, and push image to Amazon ECR
       id: build-image
       env:
         ECR_REGISTRY: ${{ steps.login-ecr.outputs.registry }}
         IMAGE_TAG: ${{ github.sha }}
-      run: | 
+      run: |
+        # Build a docker container and
+        # push it to ECR so that it can
+        # be deployed to ECS.
         cd product
-        docker build -t ${{ env.ECR_REPOSITORY }} .
-        docker tag ${{ env.ECR_REPOSITORY }}:latest ${{ secrets.ECR_URI }}/${{ env.ECR_REPOSITORY }}:latest
-        docker push ${{ secrets.ECR_URI }}/${{ env.ECR_REPOSITORY }}:latest
-      # docker push $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG
-      # echo "${{ secrets.ECR_URI }}/${{ env.ECR_REPOSITORY }}:latest" >> $GITHUB_OUTPUT
-
-      #- name: Push Docker Image to AWS ECR
-      #  run: |
-      #    docker tag ${{ env.ECR_REPOSITORY }}:latest ${{ secrets.ECR_URI }}/${{ env.ECR_REPOSITORY }}:latest
-
-      #- name: Push Docker Image to AWS ECR
-      #  run: |
-      #    docker push ${{ secrets.ECR_URI }}/${{ env.ECR_REPOSITORY }}:latest
+        docker build -t $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG .
+        docker push $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG
+        echo "image=$ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG" >> $GITHUB_OUTPUT
 
     - name: Fill in the new image ID in the Amazon ECS task definition
       id: task-def
@@ -124,16 +101,7 @@ jobs:
       with:
         task-definition: ${{ env.ECS_TASK_DEFINITION }}
         container-name: ${{ env.CONTAINER_NAME }}
-        image: ${{ secrets.ECR_URI }}/${{ env.ECR_REPOSITORY }}:latest
-      # image: ${{ steps.docker-env.outputs.image }}
-          
-      # - name: Fill in the new image ID in the Amazon ECS task definition
-      #   id: register-task-def
-      #   uses: aws-actions/amazon-ecs-render-task-definition@v1
-      #   with:
-      #     task-definition: ${{ env.ECS_TASK_DEFINITION }}
-      #     container-name: ${{ env.CONTAINER_NAME }}
-      #     image: ${{ steps.build-image.outputs.image }}
+        image: ${{ steps.build-image.outputs.image }}
 
     - name: Deploy Amazon ECS task definition
       uses: aws-actions/amazon-ecs-deploy-task-definition@v1
