@@ -2,6 +2,8 @@ package com.emotionalcart.adminproduct.presentation;
 
 import com.emotionalcart.adminproduct.presentation.dto.CreateBannerRequest;
 import com.emotionalcart.adminproduct.presentation.dto.CreateBannerResponse;
+import com.emotionalcart.adminproduct.presentation.dto.ReadBannerDetailResponse;
+import com.emotionalcart.adminproduct.presentation.dto.ReadBannersResponse;
 import com.emotionalcart.core.exception.GlobalExceptionHandler;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
@@ -13,6 +15,9 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.ModelAttribute;
+import org.springframework.web.bind.annotation.PathVariable;
+
+import java.util.List;
 
 @Tag(name = "백오피스 배너 API", description = "백오피스 배너 관련 API")
 public interface AdminBannerControllerDocs {
@@ -36,4 +41,28 @@ public interface AdminBannerControllerDocs {
             @Parameter(description = "배너 등록 요청 데이터", required = true)
             @ModelAttribute @Valid CreateBannerRequest request
     );
+
+    @Operation(
+            summary = "배너 목록 조회",
+            description = "등록된 배너 목록을 조회합니다.",
+            responses = {
+                    @ApiResponse(responseCode = "200", description = "배너 목록 조회 성공",
+                            content = @Content(mediaType = "application/json",
+                                    schema = @Schema(implementation = ReadBannersResponse.class))),
+                    @ApiResponse(responseCode = "400", description = "잘못된 요청")
+            }
+    )
+    ResponseEntity<List<ReadBannersResponse>> readBanners();
+
+    @Operation(
+            summary = "배너 상세 조회",
+            description = "특정 배너의 상세 정보를 조회합니다.",
+            responses = {
+                    @ApiResponse(responseCode = "200", description = "배너 상세 조회 성공",
+                            content = @Content(mediaType = "application/json",
+                                    schema = @Schema(implementation = ReadBannerDetailResponse.class))),
+                    @ApiResponse(responseCode = "404", description = "배너를 찾을 수 없음")
+            }
+    )
+    ResponseEntity<ReadBannerDetailResponse> readBannerDetail(@Parameter(description = "배너 ID", required = true) @PathVariable Long bannerId);
 }

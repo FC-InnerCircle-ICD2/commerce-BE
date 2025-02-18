@@ -4,6 +4,8 @@ import com.emotionalcart.adminproduct.domain.AdminBannerDataProvider;
 import com.emotionalcart.adminproduct.domain.AdminProductDataProvider;
 import com.emotionalcart.adminproduct.presentation.dto.CreateBannerRequest;
 import com.emotionalcart.adminproduct.presentation.dto.CreateBannerResponse;
+import com.emotionalcart.adminproduct.presentation.dto.ReadBannerDetailResponse;
+import com.emotionalcart.adminproduct.presentation.dto.ReadBannersResponse;
 import com.emotionalcart.core.exception.ErrorCode;
 import com.emotionalcart.core.exception.ProductException;
 import com.emotionalcart.core.feature.banner.Banner;
@@ -17,6 +19,9 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
+
+import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -89,5 +94,21 @@ public class AdminBannerService {
         } catch (Exception e) {
             throw new ProductException(ErrorCode.S3_UPLOAD_FAILED);
         }
+    }
+
+    @Transactional(readOnly = true)
+    public List<ReadBannersResponse> readBanners() {
+        List<Banner> banners = adminBannerDataProvider.findAllBanners();
+
+        return banners.stream()
+                .map(ReadBannersResponse::toResponse)
+                .collect(Collectors.toList());
+    }
+
+    @Transactional(readOnly = true)
+    public ReadBannerDetailResponse readBannerDetail(Long bannerId) {
+        Banner banner = adminBannerDataProvider.findBannerById(bannerId);
+        ProductBanner productBanner = adminBannerDataProvider.findProductBanner(banner.getId());
+        return ReadBannerDetailResponse.toResponse(banner, productBanner);
     }
 }
