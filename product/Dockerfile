@@ -2,8 +2,8 @@ FROM openjdk:21-jdk-slim
 # or
 # FROM openjdk:8-jdk-alpine
 # FROM openjdk:11-jdk-alpine
-WORKDIR /app
-#CMD ["./gradlew", "clean", "build"]
+#WORKDIR /app
+CMD ["./gradlew", "clean", "build"]
 # or Maven
 # CMD ["./mvnw", "clean", "package"]
 
@@ -14,8 +14,6 @@ ARG JAR_FILE=build/libs/*.jar
 # ARG JAR_FILE_PATH=target/*.jar
 
 COPY ${JAR_FILE} app.jar
-
-RUN chmod +x /app.jar
 
 EXPOSE 8080
 
