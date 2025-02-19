@@ -6,8 +6,6 @@ import com.emotionalcart.common.security.AppProperties;
 import com.emotionalcart.common.security.CustomAuthenticationEntryPoint;
 import com.emotionalcart.common.security.DefaultSecurityConfig;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.security.config.annotation.web.builders.HttpSecurity;
-import org.springframework.security.config.annotation.web.configurers.AuthorizeHttpRequestsConfigurer;
 
 @Configuration
 public class SecurityConfig extends DefaultSecurityConfig {
@@ -20,9 +18,8 @@ public class SecurityConfig extends DefaultSecurityConfig {
     }
 
     @Override
-    protected AuthorizeHttpRequestsConfigurer<HttpSecurity>.AuthorizedUrl getAuthorizedUrl(
-        AuthorizeHttpRequestsConfigurer<HttpSecurity>.AuthorizationManagerRequestMatcherRegistry request) {
-        return request.requestMatchers("/api/v1/members/auth/**", "/error");
+    protected String[] getPermissionUrl() {
+        return new String[] {"/api/v1/members/auth/**", "/error"};
     }
 
 }

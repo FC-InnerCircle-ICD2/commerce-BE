@@ -11,7 +11,7 @@ import static org.springframework.data.web.config.EnableSpringDataWebSupport.Pag
 @EnableSpringDataWebSupport(pageSerializationMode = VIA_DTO)
 @EnableFeignClients
 @EnableJpaAuditing
-@SpringBootApplication(scanBasePackages = {"com.emotionalcart.order"})
+@SpringBootApplication
 public class OrderApplication {
 
     public static void main(String[] args) {

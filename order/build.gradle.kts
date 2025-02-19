@@ -53,7 +53,6 @@ dependencies {
     testImplementation("org.springframework.boot:spring-boot-testcontainers")
     testImplementation("org.testcontainers:mysql")
 
-    implementation("org.springdoc:springdoc-openapi-starter-webmvc-ui:2.7.0")
 
     // https://mvnrepository.com/artifact/org.springframework.boot/spring-boot-starter-test
     testImplementation("org.springframework.boot:spring-boot-starter-test")

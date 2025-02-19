@@ -1,5 +1,6 @@
 plugins {
     id("java")
+    id("java-library")
     id("io.spring.dependency-management") version "1.1.5"
 }
 
@@ -18,6 +19,7 @@ dependencies {
     implementation("io.jsonwebtoken:jjwt-impl:0.12.3")
     implementation("io.jsonwebtoken:jjwt-jackson:0.12.3")
     implementation("org.springframework.boot:spring-boot-starter-data-jpa")
+    api("org.springdoc:springdoc-openapi-starter-webmvc-ui:2.7.0")
 
     compileOnly("org.projectlombok:lombok")
     annotationProcessor("org.projectlombok:lombok")

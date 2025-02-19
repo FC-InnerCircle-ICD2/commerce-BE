@@ -1,8 +1,9 @@
 plugins {
     id("java")
-    id("org.springframework.boot") version "3.2.5"
+    id("org.springframework.boot") version "3.4.1"
     id("io.spring.dependency-management") version "1.1.5"
 }
+val springCloudVersion by extra("2024.0.0")
 
 group = "com.emotionalcart"
 version = "0.0.1-SNAPSHOT"
@@ -21,9 +22,9 @@ dependencies {
     implementation("org.springframework.boot:spring-boot-starter-security")
     implementation("org.springframework.cloud:spring-cloud-starter-openfeign")
 
-    implementation ("io.jsonwebtoken:jjwt-api:0.12.3")
-    implementation ("io.jsonwebtoken:jjwt-impl:0.12.3")
-    implementation ("io.jsonwebtoken:jjwt-jackson:0.12.3")
+    implementation("io.jsonwebtoken:jjwt-api:0.12.3")
+    implementation("io.jsonwebtoken:jjwt-impl:0.12.3")
+    implementation("io.jsonwebtoken:jjwt-jackson:0.12.3")
 
     compileOnly("org.projectlombok:lombok")
     runtimeOnly("com.mysql:mysql-connector-j")  // MySQL 드라이버
@@ -35,9 +36,10 @@ dependencies {
 
 dependencyManagement {
     imports {
-        mavenBom("org.springframework.cloud:spring-cloud-dependencies:2023.0.0")
+        mavenBom("org.springframework.cloud:spring-cloud-dependencies:$springCloudVersion")
     }
 }
+
 
 tasks.test {
     useJUnitPlatform()
