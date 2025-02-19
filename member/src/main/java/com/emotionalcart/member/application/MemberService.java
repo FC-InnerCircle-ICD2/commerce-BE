@@ -25,4 +25,13 @@ public class MemberService {
         );
     }
 
+    public MemberResponse getMemberInfo(Long id) {
+        Member member = memberDataProvider.findById(id);
+        return new MemberResponse(
+            member.getId(),
+            member.getMemberRoles().stream().map(Enum::name).toList(),
+            member.getUserName()
+        );
+    }
+
 }
