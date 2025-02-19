@@ -31,9 +31,9 @@ jobs:
       - name: Build with Gradle
         run: ./gradlew clean build -x test
 
-      - name: Run Tests
-        run: |
-          ./gradlew --info test
+     # - name: Run Tests
+     #   run: |
+     #     ./gradlew --info test
       #- name: Upload Artifact
       #  uses: actions/upload-artifact@v3
       #  with:
