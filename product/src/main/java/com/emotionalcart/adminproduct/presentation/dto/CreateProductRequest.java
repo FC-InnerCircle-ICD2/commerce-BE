@@ -4,6 +4,7 @@ import com.emotionalcart.core.feature.product.Product;
 import com.emotionalcart.core.feature.product.ProductOption;
 import com.emotionalcart.core.feature.product.ProductOptionDetail;
 import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.Size;
 import lombok.Getter;
 import lombok.Setter;
 import org.springframework.web.multipart.MultipartFile;
@@ -25,6 +26,7 @@ public class CreateProductRequest {
     @NotNull
     private Long categoryId;
     @NotNull
+    @Size(max = 3, message = "옵션은 3개까지만 등록 가능합니다.")
     private List<CreateProductOption> options;
     @NotNull
     private MultipartFile mainImage;
