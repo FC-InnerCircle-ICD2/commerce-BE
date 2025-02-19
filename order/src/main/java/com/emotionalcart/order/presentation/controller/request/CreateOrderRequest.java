@@ -60,9 +60,9 @@ public class CreateOrderRequest {
         for (CreateOrderItemRequest orderItem : orderItems) {
             CreateOrderItem createOrderItem =
                     createOrder.createOrderItem(orderItem.productId,
+                            orderItem.getQuantity(),
                             orderItem.productName,
                             orderItem.price,
-                            orderItem.quantity,
                             orderItem.categoryId);
             orderItem.getProductOptionDetails().forEach(option -> createOrderItem.addOrderItemOption(option.productOptionId,
                     option.productOptionDetailId,
@@ -125,7 +125,12 @@ public class CreateOrderRequest {
         @NotNull(message = "상품 금액을 입력해주세요.")
         private double price;
 
+        /**
+         * 수량
+         */
+        @NotNull(message = "수량을 입력해주세요.")
         private int quantity;
+
 
     }
 
@@ -137,12 +142,6 @@ public class CreateOrderRequest {
 
         @NotNull(message = "상품 옵션 상세를 선택해주세요.")
         private Long productOptionDetailId;
-
-        /**
-         * 수량
-         */
-        @NotNull(message = "수량을 입력해주세요.")
-        private int quantity;
 
         /**
          * 추가 금액
