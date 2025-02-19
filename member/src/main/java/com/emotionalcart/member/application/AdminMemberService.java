@@ -1,0 +1,57 @@
+package com.emotionalcart.member.application;
+
+import com.emotionalcart.common.jwt.JwtTokenProvider;
+import com.emotionalcart.core.feature.Member;
+import com.emotionalcart.core.feature.enums.MemberRole;
+import com.emotionalcart.core.feature.enums.MemberState;
+import com.emotionalcart.core.feature.enums.SocialType;
+import com.emotionalcart.member.infrasturcture.MemberRepository;
+import lombok.RequiredArgsConstructor;
+import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.stereotype.Service;
+
+import java.util.List;
+import java.util.Set;
+
+@Service
+@RequiredArgsConstructor
+public class AdminMemberService {
+
+    private final PasswordEncoder passwordEncoder;
+    private final MemberRepository memberRepository;
+    private final JwtTokenProvider jwtTokenProvider;
+
+    public boolean createAdminUser(CreateAdminMember createAdminMember) {
+        memberRepository.findByEmail(createAdminMember.getEmail())
+            .ifPresent(member -> {
+                throw new IllegalArgumentException("이미 존재하는 이메일입니다.");
+            });
+        Member member = Member.builder()
+            .nickName(createAdminMember.getUserName())
+            .userName(createAdminMember.getUserName())
+            .email(createAdminMember.getEmail())
+            .password(passwordEncoder.encode(createAdminMember.getPassword()))
+            .phone(createAdminMember.getPhone())
+            .memberState(MemberState.ACTIVE)
+            .socialType(SocialType.DIRECT)
+            .memberRoles(Set.of(MemberRole.COMMERCE_MEMBER, MemberRole.ADMIN_MEMBER))
+            .build();
+        memberRepository.save(member);
+        return true;
+    }
+
+    public TokenInfo login(String email, String password) {
+        Member member = memberRepository.findByEmail(email)
+            .orElseThrow(() -> new IllegalArgumentException("존재하지 않는 이메일입니다."));
+        if (!passwordEncoder.matches(password, member.getPassword())) {
+            throw new IllegalArgumentException("비밀번호가 일치하지 않습니다.");
+        }
+        List<String> roles = member.getMemberRoles().stream().map(MemberRole::name).toList();
+        String accessToken = jwtTokenProvider.createAccessToken(member.getId(),
+                                                                member.getEmail(),
+                                                                roles);
+        String refreshToken = jwtTokenProvider.createRefreshToken(member.getId(), member.getEmail(), roles);
+        return TokenInfo.of(accessToken, refreshToken);
+    }
+
+}
