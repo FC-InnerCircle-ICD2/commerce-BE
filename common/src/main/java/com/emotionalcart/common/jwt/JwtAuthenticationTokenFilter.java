@@ -16,12 +16,9 @@ import org.springframework.stereotype.Component;
 import org.springframework.web.filter.GenericFilterBean;
 
 import java.io.IOException;
-import java.net.URLDecoder;
-import java.nio.charset.StandardCharsets;
 import java.util.Collection;
 import java.util.List;
 import java.util.Optional;
-import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
 import static java.util.Objects.nonNull;
@@ -36,14 +33,14 @@ public class JwtAuthenticationTokenFilter extends GenericFilterBean {
 
     private final JwtTokenProvider tokenProvider;
 
-    private static final Pattern BEARER = Pattern.compile("^Bearer$", Pattern.CASE_INSENSITIVE);
+    private final JwtHeaderValidator jwtHeaderValidator;
 
     @Override
     public void doFilter(ServletRequest request, ServletResponse response, FilterChain chain) throws IOException, ServletException {
         HttpServletRequest req = (HttpServletRequest)request;
         HttpServletResponse res = (HttpServletResponse)response;
         if (SecurityContextHolder.getContext().getAuthentication() == null) {
-            Optional<String> optionalAuthorizationToken = obtainAuthorizationToken(req, jwtProperties.getHeaderKey());
+            Optional<String> optionalAuthorizationToken = jwtHeaderValidator.obtainAuthorizationToken(req);
             if (optionalAuthorizationToken.isPresent()) {
                 String authorizationToken = optionalAuthorizationToken.get();
                 try {
@@ -74,24 +71,6 @@ public class JwtAuthenticationTokenFilter extends GenericFilterBean {
     public Collection<? extends GrantedAuthority> authorities(String token) {
         List<String> roles = tokenProvider.getRoles(token);
         return roles.stream().map(r -> new SimpleGrantedAuthority("ROLE_" + r)).collect(Collectors.toSet());
-    }
-
-    public static Optional<String> obtainAuthorizationToken(HttpServletRequest req, String headerKey) {
-        Optional<String> optionalToken = Optional.ofNullable(req.getHeader(headerKey));
-        if (optionalToken.isPresent()) {
-            String token = optionalToken.get();
-            if (log.isDebugEnabled()) {
-                log.debug("JWT 인증 요청이 들어 왔습니다. 토큰 : {}", token);
-            }
-            token = URLDecoder.decode(token, StandardCharsets.UTF_8);
-            String[] parts = token.split(" ");
-            if (parts.length == 2) {
-                String scheme = parts[0];
-                String credentials = parts[1];
-                return BEARER.matcher(scheme).matches() ? Optional.ofNullable(credentials) : Optional.empty();
-            }
-        }
-        return Optional.empty();
     }
 
 }
