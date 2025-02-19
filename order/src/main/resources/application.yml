@@ -4,6 +4,7 @@ spring:
   profiles:
     include:
       - common
+    active: default
   datasource:
     driver-class-name: com.mysql.cj.jdbc.Driver
     url: ${DATASOURCE_URL:jdbc:mysql://localhost:3306/emotional_cart}?serverTimezone=UTC&useSSL=false&allowPublicKeyRetrieval=true&rewriteBatchedStatements=true
@@ -35,7 +36,3 @@ springdoc:
         url: ${ORDER_SERVER_URL:http://localhost}:${server.port}/v3/api-docs
       - name: Product Service
         url: ${PRODUCT_SERVER_URL:http://localhost}:8080/api/v3/api-docs
-aws:
-  s3:
-    access-key: ${AWS_S3_ACCESS_KEY}
-    secret-key: ${AWS_S3_SECRET_KEY}
