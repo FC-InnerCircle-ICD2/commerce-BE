@@ -2,6 +2,7 @@ spring:
   application:
     name: order-service
   profiles:
+    active: default
     include:
       - common
     active: default
