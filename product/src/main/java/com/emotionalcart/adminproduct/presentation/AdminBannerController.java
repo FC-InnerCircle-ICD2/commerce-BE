@@ -10,7 +10,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
-@RequestMapping("/admin/v1/banners")
+@RequestMapping("/api/admin/v1/banners")
 @RequiredArgsConstructor
 public class AdminBannerController implements AdminBannerControllerDocs{
     private final AdminBannerService adminBannerService;

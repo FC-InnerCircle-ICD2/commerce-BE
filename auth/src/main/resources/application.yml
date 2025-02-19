@@ -49,7 +49,7 @@ spring:
 
   jpa:
     hibernate:
-      ddl-auto: update  # (옵션: create, update, validate, none. 개발 시 `update` 추천)
+      ddl-auto: none  # (옵션: create, update, validate, none. 개발 시 `update` 추천)
     properties:
       hibernate:
         dialect: org.hibernate.dialect.MySQLDialect
