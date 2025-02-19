@@ -10,6 +10,10 @@ spring:
     url: ${DATASOURCE_URL:jdbc:mysql://localhost:3306/emotional_cart}?serverTimezone=UTC&useSSL=false&allowPublicKeyRetrieval=true&rewriteBatchedStatements=true
     username: ${DATASOURCE_USERNAME:root}
     password: ${DATASOURCE_PASSWORD:1234}
+  redis:
+    host: ${REDIS_SERVER_HOST:localhost}   # Redis server IP address
+    port: ${REDIS_SERVER_PORT:6379}             # Redis server port
+    timeout: 2000           # Connection timeout (in milliseconds)
   jpa:
     hibernate:
       ddl-auto: validate
