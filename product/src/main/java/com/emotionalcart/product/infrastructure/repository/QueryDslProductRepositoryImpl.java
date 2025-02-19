@@ -5,7 +5,6 @@ import com.emotionalcart.product.domain.dto.ProductSearch;
 import com.querydsl.core.BooleanBuilder;
 import com.querydsl.core.types.OrderSpecifier;
 import com.querydsl.core.types.Projections;
-import com.querydsl.core.types.dsl.BooleanExpression;
 import com.querydsl.jpa.impl.JPAQuery;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import lombok.RequiredArgsConstructor;
@@ -20,6 +19,7 @@ import static com.emotionalcart.core.feature.product.QProduct.product;
 import static com.emotionalcart.core.feature.product.QProductOption.productOption;
 import static com.emotionalcart.core.feature.product.QProductOptionDetail.productOptionDetail;
 import static com.emotionalcart.core.feature.review.QReviewStatistic.reviewStatistic;
+import static com.emotionalcart.core.feature.order.QOrderStatistics.orderStatistics;
 
 @RequiredArgsConstructor
 public class QueryDslProductRepositoryImpl implements QueryDslProductRepository {
@@ -30,7 +30,7 @@ public class QueryDslProductRepositoryImpl implements QueryDslProductRepository 
     public Page<Product> findAllProducts(ProductSearch productSearch) {
 
         // 정렬 조건
-        OrderSpecifier<?> orderSpecifier = ProductQueryHelper.getOrderSpecifier(productSearch.getSortOption(), product);
+        OrderSpecifier<?>[] orderSpecifier = ProductQueryHelper.getOrderSpecifier(productSearch.getSortOption(), product, orderStatistics);
 
         // 필터 조건 생성
         BooleanBuilder filterBuilder = ProductQueryHelper.createFilterBuilder(
@@ -46,6 +46,7 @@ public class QueryDslProductRepositoryImpl implements QueryDslProductRepository 
         List<Product> products  = queryFactory
                 .selectDistinct(product)
                 .from(product)
+                .leftJoin(orderStatistics).on(orderStatistics.productId.eq(product.id)) // 명시적 조인
                 .leftJoin(product.reviewStatistic, reviewStatistic).fetchJoin()
                 .where(filterBuilder)
                 .offset(productSearch.getPageRequest().getOffset())
