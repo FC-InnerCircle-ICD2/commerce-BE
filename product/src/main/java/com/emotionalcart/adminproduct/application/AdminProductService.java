@@ -5,11 +5,14 @@ import com.emotionalcart.adminproduct.domain.AdminProductDataProvider;
 import com.emotionalcart.adminproduct.domain.AdminProviderDataProvider;
 import com.emotionalcart.adminproduct.presentation.dto.CreateProductRequest;
 import com.emotionalcart.adminproduct.presentation.dto.CreateProductResponse;
+import com.emotionalcart.adminproduct.presentation.dto.ReadAdminProductDetailResponse;
 import com.emotionalcart.core.exception.ErrorCode;
 import com.emotionalcart.core.exception.ProductException;
+import com.emotionalcart.core.feature.category.Category;
 import com.emotionalcart.core.feature.product.Product;
 import com.emotionalcart.core.feature.product.ProductImage;
 import com.emotionalcart.core.feature.product.ProductImageType;
+import com.emotionalcart.core.feature.provider.Provider;
 import com.emotionalcart.core.feature.review.ReviewStatistic;
 import com.emotionalcart.s3.S3Utils;
 import com.emotionalcart.s3.config.S3Constants;
@@ -78,5 +81,15 @@ public class AdminProductService {
         } catch (Exception e) {
             throw new ProductException(ErrorCode.S3_UPLOAD_FAILED);
         }
+    }
+
+    /**
+     * 상품 상세 조회
+     */
+    public ReadAdminProductDetailResponse readProduct(Long productId) {
+        Product product = adminProductDataProvider.findProductById(productId);
+        Provider provider = adminProviderDataProvider.findProviderById(product.getProviderId());
+        Category category = adminCategoryDataProvider.findCategory(product.getCategoryId());
+        return ReadAdminProductDetailResponse.toResponse(product, category, provider);
     }
 }

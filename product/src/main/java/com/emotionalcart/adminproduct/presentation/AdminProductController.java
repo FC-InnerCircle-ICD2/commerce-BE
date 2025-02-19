@@ -3,6 +3,7 @@ package com.emotionalcart.adminproduct.presentation;
 import com.emotionalcart.adminproduct.application.AdminProductService;
 import com.emotionalcart.adminproduct.presentation.dto.CreateProductRequest;
 import com.emotionalcart.adminproduct.presentation.dto.CreateProductResponse;
+import com.emotionalcart.adminproduct.presentation.dto.ReadAdminProductDetailResponse;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.MediaType;
@@ -20,5 +21,11 @@ public class AdminProductController implements AdminProductControllerDocs {
     public ResponseEntity<CreateProductResponse> createProduct(
             @Valid @ModelAttribute CreateProductRequest request) {
         return ResponseEntity.ok(adminProductService.createProduct(request));
+    }
+
+    @GetMapping("/{productId}")
+    public ResponseEntity<ReadAdminProductDetailResponse> readProduct(
+            @PathVariable Long productId) {
+        return ResponseEntity.ok(adminProductService.readProduct(productId));
     }
 }

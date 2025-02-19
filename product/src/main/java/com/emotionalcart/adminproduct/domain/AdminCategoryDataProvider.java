@@ -19,4 +19,9 @@ public class AdminCategoryDataProvider {
             throw new ProductException(ErrorCode.CATEGORY_MUST_BE_DEPTH_2);
         }
     }
+
+    public Category findCategory(Long categoryId) {
+        return categoryRepository.findByIdAndIsDeletedIsFalse(categoryId)
+                .orElseThrow(() -> new ProductException(ErrorCode.NOT_FOUND_CATEGORY));
+    }
 }
