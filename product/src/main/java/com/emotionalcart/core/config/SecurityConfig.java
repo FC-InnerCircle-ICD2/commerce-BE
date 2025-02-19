@@ -1,42 +1,21 @@
 package com.emotionalcart.core.config;
 
-import org.springframework.context.annotation.Bean;
+import com.emotionalcart.common.jwt.JwtAccessDeniedHandler;
+import com.emotionalcart.common.jwt.JwtAuthenticationTokenFilter;
+import com.emotionalcart.common.security.AppProperties;
+import com.emotionalcart.common.security.CustomAuthenticationEntryPoint;
+import com.emotionalcart.common.security.DefaultSecurityConfig;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.security.config.annotation.web.builders.HttpSecurity;
-import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
-import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
-import org.springframework.security.config.http.SessionCreationPolicy;
-import org.springframework.security.web.SecurityFilterChain;
-import org.springframework.web.cors.CorsConfiguration;
-import org.springframework.web.cors.CorsConfigurationSource;
-import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 
 @Configuration
-@EnableWebSecurity
-public class SecurityConfig {
-    @Bean
-    public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
-        http
-                .csrf(AbstractHttpConfigurer::disable)
-                .cors(cors -> cors.configurationSource(corsConfigurationSource()))
-                .sessionManagement(session -> session
-                        .sessionCreationPolicy(SessionCreationPolicy.STATELESS))
-                .authorizeHttpRequests(auth -> auth
-                        .anyRequest().permitAll());
+public class SecurityConfig extends DefaultSecurityConfig {
 
-        return http.build();
+    public SecurityConfig(AppProperties appProperties,
+                          CustomAuthenticationEntryPoint entryPoint,
+                          JwtAuthenticationTokenFilter jwtAuthenticationTokenFilter,
+                          JwtAccessDeniedHandler jwtAccessDeniedHandler) {
+        super(appProperties, entryPoint, jwtAuthenticationTokenFilter, jwtAccessDeniedHandler);
     }
 
-    @Bean
-    public CorsConfigurationSource corsConfigurationSource() {
-        CorsConfiguration configuration = new CorsConfiguration();
-        configuration.addAllowedOriginPattern("*");
-        configuration.addAllowedMethod("*");
-        configuration.addAllowedHeader("*");
-        configuration.setAllowCredentials(false);
 
-        UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
-        source.registerCorsConfiguration("/**", configuration);
-        return source;
-    }
 }
