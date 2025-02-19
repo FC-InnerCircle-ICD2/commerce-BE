@@ -105,10 +105,16 @@ public class Orders extends BaseEntity {
         orders.orderAt = LocalDateTime.now();
         orders.paymentMethod = createOrder.getPaymentMethod();
         orders.totalPrice =
-            Money.sum(createOrder.getOrderItemsPriceAndQuantity());
+                Money.sum(createOrder.getOrderItemsPriceAndQuantity());
         orders.createOrderItems(createOrder.getOrderItems());
         orders.createOrderRecipient(createOrder.getDeliveryInfo());
+        orders.createUser();
         return orders;
+    }
+
+    // TODO : 주문 생성 시 사용자 정보를 가져오는 로직 추가
+    private void createUser() {
+        this.userId = 0L;
     }
 
     private void createOrderRecipient(@NotNull(message = "배송 정보를 입력해주세요.") DeliveryInfo deliveryInfo) {
