@@ -13,10 +13,7 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 @Configuration
 public class SecurityConfig extends DefaultSecurityConfig {
 
-    public SecurityConfig(AppProperties appProperties,
-                          CustomAuthenticationEntryPoint entryPoint,
-                          JwtAuthenticationTokenFilter jwtAuthenticationTokenFilter,
-                          JwtAccessDeniedHandler jwtAccessDeniedHandler) {
+    public SecurityConfig(AppProperties appProperties, CustomAuthenticationEntryPoint entryPoint, JwtAuthenticationTokenFilter jwtAuthenticationTokenFilter, JwtAccessDeniedHandler jwtAccessDeniedHandler) {
         super(appProperties, entryPoint, jwtAuthenticationTokenFilter, jwtAccessDeniedHandler);
     }
 
