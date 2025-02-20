@@ -4,6 +4,7 @@ import java.util.List;
 
 import com.emotionalcart.core.feature.product.Product;
 
+import com.emotionalcart.product.infrastructure.stock.dto.OptionStocksResponse;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import com.fasterxml.jackson.databind.ser.std.ToStringSerializer;
 import lombok.Data;
@@ -22,11 +23,14 @@ public class ReadProductDetails {
         private List<ReadProductOptions.Response> options;
         private ReadProductReviewStatistic.Response reviewStatistic;
         private List<ReadProductImages.Response> images;
+        private List<OptionStocksResponse> optionStocks;
+        private int totalStockQuantity;
 
         public Response(Product product,
                 List<ReadProductOptions.Response> options, ReadProductCategories.Response categoryResponse,
                 ReadProviders.Response providerResponse, ReadProductReviewStatistic.Response reviewStatistic,
-                List<ReadProductImages.Response> images) {
+                List<ReadProductImages.Response> images, List<OptionStocksResponse> optionStocks,
+                int totalStockQuantity) {
             this.id = product.getId();
             this.name = product.getName();
             this.description = product.getDescription();
@@ -36,13 +40,16 @@ public class ReadProductDetails {
             this.options = options;
             this.reviewStatistic = reviewStatistic;
             this.images = images;
+            this.optionStocks = optionStocks;
+            this.totalStockQuantity = totalStockQuantity;
         }
 
         public static Response toResponse(Product product,
                 List<ReadProductOptions.Response> options, ReadProductCategories.Response categoryResponse,
                 ReadProviders.Response providerResponse, ReadProductReviewStatistic.Response reviewStatistic,
-                List<ReadProductImages.Response> images) {
-            return new Response(product, options, categoryResponse, providerResponse, reviewStatistic, images);
+                List<ReadProductImages.Response> images, List<OptionStocksResponse> optionStocks,
+                int totalStockQuantity) {
+            return new Response(product, options, categoryResponse, providerResponse, reviewStatistic, images, optionStocks, totalStockQuantity);
         }
     }
 }

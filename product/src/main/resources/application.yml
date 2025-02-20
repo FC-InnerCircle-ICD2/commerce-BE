@@ -2,6 +2,8 @@ server:
   port: 8080
 
 spring:
+  application:
+    name: product-service
   servlet:
     multipart:
       max-file-size: 10MB
@@ -28,3 +30,7 @@ aws:
   s3:
     access-key: ${AWS_S3_ACCESS_KEY}
     secret-key: ${AWS_S3_SECRET_KEY}
+
+stock:
+  find:
+    feign-endpoint: ${STOCK_SERVER_URL:http://localhost:9992}
