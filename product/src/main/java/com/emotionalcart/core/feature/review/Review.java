@@ -3,10 +3,10 @@ package com.emotionalcart.core.feature.review;
 import com.emotionalcart.core.base.BaseEntity;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotNull;
-import jakarta.validation.constraints.Size;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import org.springframework.data.annotation.CreatedBy;
 
 @Entity
 @Table
@@ -19,6 +19,7 @@ public class Review extends BaseEntity {
     private Long id;
 
     @NotNull
+    @CreatedBy
     private Long userId;
 
     @NotNull
@@ -36,7 +37,6 @@ public class Review extends BaseEntity {
     private String content;
 
     private Review(
-        Long userId,
         Long productId,
         String productName,
         String productOptionId,
@@ -44,7 +44,6 @@ public class Review extends BaseEntity {
         Integer rating,
         String content
     ) {
-        this.userId = userId;
         this.productId = productId;
         this.productName = productName;
         this.productOptionId = productOptionId;
@@ -54,7 +53,6 @@ public class Review extends BaseEntity {
     }
 
     public static Review of(
-        Long userId,
         Long productId,
         String productName,
         String productOptionId,
@@ -63,7 +61,6 @@ public class Review extends BaseEntity {
         String content
     ) {
         return new Review(
-            userId,
             productId,
             productName,
             productOptionId,

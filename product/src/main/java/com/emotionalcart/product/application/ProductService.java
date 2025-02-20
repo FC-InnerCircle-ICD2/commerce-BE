@@ -67,7 +67,7 @@ public class ProductService {
         Product product = productDataProvider.findProduct(productId);
         productDataProvider.findProductReview(productId, jwt.id());
         // TODO 유저 구매내역 확인
-        Review review = request.toReviewEntity(jwt.id(), productId);
+        Review review = request.toReviewEntity(productId);
         productDataProvider.saveProductReview(review);
 
         List<ReviewImage> reviewImages = uploadAndCreateReviewImages(review.getId(), request.getReviewImages());

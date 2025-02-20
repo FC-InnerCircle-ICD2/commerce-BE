@@ -24,9 +24,8 @@ public class CreateProductReviewRequest {
     private String content;
     private List<MultipartFile> reviewImages;
 
-    public Review toReviewEntity(Long userId, Long productId) {
+    public Review toReviewEntity(Long productId) {
         return Review.of(
-            userId,
             productId,
             productName,
             productOptionId,
