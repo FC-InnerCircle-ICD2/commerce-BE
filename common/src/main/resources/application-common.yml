@@ -3,7 +3,7 @@ jwt:
   header-key: Authorization
 app:
   allow-domains:
-    - ${MEMBER_SWAGGER_URL:http://localhost:8081}
-    - ${PRODUCT_SWAGGER_URL:http://localhost:8080}
-    - ${ORDER_SWAGGER_URL:http://localhost:9999}
-    - ${STOCK_SWAGGER_URL:http://localhost:9992}
+    - ${MEMBER_SERVER_URL:http://localhost:8081}
+    - ${PRODUCT_SERVER_URL:http://localhost:8080}
+    - ${ORDER_SERVER_URL:http://localhost:9999}
+    - ${STOCK_SERVER_URL:http://localhost:9992}
