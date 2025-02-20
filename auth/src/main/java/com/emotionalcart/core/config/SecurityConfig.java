@@ -39,7 +39,6 @@ public class SecurityConfig {
                                 .userService(customOAuth2UserService))
                         .successHandler(customSuccessHandler)
                 )
-
                 //경로별 인가 작업(권한 및 인증 설정)
                 .authorizeHttpRequests(auth -> auth
                         .requestMatchers("/swagger-ui/**",
@@ -54,7 +53,6 @@ public class SecurityConfig {
                 .sessionManagement(session -> session
                         .sessionCreationPolicy(SessionCreationPolicy.STATELESS)
                 );
-
         return http.build();
     }
 
