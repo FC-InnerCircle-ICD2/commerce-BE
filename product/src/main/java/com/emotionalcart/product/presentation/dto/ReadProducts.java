@@ -61,7 +61,7 @@ public class ReadProducts {
         private List<ReadProductImages.Response> images;
         private int totalStockQuantity;
 
-        public Response(Product product, List<ProductOptionResponse> options, Category category, Provider provider, List<ReadProductImages.Response> images, int totalStockQuantity) {
+        public Response(Product product, List<ProductOptionResponse> options, Category category, Provider provider, List<ReadProductImages.Response> images, OptionStockResult stockResult) {
             this.productId = product.getId();
             this.name = product.getName();
             this.description = product.getDescription();
@@ -71,7 +71,7 @@ public class ReadProducts {
             this.options = options;
             this.rating = product.getReviewStatistic() != null ? product.getReviewStatistic().getAverageRating() : null;
             this.images = images;
-            this.totalStockQuantity = totalStockQuantity;
+            this.totalStockQuantity = stockResult.getTotalStockQuantity();
         }
 
         public static Page<Response> toResponse(Page<Product> products, ProductOptions productOptions,
@@ -87,11 +87,10 @@ public class ReadProducts {
                 List<ProductOptionResponse> productOptionResponses = optionsMap.getOrDefault(productId, List.of());
                 Category category = categoryMap.getOrDefault(product.getCategoryId(), null);
                 Provider provider = providerMap.getOrDefault(product.getProviderId(), null);
-                //Long sales = salesData.getOrDefault(product.getId(), 0L); // 판매량 정보 포함
                 List<ReadProductImages.Response> images = readProductImagesMap.getOrDefault(product, List.of());
                 OptionStockResult optionStockResult = stockResults.get(productId);
 
-                return new Response(product, productOptionResponses, category, provider, images, optionStockResult.getTotalStockQuantity());
+                return new Response(product, productOptionResponses, category, provider, images, optionStockResult);
             });
         }
     }
@@ -124,7 +123,6 @@ public class ReadProducts {
         @JsonSerialize(using = ToStringSerializer.class)
         private Long id;
         private String value;
-        private Integer quantity;
         private Integer order;
         private Integer additionalPrice;
 
