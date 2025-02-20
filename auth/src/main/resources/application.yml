@@ -75,7 +75,7 @@ logging:
 
 member:
   find:
-    feign-endpoint: http://localhost:8081
+    feign-endpoint: ${MEMBER_SERVER_URL:http://localhost:8081}
 server:
   port: 8082
 
