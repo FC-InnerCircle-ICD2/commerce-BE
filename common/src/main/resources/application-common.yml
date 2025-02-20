@@ -1,3 +1,9 @@
 jwt:
   secret-key: dlsjtjzmfdlzjajtmxlaghkdlxldgkqtlek
   header-key: Authorization
+app:
+  allow-domains:
+    - ${MEMBER_SWAGGER_URL:http://localhost:8081}
+    - ${PRODUCT_SWAGGER_URL:http://localhost:8080}
+    - ${ORDER_SWAGGER_URL:http://localhost:9999}
+    - ${STOCK_SWAGGER_URL:http://localhost:9992}

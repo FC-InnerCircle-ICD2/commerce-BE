@@ -19,7 +19,10 @@ public class SecurityConfig extends DefaultSecurityConfig {
 
     @Override
     protected String[] getPermissionUrl() {
-        return new String[] {"/api/v1/members/auth/**", "/api/v1/admin/members/auth/**", "/error"};
+        return new String[]{"/swagger-ui/**",
+                "/v3/api-docs/**",
+                "/swagger-resources/**",
+                "/actuator/**", "/api/v1/members/auth/**", "/api/v1/admin/members/auth/**", "/error"};
     }
 
     @Bean
