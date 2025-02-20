@@ -14,9 +14,14 @@ import com.emotionalcart.product.domain.ProductDataProvider;
 import com.emotionalcart.product.domain.ProviderDataProvider;
 import com.emotionalcart.product.domain.dto.ProductDetail;
 import com.emotionalcart.product.domain.support.*;
+import com.emotionalcart.product.infrastructure.stock.StockService;
+import com.emotionalcart.product.infrastructure.stock.dto.OptionStockResult;
+import com.emotionalcart.product.infrastructure.stock.dto.StockQuantitySearchRequest;
 import com.emotionalcart.product.presentation.dto.*;
 import com.emotionalcart.product.presentation.dto.request.CreateProductReviewRequest;
 import com.emotionalcart.product.presentation.dto.response.CreateProductReviewResponse;
+import com.emotionalcart.product.infrastructure.stock.dto.OptionStockDto;
+import com.emotionalcart.product.infrastructure.stock.dto.OptionStocksResponse;
 import com.emotionalcart.s3.S3Utils;
 import com.emotionalcart.s3.config.S3Constants;
 import jakarta.validation.constraints.NotNull;
@@ -26,10 +31,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 import java.util.stream.Collectors;
 
 @Service
@@ -40,6 +42,7 @@ public class ProductService {
     private final CategoryDataProvider categoryDataProvider;
     private final ProviderDataProvider providerDataProvider;
     private final S3Utils s3Utils;
+    private final StockService stockService;
 
     public Page<ReadProductReviews.Response> readProductReviews(@NotNull Long productId,
                                                                 ReadProductReviews.Request request) {
@@ -106,8 +109,28 @@ public class ProductService {
         Map<Long, Provider> providers = providerDataProvider.findProviderByIds(products.getProviderIds());
         ProductImages productImages = ProductImages.from(productDataProvider.findAllProductImages(products.ids()));
 
+        // 상품별 옵션 목록 그룹화
+        Map<Long, List<ProductOption>> productOptionsMap = productOptions.getOptions().stream()
+                .collect(Collectors.groupingBy(ProductOption::getProductId));
+
+        // 상품별 옵션 조합 생성
+        Map<Long, List<OptionDetailsGroup>> productOptionCombinations = new HashMap<>();
+        for (Long productId : products.ids()) {
+            List<ProductOption> productOptionsList = productOptionsMap.getOrDefault(productId, List.of());
+            List<OptionDetailsGroup> optionDetailsGrouped = convertToOptionGroups(productOptionsList);
+            List<OptionDetailsGroup> optionCombinations = cartesianProduct(optionDetailsGrouped);
+            productOptionCombinations.put(productId, optionCombinations);
+        }
+
+        // 상품별 옵션 조합별 재고 조회
+        Map<Long, OptionStockResult> stockResults = products.ids().stream()
+                .collect(Collectors.toMap(
+                        productId -> productId,
+                        productId -> fetchOptionStockQuantities(productId, productOptionCombinations.getOrDefault(productId, List.of()))
+                ));
+
         // DTO 변환
-        return ReadProducts.Response.toResponse(productPage, productOptions, categories, providers, productImages);
+        return ReadProducts.Response.toResponse(productPage, productOptions, categories, providers, productImages, stockResults);
     }
 
     public ReadProductDetails.Response getProductDetail(Long productId) {
@@ -119,6 +142,8 @@ public class ProductService {
         List<ReadProductOptions.Response> productOptionsResponses = new ArrayList<>();
 
         List<ProductOption> productOptions = productDataProvider.findAllProductOptionsByProductId(productId);
+
+        List<OptionDetailsGroup> optionDetailsGrouped = convertToOptionGroups(productOptions);
 
         for (ProductOption productOption : productOptions) {
             // 상품 옵션 상세 정보
@@ -138,6 +163,18 @@ public class ProductService {
             productOptionsResponses.add(productOptionResponse);
         }
 
+        // 옵션 상세 ID들의 가능한 모든 조합 생성
+        List<OptionDetailsGroup> optionCombinations = cartesianProduct(optionDetailsGrouped);
+
+        // 공통 메서드 사용하여 재고 정보 조회
+        OptionStockResult stockResult = fetchOptionStockQuantities(productId, optionCombinations);
+
+        //전체 재고
+        int totalStockQuantity = optionCombinations.stream().mapToInt(combination -> {
+            List<Long> optionIds = combination.getOptionIds();
+            return stockService.getStockQuantity(new StockQuantitySearchRequest(productId, optionIds));
+        }).sum();
+
         // 리뷰 평균 평점 및 리뷰 개수
         ReadProductReviewStatistic.Response reviewStatistic = ReadProductReviewStatistic.Response
                 .toResponse(productDataProvider.findReviewStatistic(productId));
@@ -155,7 +192,58 @@ public class ProductService {
                 .toResponse(productDataProvider.findProductImages(productId));
 
         return ReadProductDetails.Response.toResponse(product, productOptionsResponses, categoryResponse,
-                providerResponse, reviewStatistic, productImages);
+                providerResponse, reviewStatistic, productImages, stockResult.getOptionStocksResponses(), stockResult.getTotalStockQuantity());
+    }
+
+    private List<OptionDetailsGroup> convertToOptionGroups(List<ProductOption> productOptions) {
+        return productOptions.stream()
+                .map(productOption -> {
+                    List<OptionStockDto> optionDetails = productOption.getDetails().stream()
+                            .map(optionDetail -> new OptionStockDto(optionDetail.getId(), optionDetail.getValue()))
+                            .toList();
+                    return OptionDetailsGroup.fromDetails(optionDetails);
+                })
+                .toList();
+    }
+
+    public OptionStockResult fetchOptionStockQuantities(Long productId, List<OptionDetailsGroup> optionCombinations) {
+        // 옵션 조합별 재고 조회
+        List<OptionStocksResponse> optionStocksResponses = optionCombinations.stream()
+                .map(combination -> {
+                    List<Long> optionIds = combination.getOptionIds();
+                    Integer stockQuantity = stockService.getStockQuantity(new StockQuantitySearchRequest(productId, optionIds));
+                    return OptionStocksResponse.toResponse(combination, stockQuantity);
+                })
+                .toList();
+
+        // 전체 재고 수량 계산
+        int totalStockQuantity = optionCombinations.stream()
+                .mapToInt(combination -> {
+                    List<Long> optionIds = combination.getOptionIds();
+                    return stockService.getStockQuantity(new StockQuantitySearchRequest(productId, optionIds));
+                })
+                .sum();
+
+        return new OptionStockResult(optionStocksResponses, totalStockQuantity);
+    }
+
+    private static List<OptionDetailsGroup> cartesianProduct(List<OptionDetailsGroup> optionDetailIds) {
+        List<OptionDetailsGroup> result = new ArrayList<>();
+        cartesianProductHelper(optionDetailIds, 0, new ArrayList<>(), result);
+        return result;
+    }
+
+    private static void cartesianProductHelper(List<OptionDetailsGroup> optionDetailsGrouped, int depth,
+                                               List<OptionStockDto> current, List<OptionDetailsGroup> result) {
+        if (depth == optionDetailsGrouped.size()) {
+            result.add(OptionDetailsGroup.fromDetails(current));
+            return;
+        }
+        for (OptionStockDto item : optionDetailsGrouped.get(depth).getOptions()) {
+            List<OptionStockDto> nextCurrent = new ArrayList<>(current);
+            nextCurrent.add(item);
+            cartesianProductHelper(optionDetailsGrouped, depth + 1, nextCurrent, result);
+        }
     }
 
     public void readProductsValidate(List<ReadProductsValidate.Request> requests) {
