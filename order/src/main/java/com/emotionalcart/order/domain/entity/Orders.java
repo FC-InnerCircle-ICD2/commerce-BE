@@ -78,6 +78,7 @@ public class Orders extends BaseEntity {
     /**
      * 사용자 아이디
      */
+    @CreatedBy
     private Long userId;
 
     /**
@@ -105,7 +106,7 @@ public class Orders extends BaseEntity {
         orders.orderAt = LocalDateTime.now();
         orders.paymentMethod = createOrder.getPaymentMethod();
         orders.totalPrice =
-                Money.sum(createOrder.getOrderItemsPriceAndQuantity());
+            Money.sum(createOrder.getOrderItemsPriceAndQuantity());
         orders.createOrderItems(createOrder.getOrderItems());
         orders.createOrderRecipient(createOrder.getDeliveryInfo());
         orders.createUser();
