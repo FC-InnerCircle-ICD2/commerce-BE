@@ -9,4 +9,4 @@ app:
     - ${STOCK_SERVER_URL:http://localhost:9992}
     - ${AUTH_SERVER_URL:http://localhost:8082}
     - ${FRONT_SERVER_URL:http://localhost:3000}
-    - ${FRONT_SERVER_ADMIN_URL:http://localhost:5174}
+    - ${FRONT_SERVER_ADMIN_URL:http://localhost:5173}
