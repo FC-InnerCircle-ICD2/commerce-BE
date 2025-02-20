@@ -117,8 +117,7 @@ public class ProductService {
         Map<Long, List<OptionDetailsGroup>> productOptionCombinations = new HashMap<>();
         for (Long productId : products.ids()) {
             List<ProductOption> productOptionsList = productOptionsMap.getOrDefault(productId, List.of());
-            List<OptionDetailsGroup> optionDetailsGrouped = convertToOptionGroups(productOptionsList);
-            List<OptionDetailsGroup> optionCombinations = cartesianProduct(optionDetailsGrouped);
+            List<OptionDetailsGroup> optionCombinations = cartesianProduct(convertToOptionGroups(productOptionsList));
             productOptionCombinations.put(productId, optionCombinations);
         }
 
@@ -169,12 +168,6 @@ public class ProductService {
         // 공통 메서드 사용하여 재고 정보 조회
         OptionStockResult stockResult = fetchOptionStockQuantities(productId, optionCombinations);
 
-        //전체 재고
-        int totalStockQuantity = optionCombinations.stream().mapToInt(combination -> {
-            List<Long> optionIds = combination.getOptionIds();
-            return stockService.getStockQuantity(new StockQuantitySearchRequest(productId, optionIds));
-        }).sum();
-
         // 리뷰 평균 평점 및 리뷰 개수
         ReadProductReviewStatistic.Response reviewStatistic = ReadProductReviewStatistic.Response
                 .toResponse(productDataProvider.findReviewStatistic(productId));
@@ -192,7 +185,7 @@ public class ProductService {
                 .toResponse(productDataProvider.findProductImages(productId));
 
         return ReadProductDetails.Response.toResponse(product, productOptionsResponses, categoryResponse,
-                providerResponse, reviewStatistic, productImages, stockResult.getOptionStocksResponses(), stockResult.getTotalStockQuantity());
+                providerResponse, reviewStatistic, productImages, stockResult);
     }
 
     private List<OptionDetailsGroup> convertToOptionGroups(List<ProductOption> productOptions) {
