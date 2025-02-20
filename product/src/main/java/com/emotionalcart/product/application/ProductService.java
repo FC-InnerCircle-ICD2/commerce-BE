@@ -1,5 +1,6 @@
 package com.emotionalcart.product.application;
 
+import com.emotionalcart.common.jwt.JwtAuthentication;
 import com.emotionalcart.common.security.LoginAccountAuditorAware;
 import com.emotionalcart.core.exception.ErrorCode;
 import com.emotionalcart.core.exception.ProductException;
@@ -60,15 +61,13 @@ public class ProductService {
     }
 
     @Transactional
-    public CreateProductReviewResponse createProductReview(@NotNull Long productId, CreateProductReviewRequest request) {
-        String userId = loginAccountAuditorAware.getCurrentAuditor()
-            .orElseThrow(() -> new ProductException(ErrorCode.UNAUTHORIZE_ERROR))
-            .toString();
-
+    public CreateProductReviewResponse createProductReview(JwtAuthentication jwt,
+                                                           @NotNull Long productId,
+                                                           CreateProductReviewRequest request) {
         Product product = productDataProvider.findProduct(productId);
-        productDataProvider.findProductReview(productId, userId);
+        productDataProvider.findProductReview(productId, jwt.id());
         // TODO 유저 구매내역 확인
-        Review review = request.toReviewEntity(productId);
+        Review review = request.toReviewEntity(jwt.id(), productId);
         productDataProvider.saveProductReview(review);
 
         List<ReviewImage> reviewImages = uploadAndCreateReviewImages(review.getId(), request.getReviewImages());

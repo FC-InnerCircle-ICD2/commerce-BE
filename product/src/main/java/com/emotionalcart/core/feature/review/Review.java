@@ -19,7 +19,7 @@ public class Review extends BaseEntity {
     private Long id;
 
     @NotNull
-    private String userId;
+    private Long userId;
 
     @NotNull
     private Long productId;
@@ -36,13 +36,13 @@ public class Review extends BaseEntity {
     private String content;
 
     private Review(
-            String userId,
-            Long productId,
-            String productName,
-            String productOptionId,
-            String productOptionName,
-            Integer rating,
-            String content
+        Long userId,
+        Long productId,
+        String productName,
+        String productOptionId,
+        String productOptionName,
+        Integer rating,
+        String content
     ) {
         this.userId = userId;
         this.productId = productId;
@@ -54,21 +54,23 @@ public class Review extends BaseEntity {
     }
 
     public static Review of(
-            Long productId,
-            String productName,
-            String productOptionId,
-            String productOptionName,
-            Integer rating,
-            String content
+        Long userId,
+        Long productId,
+        String productName,
+        String productOptionId,
+        String productOptionName,
+        Integer rating,
+        String content
     ) {
         return new Review(
-                "userId", // TODO 회원가입 적용 이후 반영
-                productId,
-                productName,
-                productOptionId,
-                productOptionName,
-                rating,
-                content
+            userId,
+            productId,
+            productName,
+            productOptionId,
+            productOptionName,
+            rating,
+            content
         );
     }
+
 }

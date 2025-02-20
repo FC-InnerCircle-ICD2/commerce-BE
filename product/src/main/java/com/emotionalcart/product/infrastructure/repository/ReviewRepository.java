@@ -12,5 +12,5 @@ import java.util.Optional;
 @Repository
 public interface ReviewRepository extends JpaRepository<Review, Long> {
     Page<Review> findAllByProductIdAndIsDeletedIsFalse(@NotNull Long productId, PageRequest pageRequest);
-    Optional<Review> findByProductIdAndUserIdAndIsDeletedIsFalse(Long productId, String userId);
+    Optional<Review> findByProductIdAndUserIdAndIsDeletedIsFalse(Long productId, Long userId);
 }
