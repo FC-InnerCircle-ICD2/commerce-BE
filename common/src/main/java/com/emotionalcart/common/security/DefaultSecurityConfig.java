@@ -56,11 +56,15 @@ public abstract class DefaultSecurityConfig {
         return handle -> handle.accessDeniedHandler(jwtAccessDeniedHandler).authenticationEntryPoint(entryPoint);
     }
 
-    protected AuthorizeHttpRequestsConfigurer<HttpSecurity>.AuthorizedUrl getAuthorizedUrl(AuthorizeHttpRequestsConfigurer<HttpSecurity>.AuthorizationManagerRequestMatcherRegistry request) {
-        return request.requestMatchers("/swagger-ui/**",
-                                       "/v3/api-docs/**",
-                                       "/swagger-resources/**",
-                                       "/actuator/**");
+    private AuthorizeHttpRequestsConfigurer<HttpSecurity>.AuthorizedUrl getAuthorizedUrl(AuthorizeHttpRequestsConfigurer<HttpSecurity>.AuthorizationManagerRequestMatcherRegistry request) {
+        return request.requestMatchers(getPermissionUrl());
+    }
+
+    protected String[] getPermissionUrl() {
+        return new String[] {"/swagger-ui/**",
+            "/v3/api-docs/**",
+            "/swagger-resources/**",
+            "/actuator/**"};
     }
 
     private CorsConfigurationSource corsConfigurationSource() {
