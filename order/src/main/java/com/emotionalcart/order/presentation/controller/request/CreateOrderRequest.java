@@ -53,28 +53,28 @@ public class CreateOrderRequest {
         CreateOrder createOrder = CreateOrder.ofPaymentMethod(paymentMethod.name());
         if (paymentMethod == PaymentMethod.CARD) {
             createOrder.createNewCardInfo(cardInfo.getCardNumber(),
-                    cardInfo.getExpirationDate(),
-                    cardInfo.getCvc(),
-                    cardInfo.getCardOwnerName());
+                                          cardInfo.getExpirationDate(),
+                                          cardInfo.getCvc(),
+                                          cardInfo.getCardOwnerName());
         }
         for (CreateOrderItemRequest orderItem : orderItems) {
             CreateOrderItem createOrderItem =
-                    createOrder.createOrderItem(orderItem.productId,
-                            orderItem.productName,
-                            orderItem.price,
-                            orderItem.quantity,
-                            orderItem.categoryId);
+                createOrder.createOrderItem(orderItem.productId,
+                                            orderItem.getQuantity(),
+                                            orderItem.productName,
+                                            orderItem.price,
+                                            orderItem.categoryId);
             orderItem.getProductOptionDetails().forEach(option -> createOrderItem.addOrderItemOption(option.productOptionId,
-                    option.productOptionDetailId,
-                    option.additionalPrice));
+                                                                                                     option.productOptionDetailId,
+                                                                                                     option.additionalPrice));
             createOrder.addItem(createOrderItem);
         }
         createOrder.createDeliveryInfo(delivery.getName(),
-                delivery.getPhoneNumber(),
-                delivery.getZoneCode(),
-                delivery.getAddress(),
-                delivery.getDetailAddress(),
-                delivery.getDeliveryMemo());
+                                       delivery.getPhoneNumber(),
+                                       delivery.getZoneCode(),
+                                       delivery.getAddress(),
+                                       delivery.getDetailAddress(),
+                                       delivery.getDeliveryMemo());
         return createOrder;
     }
 
@@ -125,6 +125,9 @@ public class CreateOrderRequest {
         @NotNull(message = "상품 금액을 입력해주세요.")
         private double price;
 
+        /**
+         * 수량
+         */
         private int quantity;
 
     }
@@ -139,15 +142,12 @@ public class CreateOrderRequest {
         private Long productOptionDetailId;
 
         /**
-         * 수량
-         */
-        @NotNull(message = "수량을 입력해주세요.")
-        private int quantity;
-
-        /**
          * 추가 금액
          */
         private double additionalPrice;
+
+        @NotNull(message = "수량을 입력해주세요.")
+        private int quantity;
 
     }
 

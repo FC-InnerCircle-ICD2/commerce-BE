@@ -1,6 +1,5 @@
 server:
-  servlet:
-    context-path: /api
+  port: 8080
 
 spring:
   application:
@@ -12,6 +11,7 @@ spring:
   profiles:
     include:
       - common
+    active: default
   datasource:
     url: ${DATASOURCE_URL}
     username: ${DATASOURCE_USERNAME}

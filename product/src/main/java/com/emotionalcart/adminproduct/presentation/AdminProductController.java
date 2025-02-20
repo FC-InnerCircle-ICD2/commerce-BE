@@ -10,7 +10,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
-@RequestMapping("/admin/v1/products")
+@RequestMapping("/api/admin/v1/products")
 @RequiredArgsConstructor
 public class AdminProductController implements AdminProductControllerDocs {
     private final AdminProductService adminProductService;
