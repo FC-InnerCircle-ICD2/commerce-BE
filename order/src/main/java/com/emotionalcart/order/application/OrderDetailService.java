@@ -12,10 +12,10 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.Comparator;
 import java.util.List;
 import java.util.stream.IntStream;
 
@@ -41,13 +41,12 @@ public class OrderDetailService {
      * @return
      */
     public Page<UserOrder> getOrderListByUserId(Long userId, Pageable request) {
-        Page<Orders> orderList = orderRepository.findByUserId(0L, request);
+        Page<Orders> orderList = orderRepository.findByUserId(0L, request, Sort.by(Sort.Order.desc("orderAt")));
         List<List<ProductDetail>> productDetailsByOrders =
             orderList.stream().map(order -> order.getOrderItems().stream().map(orderItem -> productService.getProductDetail(orderItem.getProductId())).toList()).toList();
 
         List<UserOrder> userOrders = IntStream.range(0, orderList.getContent().size())
             .mapToObj(i -> UserOrder.from(orderList.getContent().get(i), productDetailsByOrders.get(i)))
-            .sorted(Comparator.comparing(UserOrder::getOrderAt).reversed())
             .toList();
 
         // 최종적으로 Page<UserOrder> 반환
