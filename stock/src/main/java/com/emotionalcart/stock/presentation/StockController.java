@@ -47,7 +47,7 @@ public class StockController {
                                                                          request.getQuantity()));
     }
 
-    @PatchMapping("/deduct")
+    @PostMapping("/deduct")
     public ResponseEntity<DeductedStockInfo> deductStockQuantity(@RequestBody StockQuantityUpdateRequest request) {
         return ResponseEntity.ok(stockCommandService.deductStockQuantity(request.getProductId(),
                                                                          request.getOptionDetailIds(),
