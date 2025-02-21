@@ -13,6 +13,7 @@ import java.util.List;
 @Getter
 @Setter
 public class CreateProductReviewRequest {
+
     private String productName;
     private String productOptionId;
     private String productOptionName;
@@ -25,12 +26,13 @@ public class CreateProductReviewRequest {
 
     public Review toReviewEntity(Long productId) {
         return Review.of(
-                productId,
-                productName,
-                productOptionId,
-                productOptionName,
-                rating,
-                content
+            productId,
+            productName,
+            productOptionId,
+            productOptionName,
+            rating,
+            content
         );
     }
+
 }

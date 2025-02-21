@@ -2,6 +2,7 @@ package com.emotionalcart.core.config;
 
 import com.emotionalcart.auth.application.CustomOAuth2UserService;
 import com.emotionalcart.auth.presentation.handler.CustomSuccessHandler;
+import com.emotionalcart.auth.presentation.handler.OAuth2AuthorizationRequestCustomizer;
 import com.emotionalcart.common.security.AppProperties;
 import com.emotionalcart.common.security.CustomAuthenticationEntryPoint;
 import lombok.RequiredArgsConstructor;
@@ -28,6 +29,7 @@ public class SecurityConfig {
     private final CustomOAuth2UserService customOAuth2UserService;
     private final CustomSuccessHandler customSuccessHandler;
     private final CustomAuthenticationEntryPoint customAuthenticationEntryPoint;
+    private final OAuth2AuthorizationRequestCustomizer authorizationRequestCustomizer;
 
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
@@ -44,6 +46,9 @@ public class SecurityConfig {
 
             //oauth2
             .oauth2Login(oauth2 -> oauth2
+                .authorizationEndpoint(endpoint -> endpoint
+                                .authorizationRequestResolver(authorizationRequestCustomizer)
+                        )
                 .userInfoEndpoint(userInfoEndpointConfig -> userInfoEndpointConfig
                     .userService(customOAuth2UserService))
                 .successHandler(customSuccessHandler)
