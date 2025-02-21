@@ -39,7 +39,7 @@ public class OrderDetailService {
      */
     public Page<UserOrder> getOrderListByUserId(Long userId, Pageable request) {
         PageRequest pageRequest = PageRequest.of(request.getPageNumber(), request.getPageSize(), Sort.by(Sort.Order.desc("orderAt")));
-        Page<Orders> orderList = orderRepository.findByUserId(0L, pageRequest);
+        Page<Orders> orderList = orderRepository.findByUserId(userId, pageRequest);
         List<List<ProductDetail>> productDetailsByOrders =
             orderList.stream().map(order -> order.getOrderItems().stream().map(orderItem -> productService.getProductDetail(orderItem.getProductId())).toList()).toList();
 
