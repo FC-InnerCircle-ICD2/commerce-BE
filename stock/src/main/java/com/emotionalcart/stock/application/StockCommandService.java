@@ -147,7 +147,7 @@ public class StockCommandService {
             Stock stock = stockRepository.getStockByOptionIds(StockQuantitySearchCondition.of(command.getProductId(),
                                                                                               optionValidateCommand.getOptionDetailsIds()))
                 .orElseThrow(() -> new IllegalArgumentException("해당 상품은 재고가 존재하지 않습니다."));
-            if (!Objects.equals(stock.getQuantity(), optionValidateCommand.getQuantity())) {
+            if (stock.getQuantity() < optionValidateCommand.getQuantity()) {
                 return false;
             }
         }
