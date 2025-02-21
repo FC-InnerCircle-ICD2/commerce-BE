@@ -27,21 +27,11 @@ public class ProductService {
     /**
      * 상품 유효성 검사
      *
-     * @param productValidationRequest
+     * @param productQuantityValidateRequest
      * @return
      */
-    public void isValidProduct(List<ProductValidationRequest> productValidationRequest) {
-        productFeignClient.validateProductPrice(productValidationRequest);
-    }
-
-    /**
-     * 상품 재고 변경
-     *
-     * @param productStockRequest
-     * @return
-     */
-    public void updateProductStock(List<ProductStockRequest> productStockRequest) {
-        productFeignClient.updateProductStock(productStockRequest);
+    public void isValidProduct(List<ProductQuantityValidateRequest> productQuantityValidateRequest) {
+        productFeignClient.validateProductPrice(productQuantityValidateRequest);
     }
 
     public ProductDetail getProductDetail(Long productId) {

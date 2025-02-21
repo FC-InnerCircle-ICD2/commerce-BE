@@ -18,8 +18,9 @@ import com.emotionalcart.order.infra.payment.PaymentService;
 import com.emotionalcart.order.infra.product.ProductService;
 import com.emotionalcart.order.infra.product.dto.ProductPrice;
 import com.emotionalcart.order.infra.product.dto.ProductPriceRequest;
+import com.emotionalcart.order.infra.product.dto.ProductQuantityValidateRequest;
 import com.emotionalcart.order.infra.product.dto.ProductStockRequest;
-import com.emotionalcart.order.infra.product.dto.ProductValidationRequest;
+import com.emotionalcart.order.infra.stock.StockService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.redisson.RedissonMultiLock;
@@ -43,6 +44,7 @@ public class CreateOrderService {
     private final PaymentService paymentService;
     private final ProductService productService;
     private final RedissonMultiLockProvider redissonMultiLockProvider;
+    private final StockService stockService;
 
     /**
      * 주문 생성
@@ -89,25 +91,29 @@ public class CreateOrderService {
     private void updateQuantity(Orders orders) {
         List<ProductStockRequest> productStockRequests = new ArrayList<>();
         for (OrderItem orderItem : orders.getOrderItems()) {
-            ProductStockRequest request = ProductStockRequest.of(orderItem.getProductId());
+            ProductStockRequest request = ProductStockRequest.of(orderItem.getProductId(), orderItem.getQuantity());
             orderItem.getOrderItemOptions().forEach(option -> request.addOption(option.getProductOptionId(),
-                                                                                option.getProductOptionDetailId(),
-                                                                                orderItem.getQuantity()));
+                                                                                option.getProductOptionDetailId()));
             productStockRequests.add(request);
         }
-        //        productService.updateProductStock(productStockRequests);
+        stockService.deductStockQuantity(productStockRequests);
     }
 
+    /**
+     * 상품 수량 검증
+     *
+     * @param createOrder
+     */
     private void validateQuantity(CreateOrder createOrder) {
-        List<ProductValidationRequest> productValidationRequests = new ArrayList<>();
+        List<ProductQuantityValidateRequest> productQuantityValidateRequests = new ArrayList<>();
         for (CreateOrderItem orderItem : createOrder.getOrderItems()) {
-            ProductValidationRequest request = ProductValidationRequest.of(orderItem.getProductId());
+            ProductQuantityValidateRequest request = ProductQuantityValidateRequest.of(orderItem.getProductId(), orderItem.getQuantity());
             orderItem.getOrderItemOptions().forEach(option -> request.addOption(option.getProductOptionId(),
                                                                                 option.getProductOptionDetailId(),
                                                                                 orderItem.getQuantity()));
-            productValidationRequests.add(request);
+            productQuantityValidateRequests.add(request);
         }
-        productService.isValidProduct(productValidationRequests);
+        stockService.isValidProductQuantity(productQuantityValidateRequests);
     }
 
     private Orders validateAndSaveOrder(CreateOrder createOrder) {
