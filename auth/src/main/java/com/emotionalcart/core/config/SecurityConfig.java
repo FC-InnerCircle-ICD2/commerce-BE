@@ -80,7 +80,8 @@ public class SecurityConfig {
                                          "Access-Token",
                                          "Refresh-Token",
                                          "Access-Control-Allow-Origin",
-                                         "strict-origin-when-cross-origin"));
+                                         "strict-origin-when-cross-origin",
+                                         "Set-Cookie"));
         config.setAllowedHeaders(List.of("*"));
         config.setAllowCredentials(true);
         UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
