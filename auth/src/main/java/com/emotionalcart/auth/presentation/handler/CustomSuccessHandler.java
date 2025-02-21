@@ -36,7 +36,7 @@ public class CustomSuccessHandler extends SimpleUrlAuthenticationSuccessHandler 
         log.info("Redirect URI: {}", redirectUri);
 
         if (redirectUri == null || redirectUri.isEmpty()) {
-            redirectUri = "https://commerce-fe-teal.vercel.app";
+            redirectUri = "https://www.emmotional-cart.click";
         }
 
         // OAuth2User
