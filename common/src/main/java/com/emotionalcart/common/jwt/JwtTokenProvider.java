@@ -27,7 +27,7 @@ public class JwtTokenProvider {
     }
 
     public String createAccessToken(Long userId, String username, List<String> roles) {
-        long tokenValidationSecond = 1000L * 60 * 5;
+        long tokenValidationSecond = 1000L * 60 * 60 * 10;
         return createToken(userId, username, roles, tokenValidationSecond);
     }
 

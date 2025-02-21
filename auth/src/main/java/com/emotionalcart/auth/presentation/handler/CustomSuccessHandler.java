@@ -50,7 +50,7 @@ public class CustomSuccessHandler extends SimpleUrlAuthenticationSuccessHandler 
         String refreshToken = jwtTokenProvider.createRefreshToken(userId, username, roles);
 
         // 응답 설정
-        CookieUtil.addCookie(response, "Access-Token", accessToken, 5 * 60);
+        CookieUtil.addCookie(response, "Access-Token", accessToken, 10 * 60 * 60);
         CookieUtil.addCookie(response, "Refresh-Token", refreshToken, 30 * 60);
         response.setContentType("application/json");
         response.setCharacterEncoding("UTF-8");
