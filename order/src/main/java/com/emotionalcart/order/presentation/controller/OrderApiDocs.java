@@ -24,6 +24,6 @@ public interface OrderApiDocs {
     ResponseEntity<OrderDetailResponse> getOrderDetail(@PathVariable Long orderId);
 
     @Operation(summary = "사용자 주문 목록 조회 API")
-    ResponseEntity<Page<UserOrderResponse>> getOrderList(JwtAuthentication userId, Pageable request);
+    ResponseEntity<Page<UserOrderResponse>> getOrderList(JwtAuthentication jwtAuthentication, Pageable request);
 
 }
