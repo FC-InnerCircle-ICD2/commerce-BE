@@ -15,6 +15,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.Comparator;
 import java.util.List;
 import java.util.stream.IntStream;
 
@@ -46,6 +47,7 @@ public class OrderDetailService {
 
         List<UserOrder> userOrders = IntStream.range(0, orderList.getContent().size())
             .mapToObj(i -> UserOrder.from(orderList.getContent().get(i), productDetailsByOrders.get(i)))
+            .sorted(Comparator.comparing(UserOrder::getOrderAt).reversed())
             .toList();
 
         // 최종적으로 Page<UserOrder> 반환
