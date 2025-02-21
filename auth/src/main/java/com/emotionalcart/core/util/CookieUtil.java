@@ -9,7 +9,7 @@ public class CookieUtil {
         Cookie cookie = new Cookie(name, value);
         cookie.setDomain("emmotional-cart.click");
         cookie.setHttpOnly(false);  // JavaScript에서 접근 가능
-        cookie.setSecure(false);   // HTTPS에서만 전송
+        cookie.setSecure(true);   // HTTPS에서만 전송
         cookie.setPath("/");       // 모든 경로에서 쿠키 전송
         cookie.setMaxAge(maxAge);  // 쿠키 유효 시간 설정 (초 단위)
         cookie.setAttribute("SameSite", "None");
