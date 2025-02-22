@@ -34,4 +34,13 @@ public class StockService {
     public ResponseEntity<Boolean> validateStock(StockQuantityValidateRequest stockQuantityValidateRequest) {
         return stockFeignClient.getStockQuantities(stockQuantityValidateRequest);
     }
+
+    /**
+     * 상품 재고 검증
+     *
+     * @param stockQuantityValidateRequest 상품 재고 검증 요청
+     */
+    public ResponseEntity<Boolean> validateStock(StockQuantityValidateRequest stockQuantityValidateRequest) {
+        return stockFeignClient.getStockQuantities(stockQuantityValidateRequest);
+    }
 }
