@@ -27,9 +27,11 @@ import org.redisson.RedissonMultiLock;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
 
@@ -61,7 +63,7 @@ public class CreateOrderService {
 
         try {
             if (multiLock.tryLock(10, 10, TimeUnit.SECONDS)) {
-
+                log.error("now Time :: {}", LocalDateTime.now());
                 validateQuantity(createOrder);
                 requestOriginalPriceAndValidatePrice(createOrder);
                 payment(orders, createOrder.getCardInfo());
@@ -128,9 +130,10 @@ public class CreateOrderService {
     private void requestOriginalPriceAndValidatePrice(CreateOrder createOrder) {
         List<ProductPriceRequest> productPriceRequests = new ArrayList<>();
         for (CreateOrderItem orderItem : createOrder.getOrderItems()) {
-            ProductPriceRequest productPriceRequest = ProductPriceRequest.of(orderItem.getProductId());
+            ProductPriceRequest productPriceRequest = ProductPriceRequest.of(orderItem.getProductId(), orderItem.getPrice());
             orderItem.getOrderItemOptions().forEach(option -> productPriceRequest.addOption(option.getProductOptionId(),
-                                                                                            option.getProductOptionDetailId()));
+                                                                                            option.getProductOptionDetailId(),
+                                                                                            option.getAdditionalPrice()));
             productPriceRequests.add(productPriceRequest);
         }
         log.info("request product price: {}", productPriceRequests);
@@ -140,13 +143,32 @@ public class CreateOrderService {
     private void validatePrice(List<ProductPriceRequest> productPriceRequests) {
         List<ProductPrice> productPriceList = productService.getProductPrice(productPriceRequests);
         Map<Long, Double> productPriceMap = productPriceList.stream()
-            .collect(Collectors.toMap(ProductPrice::getProductId, ProductPrice::getPrice));
+            .collect(Collectors.toMap(
+                ProductPrice::getProductId,
+                ProductPrice::getTotalPrice,
+                Double::sum
+            ));
         log.info("response product price: {}", productPriceMap);
+        Map<Long, Double> productPriceByRequest = getProductPriceByRequest(productPriceRequests);
         for (ProductPrice productPrice : productPriceList) {
-            if (productPriceMap.get(productPrice.getProductId()) != productPrice.getPrice()) {
+            if (!Objects.equals(productPriceMap.get(productPrice.getProductId()), productPriceByRequest.get(productPrice.getProductId()))) {
+                log.error("product price : {}, request price : {}",
+                          productPriceMap.get(productPrice.getProductId()),
+                          productPriceByRequest.get(productPrice));
                 throw new InvalidValueRequestException("상품 가격이 변경되었습니다. 새로고침 이후 다시 이용 부탁드립니다.");
             }
         }
+    }
+
+    private Map<Long, Double> getProductPriceByRequest(List<ProductPriceRequest> productPriceRequests) {
+        return productPriceRequests.stream()
+            .collect(Collectors.toMap(
+                ProductPriceRequest::getProductId,
+                request -> request.getProductOptions().stream()
+                    .mapToDouble(ProductPriceRequest.ProductOption::getAdditionalPrice)  // 클래스명 수정
+                    .sum() + request.getPrice(),
+                Double::sum
+            ));
     }
 
     /**

@@ -22,8 +22,6 @@ public class StockService {
 
     private final StockFeignClient stockFeignClient;
 
-    //    private final StockDomainWebClient stockDomainWebClient;
-
     /**
      * 상품 수량 검증
      * stock > /quantity/validate api 호출
