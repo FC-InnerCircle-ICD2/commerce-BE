@@ -80,4 +80,7 @@ public class Banner extends BaseEntity {
         );
     }
 
+    public void delete(){
+        this.setIsDeleted(true);
+    }
 }

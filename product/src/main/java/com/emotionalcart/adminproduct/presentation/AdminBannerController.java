@@ -36,4 +36,11 @@ public class AdminBannerController implements AdminBannerControllerDocs{
     public ResponseEntity<ReadBannerDetailResponse> readBannerDetail(@PathVariable(name = "bannerId") Long bannerId) {
         return ResponseEntity.ok(adminBannerService.readBannerDetail(bannerId));
     }
+
+    @Override
+    @DeleteMapping("/{bannerId}")
+    public ResponseEntity<Void> deleteBanner(@PathVariable(name = "bannerId") Long bannerId) {
+        adminBannerService.deleteBanner(bannerId);
+        return ResponseEntity.ok().build();
+    }
 }
