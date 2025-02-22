@@ -21,4 +21,11 @@ public class AdminProductController implements AdminProductControllerDocs {
             @Valid @ModelAttribute CreateProductRequest request) {
         return ResponseEntity.ok(adminProductService.createProduct(request));
     }
+
+    @Override
+    @DeleteMapping("/{productId}")
+    public ResponseEntity<Void> deleteProduct(@PathVariable Long productId) {
+        adminProductService.deleteProduct(productId);
+        return ResponseEntity.ok().build();
+    }
 }
