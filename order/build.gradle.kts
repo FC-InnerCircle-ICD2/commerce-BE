@@ -35,6 +35,7 @@ dependencies {
     implementation("org.springframework.boot:spring-boot-starter-validation")
     implementation("org.flywaydb:flyway-mysql")
     implementation("org.thymeleaf.extras:thymeleaf-extras-springsecurity6")
+    implementation("org.springframework.boot:spring-boot-starter-actuator")
 
     // https://mvnrepository.com/artifact/org.redisson/redisson-spring-boot-starter
     implementation("org.redisson:redisson-spring-boot-starter:$redissonVersion")
@@ -53,7 +54,6 @@ dependencies {
     testImplementation("org.springframework.boot:spring-boot-testcontainers")
     testImplementation("org.testcontainers:mysql")
 
-    implementation("org.springdoc:springdoc-openapi-starter-webmvc-ui:2.7.0")
 
     // https://mvnrepository.com/artifact/org.springframework.boot/spring-boot-starter-test
     testImplementation("org.springframework.boot:spring-boot-starter-test")

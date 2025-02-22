@@ -31,21 +31,21 @@ public abstract class DefaultSecurityConfig {
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
         http.httpBasic(AbstractHttpConfigurer::disable)
-            .csrf(AbstractHttpConfigurer::disable)
-            .cors(c -> c.configurationSource(corsConfigurationSource()))
-            .exceptionHandling(handleException())
-            .headers(handleExceptionHeader())
-            .sessionManagement(handleSessionPolicy())
-            .authorizeHttpRequests(request ->
-                                       getAuthorizedUrl(request).permitAll()
-                                           .anyRequest().authenticated())
-            .addFilterBefore(jwtAuthenticationTokenFilter, UsernamePasswordAuthenticationFilter.class);
+                .csrf(AbstractHttpConfigurer::disable)
+                .cors(c -> c.configurationSource(corsConfigurationSource()))
+                .exceptionHandling(handleException())
+                .headers(handleExceptionHeader())
+                .sessionManagement(handleSessionPolicy())
+                .authorizeHttpRequests(request ->
+                        getAuthorizedUrl(request).permitAll()
+                                .anyRequest().authenticated())
+                .addFilterBefore(jwtAuthenticationTokenFilter, UsernamePasswordAuthenticationFilter.class);
         return http.build();
     }
 
     private static Customizer<SessionManagementConfigurer<HttpSecurity>> handleSessionPolicy() {
         return session -> session.sessionCreationPolicy(
-            SessionCreationPolicy.STATELESS);
+                SessionCreationPolicy.STATELESS);
     }
 
     private static Customizer<HeadersConfigurer<HttpSecurity>> handleExceptionHeader() {
@@ -57,10 +57,14 @@ public abstract class DefaultSecurityConfig {
     }
 
     protected AuthorizeHttpRequestsConfigurer<HttpSecurity>.AuthorizedUrl getAuthorizedUrl(AuthorizeHttpRequestsConfigurer<HttpSecurity>.AuthorizationManagerRequestMatcherRegistry request) {
-        return request.requestMatchers("/swagger-ui/**",
-                                       "/v3/api-docs/**",
-                                       "/swagger-resources/**",
-                                       "/actuator/**");
+        return request.requestMatchers(getPermissionUrl());
+    }
+
+    protected String[] getPermissionUrl() {
+        return new String[]{"/swagger-ui/**",
+                "/v3/api-docs/**",
+                "/swagger-resources/**",
+                "/actuator/**"};
     }
 
     private CorsConfigurationSource corsConfigurationSource() {
@@ -69,10 +73,10 @@ public abstract class DefaultSecurityConfig {
         config.setAllowedOrigins(allowDomains);
         config.setAllowedMethods(List.of("GET", "PUT", "DELETE", "POST", "PATCH", "OPTIONS", "HEAD"));
         config.setExposedHeaders(List.of("Access-Control-Allow-Headers",
-                                         "Access-Token",
-                                         "Refresh-Token",
-                                         "Access-Control-Allow-Origin",
-                                         "strict-origin-when-cross-origin"));
+                "Access-Token",
+                "Refresh-Token",
+                "Access-Control-Allow-Origin",
+                "strict-origin-when-cross-origin"));
         config.setAllowedHeaders(List.of("*"));
         config.setAllowCredentials(true);
         UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();

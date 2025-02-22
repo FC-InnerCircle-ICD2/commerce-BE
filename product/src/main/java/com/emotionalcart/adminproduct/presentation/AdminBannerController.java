@@ -14,7 +14,7 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 
 @RestController
-@RequestMapping("/admin/v1/banners")
+@RequestMapping("/api/admin/v1/banners")
 @RequiredArgsConstructor
 public class AdminBannerController implements AdminBannerControllerDocs{
     private final AdminBannerService adminBannerService;

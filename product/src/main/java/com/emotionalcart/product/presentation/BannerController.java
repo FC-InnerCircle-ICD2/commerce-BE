@@ -13,7 +13,7 @@ import java.util.List;
 import io.swagger.v3.oas.annotations.tags.Tag;
 
 @RestController
-@RequestMapping("/v1/banners")
+@RequestMapping("/api/v1/banners")
 @RequiredArgsConstructor
 public class BannerController implements BannerControllerDocs {
     private final BannerService bannerService;
