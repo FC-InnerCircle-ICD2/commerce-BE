@@ -43,4 +43,8 @@ public class ProductBanner extends BaseEntity {
         this.linkUrl = linkUrl;
         this.linkType = linkType;
     }
+
+    public void delete(){
+        this.setIsDeleted(true);
+    }
 }

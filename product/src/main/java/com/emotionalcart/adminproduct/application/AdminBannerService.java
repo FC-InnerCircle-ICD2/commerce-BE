@@ -111,4 +111,14 @@ public class AdminBannerService {
         ProductBanner productBanner = adminBannerDataProvider.findProductBanner(banner.getId());
         return ReadBannerDetailResponse.toResponse(banner, productBanner);
     }
+
+    @Transactional
+    public void deleteBanner(Long bannerId) {
+        Banner banner = adminBannerDataProvider.findBannerById(bannerId);
+        banner.delete();
+
+        ProductBanner productBanner = adminBannerDataProvider.findProductBanner(bannerId);
+        productBanner.delete();
+    }
+
 }

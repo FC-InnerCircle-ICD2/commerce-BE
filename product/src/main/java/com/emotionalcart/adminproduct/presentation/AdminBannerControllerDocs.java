@@ -65,4 +65,7 @@ public interface AdminBannerControllerDocs {
             }
     )
     ResponseEntity<ReadBannerDetailResponse> readBannerDetail(@Parameter(description = "배너 ID", required = true) @PathVariable Long bannerId);
+
+    @Operation(summary = "배너 삭제")
+    ResponseEntity<Void> deleteBanner(@PathVariable Long bannerId);
 }
