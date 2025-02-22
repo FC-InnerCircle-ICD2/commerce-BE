@@ -23,6 +23,14 @@ spring:
       hibernate:
         dialect: org.hibernate.dialect.MySQL8Dialect
         format_sql: true
+  data:
+    redis:
+#      host: redis-u44lkt.serverless.apn2.cache.amazonaws.com # 서버리스 Redis
+      host: 52.78.140.152 # Redis 인스턴스
+      port: 6379
+      ssl:
+         enabled: false # AWS 서버리스 Redis는 TLS 필수
+#        enabled: true # AWS 서버리스 Redis는 TLS 필수
 
 aws:
   s3:
