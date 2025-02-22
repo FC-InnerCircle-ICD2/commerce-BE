@@ -15,18 +15,16 @@ import com.emotionalcart.product.domain.ProviderDataProvider;
 import com.emotionalcart.product.domain.dto.ProductDetail;
 import com.emotionalcart.product.domain.support.*;
 import com.emotionalcart.product.infrastructure.stock.StockService;
-import com.emotionalcart.product.infrastructure.stock.dto.OptionStockResult;
-import com.emotionalcart.product.infrastructure.stock.dto.StockQuantitySearchRequest;
+import com.emotionalcart.product.infrastructure.stock.dto.*;
 import com.emotionalcart.product.presentation.dto.*;
 import com.emotionalcart.product.presentation.dto.request.CreateProductReviewRequest;
 import com.emotionalcart.product.presentation.dto.response.CreateProductReviewResponse;
-import com.emotionalcart.product.infrastructure.stock.dto.OptionStockDto;
-import com.emotionalcart.product.infrastructure.stock.dto.OptionStocksResponse;
 import com.emotionalcart.s3.S3Utils;
 import com.emotionalcart.s3.config.S3Constants;
 import jakarta.validation.constraints.NotNull;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
@@ -250,9 +248,8 @@ public class ProductService {
         for (ReadProductsValidate.Request request : requests) {
             validateProductExists(groupedProductDetails, request.getProductId());
             validateOptions(groupedProductDetails, request);
+            validateStocks(request);
         }
-
-        // TODO 재고 검증
     }
 
     private void validateProductExists(ProductDetails groupedProductDetails, Long productId) {
@@ -277,6 +274,28 @@ public class ProductService {
         }
         if (!allOptionDetailIds.containsAll(selectedOptionDetailIds)) {
             throw new ProductException(ErrorCode.NOT_FOUND_PRODUCT_OPTION);
+        }
+    }
+
+    private void validateStocks(ReadProductsValidate.Request request) {
+        Long productId = request.getProductId();
+
+        // 옵션 조합별로 따로 처리 (각 옵션 조합 → 수량)
+        List<StockQuantityValidateRequest.StockQuantityOptionValidateRequest> optionRequests =
+            request.getProductOptions().stream()
+                .map(option -> new StockQuantityValidateRequest.StockQuantityOptionValidateRequest(
+                    List.of(option.getProductOptionDetailId()),  // 옵션 상세 ID
+                    option.getQuantity()  // 개별 수량
+                ))
+                .toList();
+
+        StockQuantityValidateRequest stockQuantityValidateRequest =
+            new StockQuantityValidateRequest(productId, optionRequests);
+
+        ResponseEntity<Boolean> response = stockService.validateStock(stockQuantityValidateRequest);
+
+        if (Boolean.FALSE.equals(response.getBody())) {
+            throw new ProductException(ErrorCode.OUT_OF_STOCK);
         }
     }
 
