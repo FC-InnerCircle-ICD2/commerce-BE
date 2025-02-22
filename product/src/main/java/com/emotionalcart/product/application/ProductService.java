@@ -248,8 +248,8 @@ public class ProductService {
         for (ReadProductsValidate.Request request : requests) {
             validateProductExists(groupedProductDetails, request.getProductId());
             validateOptions(groupedProductDetails, request);
-            validateStocks(request);
         }
+        validateStocks(requests);
     }
 
     private void validateProductExists(ProductDetails groupedProductDetails, Long productId) {
@@ -277,25 +277,32 @@ public class ProductService {
         }
     }
 
-    private void validateStocks(ReadProductsValidate.Request request) {
-        Long productId = request.getProductId();
+    private void validateStocks(List<ReadProductsValidate.Request> requests) {
+        Map<Long, List<StockQuantityValidateRequest.StockQuantityOptionValidateRequest>> stockValidationMap = new HashMap<>();
 
-        // 옵션 조합별로 따로 처리 (각 옵션 조합 → 수량)
-        List<StockQuantityValidateRequest.StockQuantityOptionValidateRequest> optionRequests =
-            request.getProductOptions().stream()
-                .map(option -> new StockQuantityValidateRequest.StockQuantityOptionValidateRequest(
-                    List.of(option.getProductOptionDetailId()),  // 옵션 상세 ID
-                    option.getQuantity()  // 개별 수량
-                ))
-                .toList();
+        // 상품별로 옵션 조합을 그룹화
+        for (ReadProductsValidate.Request request : requests) {
+            Long productId = request.getProductId();
 
-        StockQuantityValidateRequest stockQuantityValidateRequest =
-            new StockQuantityValidateRequest(productId, optionRequests);
+            List<StockQuantityValidateRequest.StockQuantityOptionValidateRequest> orDefault =
+                stockValidationMap.getOrDefault(productId, new ArrayList<>());
 
-        ResponseEntity<Boolean> response = stockService.validateStock(stockQuantityValidateRequest);
+            StockQuantityValidateRequest.StockQuantityOptionValidateRequest optionRequest =
+                StockQuantityValidateRequest.StockQuantityOptionValidateRequest.of(request.getQuantity(),
+                                                                                   request.getProductOptions().stream().map(
+                                                                                       ReadProductsValidate.Request.OptionRequest::getProductOptionDetailId).toList());
 
-        if (Boolean.FALSE.equals(response.getBody())) {
-            throw new ProductException(ErrorCode.OUT_OF_STOCK);
+            orDefault.add(optionRequest);
+            stockValidationMap.put(productId, orDefault);
+        }
+
+        for (Long productId : stockValidationMap.keySet()) {
+            StockQuantityValidateRequest stockQuantityValidateRequest = StockQuantityValidateRequest.of(productId, stockValidationMap.get(productId));
+
+            ResponseEntity<Boolean> response = stockService.validateStock(stockQuantityValidateRequest);
+            if (Boolean.FALSE.equals(response.getBody())) {
+                throw new ProductException(ErrorCode.OUT_OF_STOCK);
+            }
         }
     }
 
