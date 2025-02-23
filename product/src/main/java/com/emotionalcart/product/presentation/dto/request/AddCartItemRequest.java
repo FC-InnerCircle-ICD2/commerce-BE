@@ -5,7 +5,7 @@ import lombok.Setter;
 
 @Getter
 @Setter
-public class AddCartRequest {
+public class AddCartItemRequest {
     // 상품 정보
     private Long productId;
     private String productName;
