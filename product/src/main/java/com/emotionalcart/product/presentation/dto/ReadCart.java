@@ -5,17 +5,17 @@ import java.io.Serializable;
 import java.util.List;
 import java.util.ArrayList;
 
-import com.emotionalcart.product.presentation.dto.request.AddCartRequest;
+import com.emotionalcart.product.presentation.dto.request.AddCartItemRequest;
 
 public class ReadCart {
 
     @Data
     public static class Response implements Serializable {
         private static final long serialVersionUID = 1L;
-        private Long cartId;
+        private String cartId;
         private int totalQuantity;
         private int totalPrice;
-        private List<CartItem> items = new ArrayList<>(); // 장바구니 항목 리스트. 
+        private List<CartItem> items = new ArrayList<>(); // 장바구니 항목 리스트.
     }
 
     @Data
@@ -47,7 +47,7 @@ public class ReadCart {
         private Long providerId;
         private String providerName;
 
-        public static CartItem from(AddCartRequest request) {
+        public static CartItem from(AddCartItemRequest request) {
             CartItem cartItem = new CartItem();
             cartItem.productId = request.getProductId();
             cartItem.productName = request.getProductName();
