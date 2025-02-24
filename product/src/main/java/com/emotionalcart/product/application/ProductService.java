@@ -61,11 +61,11 @@ public class ProductService {
     }
 
     @Transactional
-    public CreateProductReviewResponse createProductReview(JwtAuthentication jwt,
+    public CreateProductReviewResponse createProductReview(Long userId,
                                                            @NotNull Long productId,
                                                            CreateProductReviewRequest request) {
         Product product = productDataProvider.findProduct(productId);
-        productDataProvider.findProductReview(productId, jwt.id());
+        productDataProvider.findProductReview(productId, userId);
         // TODO 유저 구매내역 확인
         Review review = request.toReviewEntity(productId);
         productDataProvider.saveProductReview(review);
