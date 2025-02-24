@@ -3,6 +3,7 @@ package com.emotionalcart.product.presentation;
 import com.emotionalcart.product.application.CartService;
 import com.emotionalcart.product.presentation.dto.ReadCart;
 import com.emotionalcart.product.presentation.dto.request.AddCartItemRequest;
+import com.emotionalcart.product.presentation.dto.request.DeleteCartItemsRequest;
 import com.emotionalcart.product.presentation.dto.request.DeleteCartResponse;
 import com.emotionalcart.product.presentation.dto.request.UpdateCartItemQuantityRequest;
 
@@ -39,25 +40,31 @@ public class CartController {
     }
 
     // 장바구니 아이템 수량 변경
-    @PutMapping("/{userId}/{productId}")
+    @PutMapping("/{userId}/{productId}/{optionDetailId}")
     public ResponseEntity<ReadCart.Response> updateCartItemQuantity(@PathVariable Long userId,
-            @PathVariable Long productId, @RequestBody UpdateCartItemQuantityRequest request) {
-        return ResponseEntity.ok(cartService.updateCartItemQuantity(userId, productId, request));
+            @PathVariable Long productId, @PathVariable Long optionDetailId,
+            @RequestBody UpdateCartItemQuantityRequest request) {
+        return ResponseEntity.ok(cartService.updateCartItemQuantity(userId, productId, optionDetailId, request));
     }
 
     // 장바구니 내 아이템 선택
-
-    // 장바구니 일부 아이템 삭제
-    @DeleteMapping("/{userId}/{productId}")
-    public ResponseEntity<ReadCart.Response> deleteCartItem(@PathVariable Long userId,
-            @PathVariable Long productId) {
-        return ResponseEntity.ok(cartService.deleteCartItem(userId, productId));
+    @PutMapping("/{userId}/{productId}/{optionDetailId}")
+    public ResponseEntity<ReadCart.Response> selectCartItem(@PathVariable Long userId,
+            @PathVariable Long productId, @PathVariable Long optionDetailId) {
+        return ResponseEntity.ok(cartService.selectCartItem(userId, productId, optionDetailId));
     }
 
     // 장바구니 비우기
     @DeleteMapping("/{userId}")
     public ResponseEntity<DeleteCartResponse> clearCart(@PathVariable Long userId) {
         return ResponseEntity.ok(cartService.clearCart(userId));
+    }
+
+    // 장바구니 아이템 삭제
+    @DeleteMapping("/{userId}/items")
+    public ResponseEntity<ReadCart.Response> deleteCartItems(@PathVariable Long userId,
+            @RequestBody DeleteCartItemsRequest request) {
+        return ResponseEntity.ok(cartService.deleteCartItems(userId, request));
     }
 
 }
