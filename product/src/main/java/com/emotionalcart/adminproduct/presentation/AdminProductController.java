@@ -22,11 +22,13 @@ public class AdminProductController implements AdminProductControllerDocs {
         return ResponseEntity.ok(adminProductService.createProduct(request));
     }
 
+    @Override
     @GetMapping
     public ResponseEntity<Page<ReadAdminProductsResponse>> readProducts(ReadAdminProductsRequest request) {
         return ResponseEntity.ok(adminProductService.readProducts(request));
     }
 
+    @Override
     @GetMapping("/{productId}")
     public ResponseEntity<ReadAdminProductDetailResponse> readProduct(
             @PathVariable Long productId) {
