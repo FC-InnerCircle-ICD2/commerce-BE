@@ -14,7 +14,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
-import java.util.Optional;
 import java.util.stream.IntStream;
 
 @Slf4j
@@ -52,9 +51,10 @@ public class OrderDetailService {
         return new PageImpl<>(userOrders, request, orderList.getTotalElements());
     }
 
-    public Boolean validateOrderByMember(Long id, Long orderId) {
-        Optional<Orders> byOrderIdAndUserId = orderRepository.findByIdAndOrderMemberId(orderId, id);
-        return byOrderIdAndUserId.isPresent();
+    public Boolean validateOrderByMember(Long userId, Long orderId) {
+        return orderRepository.findByIdAndOrderMemberId(orderId, userId)
+            .map(Orders::isCompleted)
+            .orElse(false);
     }
 
 }

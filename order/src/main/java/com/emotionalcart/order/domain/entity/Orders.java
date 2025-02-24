@@ -142,4 +142,8 @@ public class Orders extends BaseEntity {
         return totalPrice.getAmount();
     }
 
+    public Boolean isCompleted() {
+        return this.getStatus() == OrderStatus.DELIVERED;
+    }
+
 }
