@@ -8,6 +8,8 @@ import org.springframework.stereotype.Repository;
 import java.util.Optional;
 
 @Repository
-public interface AdminProductRepository extends JpaRepository<Product, Long> {
+public interface AdminProductRepository extends JpaRepository<Product, Long>, AdminQueryDslProductRepository {
+
     Optional<Product> findByIdAndIsDeletedIsFalse(@NotNull Long productId);
+
 }
