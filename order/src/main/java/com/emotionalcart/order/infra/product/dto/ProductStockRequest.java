@@ -17,19 +17,22 @@ public class ProductStockRequest {
 
     private Long productId;
 
+    private int quantity;
+
     private List<ProductOption> productOptions;
 
-    public static ProductStockRequest of(Long productId) {
+    public static ProductStockRequest of(Long productId, int quantity) {
         ProductStockRequest request = new ProductStockRequest();
         request.productId = productId;
+        request.quantity = quantity;
         return request;
     }
 
-    public void addOption(Long productOptionId, Long productOptionDetailId, int quantity) {
+    public void addOption(Long productOptionId, Long productOptionDetailId) {
         if (CollectionUtils.isEmpty(this.productOptions)) {
             this.productOptions = new ArrayList<>();
         }
-        this.productOptions.add(ProductOption.of(productOptionId, productOptionDetailId, quantity));
+        this.productOptions.add(ProductOption.of(productOptionId, productOptionDetailId));
     }
 
     @Getter
@@ -46,16 +49,10 @@ public class ProductStockRequest {
          */
         private Long productOptionDetailId;
 
-        /**
-         * 수량
-         */
-        private int quantity;
-
-        public static ProductOption of(Long productOptionId, Long productOptionDetailId, int quantity) {
+        public static ProductOption of(Long productOptionId, Long productOptionDetailId) {
             ProductOption productOption = new ProductOption();
             productOption.productOptionId = productOptionId;
             productOption.productOptionDetailId = productOptionDetailId;
-            productOption.quantity = quantity;
             return productOption;
         }
 

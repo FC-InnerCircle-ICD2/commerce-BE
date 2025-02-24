@@ -92,4 +92,14 @@ public class AdminProductService {
         Category category = adminCategoryDataProvider.findCategory(product.getCategoryId());
         return ReadAdminProductDetailResponse.toResponse(product, category, provider);
     }
+
+    /**
+     * 상품 삭제 (논리삭제 isDeleted = ture)
+     */
+    @Transactional
+    public void deleteProduct(Long productId) {
+        Product product = adminProductDataProvider.findProductById(productId);
+        // TODO provider 확인 필요해보임
+        product.delete();
+    }
 }

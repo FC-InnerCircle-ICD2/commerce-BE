@@ -11,7 +11,7 @@ import java.util.List;
 
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-public class ProductValidationRequest {
+public class ProductQuantityValidateRequest {
 
     /**
      * 상품 아이디
@@ -19,13 +19,20 @@ public class ProductValidationRequest {
     private Long productId;
 
     /**
+     * 수량
+     */
+    private int quantity;
+
+    /**
      * 상품 옵션
      */
     private List<ProductOption> productOptions;
 
-    public static ProductValidationRequest of(@NotNull(message = "상품을 선택해주세요.") Long productId) {
-        ProductValidationRequest request = new ProductValidationRequest();
+    public static ProductQuantityValidateRequest of(@NotNull(message = "상품을 선택해주세요.") Long productId,
+                                                    int quantity) {
+        ProductQuantityValidateRequest request = new ProductQuantityValidateRequest();
         request.productId = productId;
+        request.quantity = quantity;
         return request;
     }
 
@@ -35,7 +42,7 @@ public class ProductValidationRequest {
         if (CollectionUtils.isEmpty(this.productOptions)) {
             this.productOptions = new ArrayList<>();
         }
-        this.productOptions.add(ProductOption.of(productOptionId, productOptionDetailId, quantity));
+        this.productOptions.add(ProductOption.of(productOptionId, productOptionDetailId));
     }
 
     @Getter
@@ -52,18 +59,11 @@ public class ProductValidationRequest {
          */
         private Long productOptionDetailId;
 
-        /**
-         * 수량
-         */
-        private int quantity;
-
         public static ProductOption of(@NotNull(message = "상품 옵션을 선택해주세요.") Long productOptionId,
-                                       @NotNull(message = "상품 옵션 상세를 선택해주세요.") Long productOptionDetailId,
-                                       int quantity) {
+                                       @NotNull(message = "상품 옵션 상세를 선택해주세요.") Long productOptionDetailId) {
             ProductOption productOption = new ProductOption();
             productOption.productOptionId = productOptionId;
             productOption.productOptionDetailId = productOptionDetailId;
-            productOption.quantity = quantity;
             return productOption;
         }
 

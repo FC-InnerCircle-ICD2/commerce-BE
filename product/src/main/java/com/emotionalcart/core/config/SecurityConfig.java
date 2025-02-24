@@ -17,5 +17,18 @@ public class SecurityConfig extends DefaultSecurityConfig {
         super(appProperties, entryPoint, jwtAuthenticationTokenFilter, jwtAccessDeniedHandler);
     }
 
-
+    @Override
+    protected String[] getPermissionUrl() {
+        return new String[] {
+            "/swagger-ui/**",
+            "/v3/api-docs/**",
+            "/swagger-resources/**",
+            "/actuator/**",
+            "/api/v1/banners/**",
+            "/api/v1/categories/**",
+            "/api/v1/products/*",
+            "/api/v1/products/{productId}/reviews",
+            "/api/v1/products/search"
+        };
+    }
 }

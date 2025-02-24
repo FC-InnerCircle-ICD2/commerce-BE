@@ -2,6 +2,7 @@ package com.emotionalcart.order.infra.advice;
 
 import com.emotionalcart.order.infra.advice.exceptions.*;
 import com.emotionalcart.order.infra.enums.OrderErrorCode;
+import com.emotionalcart.order.infra.enums.OrderHttpStatus;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -152,6 +153,21 @@ public class GlobalExceptionHandler {
     @ResponseStatus(HttpStatus.BAD_REQUEST)
     public ResponseEntity<ErrorResponse> invalidApiException(Exception ex) {
         return buildErrorResponse(ex, OrderErrorCode.INVALID_FEIGN_RESPONSE, HttpStatus.BAD_REQUEST);
+    }
+
+    /**
+     * 재고 조회 시 품절되었을 경우에 대한 에러 값
+     *
+     * @param ex
+     * @return
+     */
+    @ExceptionHandler(StockException.class)
+    @ResponseStatus(HttpStatus.CONFLICT)
+    public ResponseEntity<ErrorResponse> invalidStockException(Exception ex) {
+        log.error("{} 발생: {}", ex.getClass().getName(), ex.getMessage(), ex);
+
+        ErrorResponse errorResponse = new ErrorResponse(OrderHttpStatus.OUT_OF_STOCK.getCode(), ex.getMessage());
+        return ResponseEntity.status(HttpStatus.CONFLICT).body(errorResponse);
     }
 
     /**

@@ -54,8 +54,8 @@ public class CreateOrder extends SelfValidation<CreateOrder> {
 
     public static CreateOrder ofPaymentMethod(String payment) {
         return CreateOrder.builder()
-                .paymentMethod(PaymentMethod.valueOf(payment))
-                .build();
+            .paymentMethod(PaymentMethod.valueOf(payment))
+            .build();
     }
 
     /**
@@ -111,9 +111,15 @@ public class CreateOrder extends SelfValidation<CreateOrder> {
      * @return 주문 상품의 금액과 수량 목록
      */
     public List<PriceAndQuantity> getOrderItemsPriceAndQuantity() {
-        return this.orderItems.stream().map(item -> PriceAndQuantity.of(item.getPrice(),
-                item.getAdditionalPrice(),
-                item.getQuantity())).toList();
+        return this.orderItems.stream().map(item -> {
+            Double reduce = item.getOrderItemOptions().stream().map(CreateOrderItemOption::getAdditionalPrice).reduce(
+                0d,
+                Double::sum
+            );
+            return PriceAndQuantity.of(item.getPrice(),
+                                       reduce,
+                                       item.getQuantity());
+        }).toList();
     }
 
     public CreateOrderItem createOrderItem(@NotNull(message = "상품을 선택해주세요.") Long productId,
@@ -122,12 +128,12 @@ public class CreateOrder extends SelfValidation<CreateOrder> {
                                            @NotNull(message = "상품 금액을 입력해주세요.") double price,
                                            @NotNull(message = "상품 카테고리를 확인해주세요.") Long categoryId) {
         return CreateOrderItem.builder()
-                .productId(productId)
-                .quantity(quantity)
-                .productName(productName)
-                .price(price)
-                .categoryId(categoryId)
-                .build();
+            .productId(productId)
+            .quantity(quantity)
+            .productName(productName)
+            .price(price)
+            .categoryId(categoryId)
+            .build();
     }
 
 }

@@ -20,6 +20,8 @@ public class ProductPrice {
      */
     private double price;
 
+    private double totalPrice;
+
     private List<ProductOption> productOptions;
 
     @Getter
@@ -61,6 +63,13 @@ public class ProductPrice {
 
     public static ProductPrice convert(ProductPriceResponse productPriceResponse) {
         return new ProductPrice(productPriceResponse);
+    }
+
+    public double getTotalPrice() {
+        double totalAdditionalPrice = this.productOptions.stream()
+            .mapToDouble(ProductOption::getAdditionalPrice)
+            .sum();
+        return this.price + totalAdditionalPrice;
     }
 
 }

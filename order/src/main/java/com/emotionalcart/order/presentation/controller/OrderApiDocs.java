@@ -1,5 +1,6 @@
 package com.emotionalcart.order.presentation.controller;
 
+import com.emotionalcart.common.jwt.JwtAuthentication;
 import com.emotionalcart.order.presentation.controller.request.CreateOrderRequest;
 import com.emotionalcart.order.presentation.controller.response.CreatedOrderResponse;
 import com.emotionalcart.order.presentation.controller.response.OrderDetailResponse;
@@ -23,6 +24,6 @@ public interface OrderApiDocs {
     ResponseEntity<OrderDetailResponse> getOrderDetail(@PathVariable Long orderId);
 
     @Operation(summary = "사용자 주문 목록 조회 API")
-    ResponseEntity<Page<UserOrderResponse>> getOrderList(Long userId, Pageable request);
+    ResponseEntity<Page<UserOrderResponse>> getOrderList(JwtAuthentication jwtAuthentication, Pageable request);
 
 }

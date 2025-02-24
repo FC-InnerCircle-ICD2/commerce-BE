@@ -14,7 +14,7 @@ import java.util.List;
 import io.swagger.v3.oas.annotations.tags.Tag;
 
 @RestController
-@RequestMapping("/v1/categories")
+@RequestMapping("/api/v1/categories")
 @RequiredArgsConstructor
 public class CategoryController implements CategoryControllerDocs {
     private final CategoryService categoryService;
