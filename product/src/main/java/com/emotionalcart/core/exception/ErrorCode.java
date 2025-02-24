@@ -25,7 +25,9 @@ public enum ErrorCode {
     PRODUCT_IMAGE_REQUIRED("PRODUCT_0018", "상품 이미지는 필수입니다.", HttpStatus.BAD_REQUEST),
     CATEGORY_MUST_BE_DEPTH_2("PRODUCT_0019", "카테고리는 Depth 2 만 입력 가능합니다.", HttpStatus.BAD_REQUEST),
     CART_NOT_FOUND("PRODUCT_0020", "장바구니가 비어있습니다.", HttpStatus.NOT_FOUND),
-    CART_ACCESS_ERROR("REDIS-0001", "장바구니 접근에 실패했습니다.", HttpStatus.INTERNAL_SERVER_ERROR);
+    CART_ACCESS_ERROR("PRODUCT_0021", "장바구니 접근에 실패했습니다.", HttpStatus.INTERNAL_SERVER_ERROR),
+    NOT_FOUND_ORDER("PRODUCT_0022", "주문 내역을 찾을 수 없습니다.", HttpStatus.NOT_FOUND),
+    ;
 
     private final String errorCode;
     private final String message;
