@@ -14,6 +14,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.IntStream;
 
 @Slf4j
@@ -39,7 +40,7 @@ public class OrderDetailService {
      */
     public Page<UserOrder> getOrderListByUserId(Long userId, Pageable request) {
         PageRequest pageRequest = PageRequest.of(request.getPageNumber(), request.getPageSize(), Sort.by(Sort.Order.desc("orderAt")));
-        Page<Orders> orderList = orderRepository.findByUserId(userId, pageRequest);
+        Page<Orders> orderList = orderRepository.findByOrderMemberId(userId, pageRequest);
         List<List<ProductDetail>> productDetailsByOrders =
             orderList.stream().map(order -> order.getOrderItems().stream().map(orderItem -> productService.getProductDetail(orderItem.getProductId())).toList()).toList();
 
@@ -49,6 +50,11 @@ public class OrderDetailService {
 
         // 최종적으로 Page<UserOrder> 반환
         return new PageImpl<>(userOrders, request, orderList.getTotalElements());
+    }
+
+    public Boolean validateOrderByMember(Long id, Long orderId) {
+        Optional<Orders> byOrderIdAndUserId = orderRepository.findByIdAndOrderMemberId(orderId, id);
+        return byOrderIdAndUserId.isPresent();
     }
 
 }

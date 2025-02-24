@@ -76,12 +76,6 @@ public class Orders extends BaseEntity {
     private String shipmentId;
 
     /**
-     * 사용자 아이디
-     */
-    @CreatedBy
-    private Long userId;
-
-    /**
      * 주문 항목 목록
      */
     @OneToMany(mappedBy = "orders", cascade = CascadeType.ALL, orphanRemoval = true)
@@ -109,13 +103,7 @@ public class Orders extends BaseEntity {
             Money.sum(createOrder.getOrderItemsPriceAndQuantity());
         orders.createOrderItems(createOrder.getOrderItems());
         orders.createOrderRecipient(createOrder.getDeliveryInfo());
-        orders.createUser();
         return orders;
-    }
-
-    // TODO : 주문 생성 시 사용자 정보를 가져오는 로직 추가
-    private void createUser() {
-        this.userId = 0L;
     }
 
     private void createOrderRecipient(@NotNull(message = "배송 정보를 입력해주세요.") DeliveryInfo deliveryInfo) {
