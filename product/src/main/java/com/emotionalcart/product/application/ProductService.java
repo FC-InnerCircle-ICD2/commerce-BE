@@ -14,6 +14,7 @@ import com.emotionalcart.product.domain.ProductDataProvider;
 import com.emotionalcart.product.domain.ProviderDataProvider;
 import com.emotionalcart.product.domain.dto.ProductDetail;
 import com.emotionalcart.product.domain.support.*;
+import com.emotionalcart.product.infrastructure.order.OrderService;
 import com.emotionalcart.product.presentation.dto.*;
 import com.emotionalcart.product.presentation.dto.request.CreateProductReviewRequest;
 import com.emotionalcart.product.presentation.dto.response.CreateProductReviewResponse;
@@ -40,6 +41,7 @@ public class ProductService {
     private final ProductDataProvider productDataProvider;
     private final CategoryDataProvider categoryDataProvider;
     private final ProviderDataProvider providerDataProvider;
+    private final OrderService orderService;
     private final S3Utils s3Utils;
 
     public Page<ReadProductReviews.Response> readProductReviews(@NotNull Long productId,
@@ -64,8 +66,7 @@ public class ProductService {
         Product product = productDataProvider.findProduct(productId);
         productDataProvider.findProductReview(productId, userId);
 
-        // TODO 유저 구매내역 확인
-        // orderService.validate(request.getOrderId());
+        orderService.validate(request.getOrderId());
 
         Review review = request.toReviewEntity(productId);
         productDataProvider.saveProductReview(review);
