@@ -13,7 +13,7 @@ public class UpdateCartItemQuantityRequest {
     private Long optionId;
 
     // 상품 상세 옵션
-    private Long detailOptionId;
-    private int detailOptionQuantity;
+    private Long optionDetailId;
+    private int optionDetailQuantity;
 
 }

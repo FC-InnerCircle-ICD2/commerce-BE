@@ -13,57 +13,92 @@ public class ReadCart {
     public static class Response implements Serializable {
         private static final long serialVersionUID = 1L;
         private String cartId;
-        private int totalQuantity;
         private int totalPrice;
         private List<CartItem> items = new ArrayList<>(); // 장바구니 항목 리스트.
+
+        public int calculateTotal() {
+            return items.stream()
+                    .filter(CartItem::isSelected)
+                    .mapToInt(item -> item.getPrice() * item.getOptionDetailQuantity())
+                    .sum();
+        }
     }
 
     @Data
     public static class CartItem implements Serializable {
         private static final long serialVersionUID = 1L;
-        // 상품 정보
         private Long productId;
         private String productName;
-        private int productPrice;
+        private int price;
+        private Option option;
+        private Image images;
+        private Provider provider;
+        private boolean isSelected;
 
-        // 상품 옵션 정보
-        private Long optionId;
-        private String optionName;
+        public void setOptionDetailQuantity(int quantity) {
+            if (this.option != null && this.option.getOptionDetail() != null) {
+                this.option.getOptionDetail().setQuantity(quantity);
+            }
+        }
 
-        // 상품 상세 옵션
-        private Long detailOptionId;
-        private String detailOptionValue;
-        private int detailOptionQuantity;
-
-        // 상품 대표 이미지
-        private Long imageId;
-        private String imageUrl;
-
-        // 카테고리
-        private Long categoryId;
-        private String categoryName;
-
-        // 공급자
-        private Long providerId;
-        private String providerName;
+        public int getOptionDetailQuantity() {
+            if (this.option != null && this.option.getOptionDetail() != null) {
+                return this.option.getOptionDetail().getQuantity();
+            }
+            return 0; // or throw an exception if appropriate
+        }
 
         public static CartItem from(AddCartItemRequest request) {
             CartItem cartItem = new CartItem();
             cartItem.productId = request.getProductId();
             cartItem.productName = request.getProductName();
-            cartItem.productPrice = request.getProductPrice();
-            cartItem.optionId = request.getOptionId();
-            cartItem.optionName = request.getOptionName();
-            cartItem.detailOptionId = request.getDetailOptionId();
-            cartItem.detailOptionValue = request.getDetailOptionValue();
-            cartItem.detailOptionQuantity = request.getDetailOptionQuantity();
-            cartItem.imageId = request.getImageId();
-            cartItem.imageUrl = request.getImageUrl();
-            cartItem.categoryId = request.getCategoryId();
-            cartItem.categoryName = request.getCategoryName();
-            cartItem.providerId = request.getProviderId();
-            cartItem.providerName = request.getProviderName();
+            cartItem.price = request.getPrice();
+            Option option = new Option();
+            option.id = request.getOptionId();
+            option.name = request.getOptionName();
+            OptionDetail optionDetail = new OptionDetail();
+            optionDetail.id = request.getOptionDetailId();
+            optionDetail.value = request.getOptionDetailValue();
+            optionDetail.quantity = request.getOptionDetailQuantity();
+            optionDetail.additionalPrice = request.getOptionDetailAdditionalPrice();
+            option.optionDetail = optionDetail;
+            cartItem.option = option;
+            Image image = new Image();
+            image.id = request.getImageId();
+            image.url = request.getImageUrl();
+            cartItem.images = image;
+            Provider provider = new Provider();
+            provider.id = request.getProviderId();
+            provider.name = request.getProviderName();
+            cartItem.provider = provider;
             return cartItem;
         }
+    }
+
+    @Data
+    public static class Option {
+        private Long id;
+        private String name;
+        private OptionDetail optionDetail;
+    }
+
+    @Data
+    public static class OptionDetail {
+        private Long id;
+        private String value;
+        private int quantity;
+        private int additionalPrice;
+    }
+
+    @Data
+    public static class Image {
+        private Long id;
+        private String url;
+    }
+
+    @Data
+    public static class Provider {
+        private Long id;
+        private String name;
     }
 }
