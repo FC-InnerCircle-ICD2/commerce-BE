@@ -1,7 +1,5 @@
 package com.emotionalcart.product.application;
 
-import com.emotionalcart.common.jwt.JwtAuthentication;
-import com.emotionalcart.common.security.LoginAccountAuditorAware;
 import com.emotionalcart.core.exception.ErrorCode;
 import com.emotionalcart.core.exception.ProductException;
 import com.emotionalcart.core.feature.category.Category;
@@ -43,7 +41,6 @@ public class ProductService {
     private final CategoryDataProvider categoryDataProvider;
     private final ProviderDataProvider providerDataProvider;
     private final S3Utils s3Utils;
-    private final LoginAccountAuditorAware loginAccountAuditorAware;
 
     public Page<ReadProductReviews.Response> readProductReviews(@NotNull Long productId,
                                                                 ReadProductReviews.Request request) {
@@ -66,7 +63,10 @@ public class ProductService {
                                                            CreateProductReviewRequest request) {
         Product product = productDataProvider.findProduct(productId);
         productDataProvider.findProductReview(productId, userId);
+
         // TODO 유저 구매내역 확인
+        // orderService.validate(request.getOrderId());
+
         Review review = request.toReviewEntity(productId);
         productDataProvider.saveProductReview(review);
 
