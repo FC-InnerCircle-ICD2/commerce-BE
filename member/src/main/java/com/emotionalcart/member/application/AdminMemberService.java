@@ -7,12 +7,19 @@ import com.emotionalcart.core.feature.enums.MemberState;
 import com.emotionalcart.core.feature.enums.SocialType;
 import com.emotionalcart.member.infrasturcture.MemberRepository;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 import java.util.Set;
 
+@Slf4j
 @Service
 @RequiredArgsConstructor
 public class AdminMemberService {
@@ -52,6 +59,18 @@ public class AdminMemberService {
                                                                 roles);
         String refreshToken = jwtTokenProvider.createRefreshToken(member.getId(), member.getEmail(), roles);
         return TokenInfo.of(accessToken, refreshToken);
+    }
+
+    /**
+     * 관리자 계정 조회
+     * 현재는 시스템 관리자 기준으로 개발
+     * 추후에는 업체도 고려해서 개발 필요
+     *
+     * @return
+     */
+    @Transactional(readOnly = true)
+    public Page<Member> getAdminUserList(Pageable pageable) {
+        return memberRepository.findAllByMemberRoles(MemberRole.COMMERCE_MEMBER, pageable);
     }
 
 }
