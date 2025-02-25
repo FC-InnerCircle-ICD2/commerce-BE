@@ -13,6 +13,7 @@ public class DeleteCartItemsRequest {
     @Setter
     public static class CartItemToDelete {
         private Long productId;
+        private Long optionId;
         private Long optionDetailId;
     }
 }
