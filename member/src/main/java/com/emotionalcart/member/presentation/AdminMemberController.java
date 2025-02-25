@@ -1,24 +1,23 @@
 package com.emotionalcart.member.presentation;
 
+import com.emotionalcart.common.jwt.JwtAuthentication;
 import com.emotionalcart.core.feature.Member;
-import com.emotionalcart.core.feature.enums.MemberRole;
 import com.emotionalcart.member.application.AdminMemberService;
 import com.emotionalcart.member.application.TokenInfo;
-import com.emotionalcart.member.presentation.dto.AdminMemberResponse;
-import com.emotionalcart.member.presentation.dto.CreateAdminMemberRequest;
-import com.emotionalcart.member.presentation.dto.LoginAdminRequest;
+import com.emotionalcart.member.presentation.dto.*;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.web.PageableDefault;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 
+@Slf4j
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("/api/v1/admin/members/auth")
@@ -39,10 +38,21 @@ public class AdminMemberController {
         return ResponseEntity.ok(true);
     }
 
-    @GetMapping("/admin-users")
-    public ResponseEntity<Page<AdminMemberResponse>> getAdminUserList(@PageableDefault(sort = "createdAt", direction = Sort.Direction.DESC) Pageable pageable) {
-        Page<Member> adminMembers = adminMemberService.getAdminUserList(pageable);
-        return ResponseEntity.ok().body(adminMembers.map(AdminMemberResponse::from));
+    @GetMapping("/admin-members")
+    public ResponseEntity<Page<AdminMembersResponse>> getAdminMembers(@AuthenticationPrincipal JwtAuthentication jwt, @PageableDefault(sort = "createdAt", direction = Sort.Direction.DESC) Pageable pageable) {
+        Page<Member> adminMembers = adminMemberService.getAdminMembers(jwt.id(), pageable);
+        return ResponseEntity.ok().body(adminMembers.map(AdminMembersResponse::from));
     }
 
+    @GetMapping("/admin-member/{memberId}")
+    public ResponseEntity<AdminMemberInfoResponse> getAdminUserInfo(@AuthenticationPrincipal JwtAuthentication jwt, @PathVariable Long memberId) {
+        Member member = adminMemberService.getAdminMemberInfo(jwt.id(), memberId);
+        return ResponseEntity.ok().body(AdminMemberInfoResponse.from(member));
+    }
+
+    @PutMapping("/admin-member/{memberId}")
+    public ResponseEntity<AdminMemberInfoResponse> updateAdminUserInfo(@AuthenticationPrincipal JwtAuthentication jwt, @PathVariable Long memberId, @RequestBody @Valid UpdateAdminMemberRequest request) {
+        Member member = adminMemberService.updateAdminMemberInfo(jwt.id(), memberId, request.mapToCommand());
+        return ResponseEntity.ok().body(AdminMemberInfoResponse.from(member));
+    }
 }

@@ -69,8 +69,32 @@ public class AdminMemberService {
      * @return
      */
     @Transactional(readOnly = true)
-    public Page<Member> getAdminUserList(Pageable pageable) {
-        return memberRepository.findAllByMemberRoles(MemberRole.COMMERCE_MEMBER, pageable);
+    public void validateAdminUser(Long memberId) {
+        memberRepository.findByIdAndMemberRoles(memberId, MemberRole.ADMIN_MEMBER)
+            .orElseThrow(()-> new IllegalArgumentException("올바른 관리자 계정으로 로그인 해주세요."));
+    }
+
+    @Transactional(readOnly = true)
+    public Page<Member> getAdminMembers(Long jwtId, Pageable pageable) {
+        validateAdminUser(jwtId);
+        return memberRepository.findAllByMemberRoles(MemberRole.ADMIN_MEMBER, pageable);
+    }
+
+    @Transactional(readOnly = true)
+    public Member getAdminMemberInfo(Long jwtId, Long memberId) {
+        validateAdminUser(jwtId);
+        return memberRepository.findByIdAndMemberRoles(memberId, MemberRole.ADMIN_MEMBER)
+            .orElseThrow(() -> new IllegalArgumentException("존재하지 않는 관리자 계정 입니다."));
+    }
+
+    @Transactional
+    public Member updateAdminMemberInfo(Long jwtId, Long memberId, UpdateAdminMember updateAdminMember) {
+        validateAdminUser(jwtId);
+        Member member = memberRepository.findByIdAndMemberRoles(memberId, MemberRole.ADMIN_MEMBER)
+            .orElseThrow(() -> new IllegalArgumentException("존재하지 않는 관리자 계정 입니다."));
+        member.changeAdminMemberInfo(updateAdminMember.getMemberState());
+        memberRepository.save(member);
+        return member;
     }
 
 }
