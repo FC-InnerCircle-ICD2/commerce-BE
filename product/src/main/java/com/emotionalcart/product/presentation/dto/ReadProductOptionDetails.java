@@ -13,7 +13,6 @@ public class ReadProductOptionDetails {
         @JsonSerialize(using = ToStringSerializer.class)
         private Long id;
         private String value;
-        private Integer quantity;
         private Integer order;
         private Integer additionalPrice;
 
