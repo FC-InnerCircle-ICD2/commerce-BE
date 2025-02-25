@@ -2,10 +2,7 @@ package com.emotionalcart.adminproduct.application;
 
 import com.emotionalcart.adminproduct.domain.AdminBannerDataProvider;
 import com.emotionalcart.adminproduct.domain.AdminProductDataProvider;
-import com.emotionalcart.adminproduct.presentation.dto.CreateBannerRequest;
-import com.emotionalcart.adminproduct.presentation.dto.CreateBannerResponse;
-import com.emotionalcart.adminproduct.presentation.dto.ReadBannerDetailResponse;
-import com.emotionalcart.adminproduct.presentation.dto.ReadBannersResponse;
+import com.emotionalcart.adminproduct.presentation.dto.*;
 import com.emotionalcart.core.exception.ErrorCode;
 import com.emotionalcart.core.exception.ProductException;
 import com.emotionalcart.core.feature.banner.Banner;
@@ -119,6 +116,37 @@ public class AdminBannerService {
 
         ProductBanner productBanner = adminBannerDataProvider.findProductBanner(bannerId);
         productBanner.delete();
+    }
+
+    @Transactional
+    public void updateBanner(Long bannerId, UpdateBannerRequest request) {
+        Banner banner = adminBannerDataProvider.findBannerById(bannerId);
+
+        banner.update(
+            request.getType(),
+            request.getTitle(),
+            request.getDescription(),
+            request.getBannerOrder(),
+            request.getStartDate(),
+            request.getEndDate()
+        );
+
+        if (request.getIconImage() != null) {
+            String iconPath = uploadAndCreateIconImage(banner, request.getIconImage());
+            banner.updateIconPath(iconPath);
+        }
+
+        if (request.getBannerImage() != null) {
+            BannerImage newBannerImage = uploadAndCreateBannerImage(banner, request.getBannerImage());
+            adminBannerDataProvider.saveBannerImage(newBannerImage);
+            banner.updateBannerImage(newBannerImage);
+        }
+
+        if (request.getType() == BannerType.PRODUCT && request.getProductId() != null) {
+            Product product = adminProductDataProvider.findProductById(request.getProductId());
+            ProductBanner productBanner = adminBannerDataProvider.findProductBanner(bannerId);
+            productBanner.update(product, request.getLinkUrl(), request.getLinkType());
+        }
     }
 
 }

@@ -83,4 +83,21 @@ public class Banner extends BaseEntity {
     public void delete(){
         this.setIsDeleted(true);
     }
+
+    public void update(BannerType type, String title, String description, Integer bannerOrder, LocalDateTime startDate, LocalDateTime endDate) {
+        this.type = type;
+        this.title = title;
+        this.description = description;
+        this.bannerOrder = bannerOrder;
+        this.startDate = startDate;
+        this.endDate = endDate;
+    }
+
+    public void updateIconPath(String iconPath) {
+        this.iconPath = iconPath;
+    }
+
+    public void updateBannerImage(BannerImage bannerImage) {
+        this.bannerImage = bannerImage;
+    }
 }

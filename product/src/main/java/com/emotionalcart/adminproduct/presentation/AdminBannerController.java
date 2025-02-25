@@ -1,10 +1,7 @@
 package com.emotionalcart.adminproduct.presentation;
 
 import com.emotionalcart.adminproduct.application.AdminBannerService;
-import com.emotionalcart.adminproduct.presentation.dto.CreateBannerRequest;
-import com.emotionalcart.adminproduct.presentation.dto.CreateBannerResponse;
-import com.emotionalcart.adminproduct.presentation.dto.ReadBannerDetailResponse;
-import com.emotionalcart.adminproduct.presentation.dto.ReadBannersResponse;
+import com.emotionalcart.adminproduct.presentation.dto.*;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.MediaType;
@@ -42,5 +39,13 @@ public class AdminBannerController implements AdminBannerControllerDocs{
     public ResponseEntity<Void> deleteBanner(@PathVariable(name = "bannerId") Long bannerId) {
         adminBannerService.deleteBanner(bannerId);
         return ResponseEntity.ok().build();
+    }
+
+    @Override
+    @PutMapping("/{bannerId}")
+    public ResponseEntity<ReadBannerDetailResponse> updateBanner(@PathVariable Long bannerId,
+                                                                 @ModelAttribute @Valid UpdateBannerRequest request){
+        adminBannerService.updateBanner(bannerId, request);
+        return ResponseEntity.ok(adminBannerService.readBannerDetail(bannerId));
     }
 }
