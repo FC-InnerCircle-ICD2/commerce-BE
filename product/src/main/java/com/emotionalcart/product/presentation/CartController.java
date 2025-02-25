@@ -5,6 +5,7 @@ import com.emotionalcart.product.presentation.dto.ReadCart;
 import com.emotionalcart.product.presentation.dto.request.AddCartItemRequest;
 import com.emotionalcart.product.presentation.dto.request.DeleteCartItemsRequest;
 import com.emotionalcart.product.presentation.dto.request.DeleteCartResponse;
+import com.emotionalcart.product.presentation.dto.request.SelectCartItemRequest;
 import com.emotionalcart.product.presentation.dto.request.UpdateCartItemQuantityRequest;
 
 import lombok.RequiredArgsConstructor;
@@ -13,6 +14,7 @@ import org.springframework.web.bind.annotation.RestController;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
@@ -40,18 +42,17 @@ public class CartController {
     }
 
     // 장바구니 아이템 수량 변경
-    @PutMapping("/{userId}/{productId}/{optionDetailId}")
+    @PutMapping("/{userId}")
     public ResponseEntity<ReadCart.Response> updateCartItemQuantity(@PathVariable Long userId,
-            @PathVariable Long productId, @PathVariable Long optionDetailId,
             @RequestBody UpdateCartItemQuantityRequest request) {
-        return ResponseEntity.ok(cartService.updateCartItemQuantity(userId, productId, optionDetailId, request));
+        return ResponseEntity.ok(cartService.updateCartItemQuantity(userId, request));
     }
 
     // 장바구니 내 아이템 선택
-    @PutMapping("/{userId}/{productId}/{optionDetailId}")
+    @PatchMapping("/{userId}")
     public ResponseEntity<ReadCart.Response> selectCartItem(@PathVariable Long userId,
-            @PathVariable Long productId, @PathVariable Long optionDetailId) {
-        return ResponseEntity.ok(cartService.selectCartItem(userId, productId, optionDetailId));
+            @RequestBody SelectCartItemRequest request) {
+        return ResponseEntity.ok(cartService.selectCartItem(userId, request));
     }
 
     // 장바구니 비우기
