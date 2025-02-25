@@ -36,19 +36,6 @@ public class ReadCart {
         private Provider provider;
         private boolean isSelected;
 
-        public void setOptionDetailQuantity(int quantity) {
-            if (this.option != null && this.option.getOptionDetail() != null) {
-                this.option.getOptionDetail().setQuantity(quantity);
-            }
-        }
-
-        public int getOptionDetailQuantity() {
-            if (this.option != null && this.option.getOptionDetail() != null) {
-                return this.option.getOptionDetail().getQuantity();
-            }
-            return 0; // or throw an exception if appropriate
-        }
-
         public static CartItem from(AddCartItemRequest request) {
             CartItem cartItem = new CartItem();
             cartItem.productId = request.getProductId();
@@ -73,6 +60,7 @@ public class ReadCart {
             provider.id = request.getProviderId();
             provider.name = request.getProviderName();
             cartItem.provider = provider;
+            cartItem.isSelected = true;
             return cartItem;
         }
     }
