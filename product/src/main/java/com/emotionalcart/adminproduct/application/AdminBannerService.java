@@ -145,7 +145,7 @@ public class AdminBannerService {
         if (request.getType() == BannerType.PRODUCT && request.getProductId() != null) {
             Product product = adminProductDataProvider.findProductById(request.getProductId());
             ProductBanner productBanner = adminBannerDataProvider.findProductBanner(bannerId);
-            productBanner.update(product, request.getLinkUrl(), request.getLinkType());
+            productBanner.update(product, banner, request.getLinkUrl(), request.getLinkType());
         }
     }
 
