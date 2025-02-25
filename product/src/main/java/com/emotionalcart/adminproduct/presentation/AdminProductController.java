@@ -1,10 +1,10 @@
 package com.emotionalcart.adminproduct.presentation;
 
 import com.emotionalcart.adminproduct.application.AdminProductService;
-import com.emotionalcart.adminproduct.presentation.dto.CreateProductRequest;
-import com.emotionalcart.adminproduct.presentation.dto.CreateProductResponse;
+import com.emotionalcart.adminproduct.presentation.dto.*;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -20,6 +20,19 @@ public class AdminProductController implements AdminProductControllerDocs {
     public ResponseEntity<CreateProductResponse> createProduct(
             @Valid @ModelAttribute CreateProductRequest request) {
         return ResponseEntity.ok(adminProductService.createProduct(request));
+    }
+
+    @Override
+    @GetMapping
+    public ResponseEntity<Page<ReadAdminProductsResponse>> readProducts(ReadAdminProductsRequest request) {
+        return ResponseEntity.ok(adminProductService.readProducts(request));
+    }
+
+    @Override
+    @GetMapping("/{productId}")
+    public ResponseEntity<ReadAdminProductDetailResponse> readProduct(
+            @PathVariable Long productId) {
+        return ResponseEntity.ok(adminProductService.readProduct(productId));
     }
 
     @Override
