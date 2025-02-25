@@ -43,8 +43,7 @@ public class ProductService {
     private final ProviderDataProvider providerDataProvider;
     private final OrderService orderService;
     private final S3Utils s3Utils;
-    private final 
-      stockService;
+    private final StockService stockService;
 
     public Page<ReadProductReviews.Response> readProductReviews(@NotNull Long productId,
                                                                 ReadProductReviews.Request request) {
