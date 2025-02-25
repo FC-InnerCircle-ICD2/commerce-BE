@@ -62,4 +62,9 @@ public class ProductOptionDetail extends BaseEntity {
     public void delete() {
         this.setIsDeleted(true);
     }
+
+    public void updateValue(String value, Integer additionalPrice) {
+        this.value = value;
+        this.additionalPrice = additionalPrice;
+    }
 }
