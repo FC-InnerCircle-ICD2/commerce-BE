@@ -51,11 +51,33 @@ public class CartService {
 
         ReadCart.Response cart = readCart(userId);
         List<ReadCart.CartItem> cartItems = cart.getItems();
-        cartItems.add(ReadCart.CartItem.from(request));
+
+        boolean itemExists = false;
+
+        for (ReadCart.CartItem item : cartItems) {
+            if (item.getProductId().equals(request.getProductId())
+                    && item.getOption().getId().equals(request.getOptionId())
+                    && item.getOption().getOptionDetail().getId().equals(request.getOptionDetailId())) {
+                itemExists = true;
+                int itemQuantity = item.getOption().getOptionDetail().getQuantity();
+                int addQuantity = request.getOptionDetailQuantity();
+                item.getOption().getOptionDetail().setQuantity(itemQuantity + addQuantity);
+                item.setSubTotalPrice((item.getPrice() + item.getOption().getOptionDetail().getAdditionalPrice())
+                        * (itemQuantity + addQuantity));
+            }
+        }
+
+        // 장바구니에 상품이 없다면 상품 추가
+        if (!itemExists) {
+            cartItems.add(ReadCart.CartItem.from(request));
+        }
 
         cart.setCartId(cartId);
         cart.setItems(cartItems);
-        
+
+        // 장바구니 총 상품가격 재계산
+        int total = cart.calculateTotal();
+        cart.setTotalPrice(total);
 
         try {
             redisTemplate.opsForValue().set(cartId, cart, 24, TimeUnit.HOURS); // 24시간 만료
@@ -81,9 +103,9 @@ public class CartService {
                     && item.getOption().getOptionDetail().getId().equals(request.getOptionDetailId())) {
                 itemExists = true;
                 wasSelected = item.isSelected(); // 기존에 선택된 상태인지 확인
-                item.setOptionDetailQuantity(request.getOptionDetailQuantity());
+                item.getOption().getOptionDetail().setQuantity(request.getOptionDetailQuantity());
                 item.setSubTotalPrice((item.getPrice() + item.getOption().getOptionDetail().getAdditionalPrice())
-                        * item.getOptionDetailQuantity());
+                        * request.getOptionDetailQuantity());
             }
         }
 
@@ -119,7 +141,7 @@ public class CartService {
                     && item.getOption().getId().equals(request.getOptionId())
                     && item.getOption().getOptionDetail().getId().equals(request.getOptionDetailId())) {
                 itemExists = true;
-                item.setSelected(true);
+                item.setSelected(item.isSelected() ? false : true);
             }
         }
 
