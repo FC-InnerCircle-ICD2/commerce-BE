@@ -23,9 +23,7 @@ public class StockService {
      */
     @GetMapping("/quantity")
     public Integer getStockQuantity(StockQuantitySearchRequest stockQuantitySearchRequest) {
-        Long productId = stockQuantitySearchRequest.getProductId();
-        List<Long> optionIds = stockQuantitySearchRequest.getOptionDetailsIds();
-        return stockFeignClient.getStockQuantity(productId, optionIds);
+        return stockFeignClient.getStockQuantity(stockQuantitySearchRequest);
     }
 
     /**
