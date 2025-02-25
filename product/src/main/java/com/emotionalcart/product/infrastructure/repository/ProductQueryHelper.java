@@ -1,8 +1,8 @@
 package com.emotionalcart.product.infrastructure.repository;
 
+import com.emotionalcart.core.feature.order.QOrderStatistics;
 import com.emotionalcart.core.feature.product.QProduct;
 import com.emotionalcart.core.feature.product.SortOption;
-import com.emotionalcart.core.feature.review.QReviewStatistic;
 import com.querydsl.core.BooleanBuilder;
 import com.querydsl.core.types.OrderSpecifier;
 
@@ -75,17 +75,15 @@ public class ProductQueryHelper {
         }
     }
 
-    public static OrderSpecifier<?> getOrderSpecifier(SortOption sortOption, QProduct product) {
+    public static OrderSpecifier<?>[] getOrderSpecifier(SortOption sortOption, QProduct product, QOrderStatistics orderStatistics) {
         if (sortOption == null) {
-            // order가 null인 경우 기본 정렬 기준으로 처리
-            return product.createdAt.desc();
+            return new OrderSpecifier[]{product.createdAt.desc()};
         }
         return switch (sortOption) {
-            case CREATE_DESC -> product.createdAt.desc();
-            case PRICE_ASC -> product.price.asc();
-            case PRICE_DESC -> product.price.desc();
-//            case SALES_DESC:
-//                return product.salesCount.desc();
+            case CREATE_DESC -> new OrderSpecifier[]{product.createdAt.desc()};
+            case PRICE_ASC -> new OrderSpecifier[]{product.price.asc()};
+            case PRICE_DESC -> new OrderSpecifier[]{product.price.desc()};
+            case SALES_DESC -> new OrderSpecifier[]{orderStatistics.totalQuantitySold.desc(), product.createdAt.desc()};
             default -> throw new IllegalArgumentException("Invalid SortOption: " + sortOption);
         };
     }
