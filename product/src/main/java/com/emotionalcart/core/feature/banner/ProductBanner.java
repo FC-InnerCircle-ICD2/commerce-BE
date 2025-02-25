@@ -48,8 +48,9 @@ public class ProductBanner extends BaseEntity {
         this.setIsDeleted(true);
     }
 
-    public void update(Product product, String linkUrl, String linkType) {
+    public void update(Product product, Banner banner, String linkUrl, String linkType) {
         this.product = product;
+        this.banner = banner;
         this.linkUrl = linkUrl;
         this.linkType = linkType;
     }
