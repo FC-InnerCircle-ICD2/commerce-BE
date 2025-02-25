@@ -24,45 +24,45 @@ import org.springframework.web.bind.annotation.RequestMapping;
 @RestController
 @RequestMapping("/v1/carts")
 @RequiredArgsConstructor
-public class CartController {
+public class CartController implements CartControllerDocs {
 
     private final CartService cartService;
 
     // 장바구니 조회
-    @GetMapping("/{userId}")
+    @Override
     public ResponseEntity<ReadCart.Response> readCart(@PathVariable Long userId) {
         return ResponseEntity.ok(cartService.readCart(userId));
     }
 
     // 장바구니 아이템 추가
-    @PostMapping("/{userId}")
+    @Override
     public ResponseEntity<ReadCart.Response> addCart(@PathVariable Long userId,
             @RequestBody AddCartItemRequest request) {
         return ResponseEntity.ok(cartService.addCartItem(userId, request));
     }
 
     // 장바구니 아이템 수량 변경
-    @PutMapping("/{userId}")
+    @Override
     public ResponseEntity<ReadCart.Response> updateCartItemQuantity(@PathVariable Long userId,
             @RequestBody UpdateCartItemQuantityRequest request) {
         return ResponseEntity.ok(cartService.updateCartItemQuantity(userId, request));
     }
 
     // 장바구니 아이템 선택
-    @PatchMapping("/{userId}")
+    @Override
     public ResponseEntity<ReadCart.Response> selectCartItem(@PathVariable Long userId,
             @RequestBody SelectCartItemRequest request) {
         return ResponseEntity.ok(cartService.selectCartItem(userId, request));
     }
 
     // 장바구니 비우기
-    @DeleteMapping("/{userId}")
+    @Override
     public ResponseEntity<DeleteCartResponse> clearCart(@PathVariable Long userId) {
         return ResponseEntity.ok(cartService.clearCart(userId));
     }
 
     // 장바구니 아이템 삭제
-    @DeleteMapping("/items/{userId}")
+    @Override
     public ResponseEntity<ReadCart.Response> deleteCartItems(@PathVariable Long userId,
             @RequestBody DeleteCartItemsRequest request) {
         return ResponseEntity.ok(cartService.deleteCartItems(userId, request));
