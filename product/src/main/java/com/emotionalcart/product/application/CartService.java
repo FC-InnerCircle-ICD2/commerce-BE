@@ -55,6 +55,7 @@ public class CartService {
 
         cart.setCartId(cartId);
         cart.setItems(cartItems);
+        
 
         try {
             redisTemplate.opsForValue().set(cartId, cart, 24, TimeUnit.HOURS); // 24시간 만료
@@ -81,7 +82,8 @@ public class CartService {
                 itemExists = true;
                 wasSelected = item.isSelected(); // 기존에 선택된 상태인지 확인
                 item.setOptionDetailQuantity(request.getOptionDetailQuantity());
-                item.setPrice(item.getPrice() * item.getOptionDetailQuantity());
+                item.setSubTotalPrice((item.getPrice() + item.getOption().getOptionDetail().getAdditionalPrice())
+                        * item.getOptionDetailQuantity());
             }
         }
 
