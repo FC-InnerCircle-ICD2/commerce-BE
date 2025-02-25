@@ -39,7 +39,7 @@ public class ProductController implements ProductControllerDocs {
         @AuthenticationPrincipal JwtAuthentication jwt,
         @PathVariable Long productId,
         @ModelAttribute @Valid CreateProductReviewRequest request) {
-        return ResponseEntity.ok(productService.createProductReview(jwt, productId, request));
+        return ResponseEntity.ok(productService.createProductReview(jwt.id(), productId, request));
     }
 
     // 상품 상세 조회

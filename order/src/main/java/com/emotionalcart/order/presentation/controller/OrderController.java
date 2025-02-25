@@ -55,4 +55,13 @@ public class OrderController implements OrderApiDocs {
         return ResponseEntity.ok().body(userOrders.map(UserOrderResponse::from));
     }
 
+    /**
+     * 사용자 주문 검증
+     */
+    @GetMapping("/users/validate/{orderId}")
+    public ResponseEntity<Boolean> validateOrderByMember(@AuthenticationPrincipal JwtAuthentication jwt, @PathVariable Long orderId) {
+        Boolean isExistOrder = orderDetailService.validateOrderByMember(jwt.id(), orderId);
+        return ResponseEntity.ok().body(isExistOrder);
+    }
+
 }

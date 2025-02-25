@@ -51,4 +51,9 @@ public class ProductOption extends BaseEntity {
     public Long getProductId() {
         return product.getId();
     }
+
+    public void delete() {
+        this.setIsDeleted(true);
+        this.details.forEach(ProductOptionDetail::delete);
+    }
 }

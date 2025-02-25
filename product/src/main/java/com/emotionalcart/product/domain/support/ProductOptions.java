@@ -2,10 +2,12 @@ package com.emotionalcart.product.domain.support;
 
 import com.emotionalcart.core.feature.product.ProductOption;
 import com.emotionalcart.product.presentation.dto.ReadProducts;
+import lombok.Getter;
 
 import java.util.*;
 import java.util.stream.Collectors;
 
+@Getter
 public class ProductOptions {
 
     private final List<ProductOption> options;
@@ -32,4 +34,5 @@ public class ProductOptions {
                 .map(ProductOption::getId)
                 .collect(Collectors.toSet());
     }
+
 }
