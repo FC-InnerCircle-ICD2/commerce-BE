@@ -20,13 +20,13 @@ public class StockController {
      * 재고 조회 API
      * </pre>
      */
-    @GetMapping("/quantity")
-    public ResponseEntity<Integer> getStockQuantity(StockQuantitySearchRequest request) {
+    @PostMapping("/quantity")
+    public ResponseEntity<Integer> getStockQuantity(@RequestBody StockQuantitySearchRequest request) {
         return ResponseEntity.ok(stockQueryService.getStockQuantityByOptionIds(request.mapToQuery()));
     }
 
-    @GetMapping("/quantity/validate")
-    public ResponseEntity<Boolean> getStockQuantities(StockQuantityValidateRequest requests) {
+    @PostMapping("/quantity/validate")
+    public ResponseEntity<Boolean> getStockQuantities(@RequestBody StockQuantityValidateRequest requests) {
         return ResponseEntity.ok(stockCommandService.validateStockQuantity(requests.mapToCommand()));
     }
 
@@ -47,7 +47,7 @@ public class StockController {
                                                                          request.getQuantity()));
     }
 
-    @PatchMapping("/deduct")
+    @PostMapping("/deduct")
     public ResponseEntity<DeductedStockInfo> deductStockQuantity(@RequestBody StockQuantityUpdateRequest request) {
         return ResponseEntity.ok(stockCommandService.deductStockQuantity(request.getProductId(),
                                                                          request.getOptionDetailIds(),

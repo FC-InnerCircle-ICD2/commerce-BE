@@ -34,3 +34,8 @@ aws:
 stock:
   find:
     feign-endpoint: ${STOCK_SERVER_URL:http://localhost:9992}
+
+order:
+  find:
+    feign-endpoint: ${ORDER_SERVER_URL:http://localhost:9999}
+

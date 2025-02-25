@@ -91,4 +91,9 @@ public class Product extends BaseEntity {
             image.setProduct(this);
         }
     }
+
+    public void delete() {
+        this.setIsDeleted(true);
+        this.options.forEach(ProductOption::delete);
+    }
 }

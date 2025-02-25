@@ -16,6 +16,7 @@ import com.emotionalcart.product.domain.dto.ProductDetail;
 import com.emotionalcart.product.domain.support.*;
 import com.emotionalcart.product.infrastructure.stock.StockService;
 import com.emotionalcart.product.infrastructure.stock.dto.*;
+import com.emotionalcart.product.infrastructure.order.OrderService;
 import com.emotionalcart.product.presentation.dto.*;
 import com.emotionalcart.product.presentation.dto.request.CreateProductReviewRequest;
 import com.emotionalcart.product.presentation.dto.response.CreateProductReviewResponse;
@@ -36,11 +37,14 @@ import java.util.stream.Collectors;
 @RequiredArgsConstructor
 @Transactional(readOnly = true)
 public class ProductService {
+
     private final ProductDataProvider productDataProvider;
     private final CategoryDataProvider categoryDataProvider;
     private final ProviderDataProvider providerDataProvider;
+    private final OrderService orderService;
     private final S3Utils s3Utils;
-    private final StockService stockService;
+    private final 
+      stockService;
 
     public Page<ReadProductReviews.Response> readProductReviews(@NotNull Long productId,
                                                                 ReadProductReviews.Request request) {
@@ -58,10 +62,14 @@ public class ProductService {
     }
 
     @Transactional
-    public CreateProductReviewResponse createProductReview(@NotNull Long productId, CreateProductReviewRequest request) {
+    public CreateProductReviewResponse createProductReview(Long userId,
+                                                           @NotNull Long productId,
+                                                           CreateProductReviewRequest request) {
         Product product = productDataProvider.findProduct(productId);
-        productDataProvider.findProductReview(productId, "userId123"); // TODO 실제 userId 반영
-        // TODO 유저 구매내역 확인
+        productDataProvider.findProductReview(productId, userId);
+
+        orderService.validate(request.getOrderId());
+
         Review review = request.toReviewEntity(productId);
         productDataProvider.saveProductReview(review);
 
@@ -84,12 +92,12 @@ public class ProductService {
             try {
                 String fileUrl = s3Utils.uploadFile(S3Constants.REVIEW_DIRECTORY, reviewId.toString(), file);
                 return ReviewImage.of(
-                        reviewId,
-                        file.getOriginalFilename(),
-                        fileUrl,
-                        file.getContentType(),
-                        file.getSize(),
-                        files.indexOf(file) + 1
+                    reviewId,
+                    file.getOriginalFilename(),
+                    fileUrl,
+                    file.getContentType(),
+                    file.getSize(),
+                    files.indexOf(file) + 1
                 );
             } catch (Exception e) {
                 throw new ProductException(ErrorCode.S3_UPLOAD_FAILED);
@@ -145,17 +153,18 @@ public class ProductService {
         for (ProductOption productOption : productOptions) {
             // 상품 옵션 상세 정보
             List<ProductOptionDetail> productOptionDetails = productDataProvider
-                    .findAllProductOptionDetailsByProductOptionId(productOption.getId());
+                .findAllProductOptionDetailsByProductOptionId(productOption.getId());
 
             List<ReadProductOptionDetails.Response> productOptionDetailResponses = new ArrayList<>();
 
             for (ProductOptionDetail productOptionDetail : productOptionDetails) {
-                ReadProductOptionDetails.Response productOptionDetailResponse = ReadProductOptionDetails.Response.toResponse(productOptionDetail);
+                ReadProductOptionDetails.Response productOptionDetailResponse =
+                    ReadProductOptionDetails.Response.toResponse(productOptionDetail);
                 productOptionDetailResponses.add(productOptionDetailResponse);
             }
 
             ReadProductOptions.Response productOptionResponse = ReadProductOptions.Response
-                    .toResponse(productOption, productOptionDetailResponses);
+                .toResponse(productOption, productOptionDetailResponses);
 
             productOptionsResponses.add(productOptionResponse);
         }
@@ -168,19 +177,19 @@ public class ProductService {
 
         // 리뷰 평균 평점 및 리뷰 개수
         ReadProductReviewStatistic.Response reviewStatistic = ReadProductReviewStatistic.Response
-                .toResponse(productDataProvider.findReviewStatistic(productId));
+            .toResponse(productDataProvider.findReviewStatistic(productId));
 
         // 카테고리 정보
         ReadProductCategories.Response categoryResponse = ReadProductCategories.Response
-                .toResponse(categoryDataProvider.findCategoryById(product.getCategoryId()));
+            .toResponse(categoryDataProvider.findCategoryById(product.getCategoryId()));
 
         // 공급자 정보
         ReadProviders.Response providerResponse = ReadProviders.Response
-                .toResponse(providerDataProvider.findProviderById(product.getProviderId()));
+            .toResponse(providerDataProvider.findProviderById(product.getProviderId()));
 
         // 상품 이미지
         List<ReadProductImages.Response> productImages = ReadProductImages.Response
-                .toResponse(productDataProvider.findProductImages(productId));
+            .toResponse(productDataProvider.findProductImages(productId));
 
         return ReadProductDetails.Response.toResponse(product, productOptionsResponses, categoryResponse,
                 providerResponse, reviewStatistic, productImages, stockResult);
@@ -239,8 +248,8 @@ public class ProductService {
 
     public void readProductsValidate(List<ReadProductsValidate.Request> requests) {
         Set<Long> productIds = requests.stream()
-                .map(ReadProductsValidate.Request::getProductId)
-                .collect(Collectors.toSet());
+            .map(ReadProductsValidate.Request::getProductId)
+            .collect(Collectors.toSet());
 
         List<ProductDetail> productDetails = productDataProvider.findAllProductDetail(productIds);
         ProductDetails groupedProductDetails = ProductDetails.from(productDetails);
@@ -263,11 +272,11 @@ public class ProductService {
         Set<Long> allOptionIds = groupedProductDetails.getAllOptionIds(productId);
         Set<Long> allOptionDetailIds = groupedProductDetails.getAllOptionDetailIds(productId);
         Set<Long> selectedOptionIds = request.getProductOptions().stream()
-                .map(ReadProductsValidate.Request.OptionRequest::getProductOptionId)
-                .collect(Collectors.toSet());
+            .map(ReadProductsValidate.Request.OptionRequest::getProductOptionId)
+            .collect(Collectors.toSet());
         Set<Long> selectedOptionDetailIds = request.getProductOptions().stream()
-                .map(ReadProductsValidate.Request.OptionRequest::getProductOptionDetailId)
-                .collect(Collectors.toSet());
+            .map(ReadProductsValidate.Request.OptionRequest::getProductOptionDetailId)
+            .collect(Collectors.toSet());
 
         if (!allOptionIds.containsAll(selectedOptionIds)) {
             throw new ProductException(ErrorCode.NOT_FOUND_PRODUCT_OPTION);
@@ -302,14 +311,14 @@ public class ProductService {
 
     public List<ReadProductsPrice.Response> readProductsPrice(List<ReadProductsPrice.Request> requests) {
         Set<Long> productIds = requests.stream()
-                .map(ReadProductsPrice.Request::getProductId)
-                .collect(Collectors.toSet());
+            .map(ReadProductsPrice.Request::getProductId)
+            .collect(Collectors.toSet());
 
         List<ProductDetail> productDetails = productDataProvider.findAllProductDetail(productIds);
         Set<Long> productOptionDetailIds = requests.stream()
-                .flatMap(request -> request.getProductOptions().stream())
-                .map(ReadProductsPrice.Request.OptionRequest::getProductOptionDetailId)
-                .collect(Collectors.toSet());
+            .flatMap(request -> request.getProductOptions().stream())
+            .map(ReadProductsPrice.Request.OptionRequest::getProductOptionDetailId)
+            .collect(Collectors.toSet());
 
         ProductDetails groupedProductDetails = ProductDetails.from(productDetails);
         List<ProductDetail> filteredDetails = groupedProductDetails.filterByOptionDetailIds(productOptionDetailIds);
@@ -317,18 +326,18 @@ public class ProductService {
         validateOptions(groupedProductDetails, requests);
 
         return filteredDetails.stream()
-                .collect(Collectors.groupingBy(ProductDetail::getProductId))
-                .entrySet().stream()
-                .map(entry -> {
-                    Long productId = entry.getKey();
-                    List<ProductDetail> details = entry.getValue();
-                    Long providerId = details.stream()
-                            .map(ProductDetail::getProviderId)
-                            .findFirst()
-                            .orElseThrow(() -> new ProductException(ErrorCode.NOT_FOUND_PRODUCT));
-                    return ReadProductsPrice.toResponse(productId, providerId, details);
-                })
-                .collect(Collectors.toList());
+            .collect(Collectors.groupingBy(ProductDetail::getProductId))
+            .entrySet().stream()
+            .map(entry -> {
+                Long productId = entry.getKey();
+                List<ProductDetail> details = entry.getValue();
+                Long providerId = details.stream()
+                    .map(ProductDetail::getProviderId)
+                    .findFirst()
+                    .orElseThrow(() -> new ProductException(ErrorCode.NOT_FOUND_PRODUCT));
+                return ReadProductsPrice.toResponse(productId, providerId, details);
+            })
+            .collect(Collectors.toList());
     }
 
     private void validateOptions(ProductDetails groupedProductDetails, List<ReadProductsPrice.Request> requests) {
@@ -341,9 +350,9 @@ public class ProductService {
             }
 
             Map<Long, Set<Long>> optionToDetailMap = productDetails.stream()
-                    .collect(Collectors.groupingBy(
-                            ProductDetail::getProductOptionId,
-                            Collectors.mapping(ProductDetail::getProductOptionDetailId, Collectors.toSet())));
+                .collect(Collectors.groupingBy(
+                    ProductDetail::getProductOptionId,
+                    Collectors.mapping(ProductDetail::getProductOptionDetailId, Collectors.toSet())));
 
             for (ReadProductsPrice.Request.OptionRequest option : request.getProductOptions()) {
                 Set<Long> validDetailIds = optionToDetailMap.get(option.getProductOptionId());
@@ -353,4 +362,5 @@ public class ProductService {
             }
         }
     }
+
 }

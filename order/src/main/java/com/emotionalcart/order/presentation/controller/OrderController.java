@@ -1,5 +1,6 @@
 package com.emotionalcart.order.presentation.controller;
 
+import com.emotionalcart.common.jwt.JwtAuthentication;
 import com.emotionalcart.order.application.CreateOrderService;
 import com.emotionalcart.order.application.OrderDetailService;
 import com.emotionalcart.order.domain.dto.CreatedOrder;
@@ -49,9 +50,18 @@ public class OrderController implements OrderApiDocs {
      * 사용자 주문 목록 조회
      */
     @GetMapping("/my-orders")
-    public ResponseEntity<Page<UserOrderResponse>> getOrderList(@AuthenticationPrincipal Long userId, Pageable request) {
-        Page<UserOrder> userOrders = orderDetailService.getOrderListByUserId(userId, request);
+    public ResponseEntity<Page<UserOrderResponse>> getOrderList(@AuthenticationPrincipal JwtAuthentication jwt, Pageable request) {
+        Page<UserOrder> userOrders = orderDetailService.getOrderListByUserId(jwt.id(), request);
         return ResponseEntity.ok().body(userOrders.map(UserOrderResponse::from));
+    }
+
+    /**
+     * 사용자 주문 검증
+     */
+    @GetMapping("/users/validate/{orderId}")
+    public ResponseEntity<Boolean> validateOrderByMember(@AuthenticationPrincipal JwtAuthentication jwt, @PathVariable Long orderId) {
+        Boolean isExistOrder = orderDetailService.validateOrderByMember(jwt.id(), orderId);
+        return ResponseEntity.ok().body(isExistOrder);
     }
 
 }
