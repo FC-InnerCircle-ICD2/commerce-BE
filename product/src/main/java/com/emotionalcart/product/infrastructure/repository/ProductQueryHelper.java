@@ -3,13 +3,8 @@ package com.emotionalcart.product.infrastructure.repository;
 import com.emotionalcart.core.feature.order.QOrderStatistics;
 import com.emotionalcart.core.feature.product.QProduct;
 import com.emotionalcart.core.feature.product.SortOption;
-import com.emotionalcart.core.feature.review.QReviewStatistic;
 import com.querydsl.core.BooleanBuilder;
 import com.querydsl.core.types.OrderSpecifier;
-import com.querydsl.core.types.dsl.CaseBuilder;
-import com.querydsl.core.types.dsl.NumberExpression;
-
-import java.util.List;
 
 import static com.emotionalcart.core.feature.review.QReviewStatistic.reviewStatistic;
 
@@ -82,7 +77,6 @@ public class ProductQueryHelper {
 
     public static OrderSpecifier<?>[] getOrderSpecifier(SortOption sortOption, QProduct product, QOrderStatistics orderStatistics) {
         if (sortOption == null) {
-            // order가 null인 경우 기본 정렬 기준으로 처리
             return new OrderSpecifier[]{product.createdAt.desc()};
         }
         return switch (sortOption) {
@@ -93,19 +87,4 @@ public class ProductQueryHelper {
             default -> throw new IllegalArgumentException("Invalid SortOption: " + sortOption);
         };
     }
-
-//    private static OrderSpecifier<?> getSalesOrderSpecifier(QProduct product) {
-//        // 1️⃣ 판매량 기준 정렬 (높은 순)
-//        NumberExpression<Integer> salesOrder = new CaseBuilder()
-//                .when(product.id.in(sortedProductIds))
-//                .then(
-//                        new CaseBuilder()
-//                                .when(product.id.eq(sortedProductIds.get(0))).then(0)
-//                                .when(product.id.eq(sortedProductIds.get(1))).then(1)
-//                                .when(product.id.eq(sortedProductIds.get(2))).then(2)
-//                                .otherwise(sortedProductIds.size()) // 리스트에 없는 경우 동일한 값 적용
-//                )
-//                .otherwise(sortedProductIds.size()); // 판매량 없는 상품들
-//        return salesOrder.asc();
-//    }
 }
