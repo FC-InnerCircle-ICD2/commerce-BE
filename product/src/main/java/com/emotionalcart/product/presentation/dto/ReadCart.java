@@ -19,7 +19,7 @@ public class ReadCart {
         public int calculateTotal() {
             return items.stream()
                     .filter(CartItem::isSelected)
-                    .mapToInt(item -> item.getPrice() * item.getOptionDetailQuantity())
+                    .mapToInt(item -> item.getSubTotalPrice())
                     .sum();
         }
     }
@@ -30,6 +30,7 @@ public class ReadCart {
         private Long productId;
         private String productName;
         private int price;
+        private int subTotalPrice;
         private Option option;
         private Image images;
         private Provider provider;
@@ -53,6 +54,7 @@ public class ReadCart {
             cartItem.productId = request.getProductId();
             cartItem.productName = request.getProductName();
             cartItem.price = request.getPrice();
+            cartItem.subTotalPrice = request.getSubTotalPrice();
             Option option = new Option();
             option.id = request.getOptionId();
             option.name = request.getOptionName();

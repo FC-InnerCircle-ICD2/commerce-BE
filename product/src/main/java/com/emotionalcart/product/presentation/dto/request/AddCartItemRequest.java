@@ -11,6 +11,7 @@ public class AddCartItemRequest {
     private Long productId;
     private String productName;
     private int price;
+    private int subTotalPrice;
 
     // 상품 옵션 정보
     private Long optionId;

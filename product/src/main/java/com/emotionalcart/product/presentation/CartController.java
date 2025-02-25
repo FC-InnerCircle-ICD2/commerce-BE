@@ -48,7 +48,7 @@ public class CartController {
         return ResponseEntity.ok(cartService.updateCartItemQuantity(userId, request));
     }
 
-    // 장바구니 내 아이템 선택
+    // 장바구니 아이템 선택
     @PatchMapping("/{userId}")
     public ResponseEntity<ReadCart.Response> selectCartItem(@PathVariable Long userId,
             @RequestBody SelectCartItemRequest request) {
@@ -62,7 +62,7 @@ public class CartController {
     }
 
     // 장바구니 아이템 삭제
-    @DeleteMapping("/{userId}/items")
+    @DeleteMapping("/items/{userId}")
     public ResponseEntity<ReadCart.Response> deleteCartItems(@PathVariable Long userId,
             @RequestBody DeleteCartItemsRequest request) {
         return ResponseEntity.ok(cartService.deleteCartItems(userId, request));
