@@ -45,7 +45,7 @@ public class ProductDataProvider {
         return reviewImageRepository.findAllByReviewIdInAndIsDeletedIsFalse(reviewIds);
     }
 
-    public void findProductReview(Long productId, String userId) {
+    public void findProductReview(Long productId, Long userId) {
         reviewRepository.findByProductIdAndUserIdAndIsDeletedIsFalse(productId, userId)
                 .ifPresent(review -> {
                     throw new ProductException(ErrorCode.DUPLICATE_REVIEW);

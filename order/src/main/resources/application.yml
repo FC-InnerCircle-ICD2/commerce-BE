@@ -2,13 +2,19 @@ spring:
   application:
     name: order-service
   profiles:
+    active: default
     include:
       - common
   datasource:
     driver-class-name: com.mysql.cj.jdbc.Driver
-    url: ${DATASOURCE_URL:jdbc:mysql://localhost:3306/emotional_cart}?serverTimezone=UTC&useSSL=false&allowPublicKeyRetrieval=true&rewriteBatchedStatements=true
+    url: ${DATASOURCE_URL:jdbc:mysql://localhost:3306/emotional_cart}?useSSL=false&allowPublicKeyRetrieval=true&rewriteBatchedStatements=true
     username: ${DATASOURCE_USERNAME:root}
     password: ${DATASOURCE_PASSWORD:1234}
+  data:
+    redis:
+      host: ${REDIS_SERVER_HOST:localhost}   # Redis server IP address
+      port: ${REDIS_SERVER_PORT:6379}             # Redis server port
+      timeout: 2000           # Connection timeout (in milliseconds)
   jpa:
     hibernate:
       ddl-auto: validate
@@ -27,15 +33,7 @@ server:
   port: 9999
 product:
   find:
-    feign-endpoint: ${PRODUCT_SERVER_URL:http://localhost}:8080
-springdoc:
-  swagger-ui:
-    urls:
-      - name: Order Service
-        url: ${ORDER_SERVER_URL:http://localhost}:${server.port}/v3/api-docs
-      - name: Product Service
-        url: ${PRODUCT_SERVER_URL:http://localhost}:8080/api/v3/api-docs
-aws:
-  s3:
-    access-key: ${AWS_S3_ACCESS_KEY}
-    secret-key: ${AWS_S3_SECRET_KEY}
+    feign-endpoint: ${PRODUCT_SERVER_URL:http://localhost:8080}
+stock:
+  find:
+    feign-endpoint: ${STOCK_SERVER_URL:http://localhost:9992}

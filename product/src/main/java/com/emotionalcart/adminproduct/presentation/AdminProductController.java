@@ -10,7 +10,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
-@RequestMapping("/admin/v1/products")
+@RequestMapping("/api/admin/v1/products")
 @RequiredArgsConstructor
 public class AdminProductController implements AdminProductControllerDocs {
     private final AdminProductService adminProductService;
@@ -20,5 +20,12 @@ public class AdminProductController implements AdminProductControllerDocs {
     public ResponseEntity<CreateProductResponse> createProduct(
             @Valid @ModelAttribute CreateProductRequest request) {
         return ResponseEntity.ok(adminProductService.createProduct(request));
+    }
+
+    @Override
+    @DeleteMapping("/{productId}")
+    public ResponseEntity<Void> deleteProduct(@PathVariable Long productId) {
+        adminProductService.deleteProduct(productId);
+        return ResponseEntity.ok().build();
     }
 }

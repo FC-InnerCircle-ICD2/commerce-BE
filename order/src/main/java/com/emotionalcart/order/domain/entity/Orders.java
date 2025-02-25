@@ -76,11 +76,6 @@ public class Orders extends BaseEntity {
     private String shipmentId;
 
     /**
-     * 사용자 아이디
-     */
-    private Long userId;
-
-    /**
      * 주문 항목 목록
      */
     @OneToMany(mappedBy = "orders", cascade = CascadeType.ALL, orphanRemoval = true)
@@ -145,6 +140,10 @@ public class Orders extends BaseEntity {
 
     public double getTotalPrice() {
         return totalPrice.getAmount();
+    }
+
+    public Boolean isCompleted() {
+        return this.getStatus() == OrderStatus.DELIVERED;
     }
 
 }

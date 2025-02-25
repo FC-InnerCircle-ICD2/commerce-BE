@@ -17,4 +17,9 @@ public class SecurityConfig extends DefaultSecurityConfig {
         super(appProperties, entryPoint, jwtAuthenticationTokenFilter, jwtAccessDeniedHandler);
     }
 
+    @Override
+    protected String[] getPermissionUrl() {
+        return new String[] {"/**"};
+    }
+
 }
