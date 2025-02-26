@@ -23,4 +23,9 @@ public class AdminProviderDataProvider {
     public Page<AdminProviders> findAllProviders(PageRequest pageRequest){
         return providerRepository.findAllProviders(pageRequest);
     }
+
+    public Provider saveProvider(Provider provider) {
+        return providerRepository.save(provider);
+    }
+
 }

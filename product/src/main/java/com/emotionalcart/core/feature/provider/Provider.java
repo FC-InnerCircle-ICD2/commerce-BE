@@ -32,4 +32,21 @@ public class Provider extends BaseEntity {
         this.description = description;
     }
 
+    public Provider(
+        String name,
+        String description
+    ) {
+        this.name = name;
+        this.description = description;
+    }
+
+    public static Provider of(
+        String name,
+        String description
+    ) {
+        return new Provider(
+            name,
+            description);
+    }
+
 }
