@@ -27,12 +27,9 @@ spring:
         format_sql: true
   data:
     redis:
-#      host: redis-u44lkt.serverless.apn2.cache.amazonaws.com # 서버리스 Redis
-      host: 52.78.140.152 # Redis 인스턴스
-      port: 6379
-      ssl:
-         enabled: false # AWS 서버리스 Redis는 TLS 필수
-#        enabled: true # AWS 서버리스 Redis는 TLS 필수
+      host: ${REDIS_SERVER_HOST:localhost}   # Redis server IP address
+      port: ${REDIS_SERVER_PORT:6379}             # Redis server port
+      timeout: 2000           # Connection timeout (in milliseconds)
 
 aws:
   s3:
