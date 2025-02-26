@@ -6,12 +6,15 @@ import com.emotionalcart.core.feature.enums.MemberRole;
 import com.emotionalcart.core.feature.enums.MemberState;
 import com.emotionalcart.core.feature.enums.SocialType;
 import com.emotionalcart.member.infrasturcture.MemberRepository;
+import com.emotionalcart.member.infrasturcture.product.ProductService;
+import com.emotionalcart.member.infrasturcture.product.dto.ReadProvider;
+import com.emotionalcart.member.infrasturcture.product.dto.UpdateProviderMemberIdRequest;
+import com.emotionalcart.member.presentation.dto.AdminMemberResponse;
+import com.emotionalcart.member.presentation.dto.CreateProviderAdminMemberRequest;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
-import org.springframework.data.domain.Sort;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -27,6 +30,7 @@ public class AdminMemberService {
     private final PasswordEncoder passwordEncoder;
     private final MemberRepository memberRepository;
     private final JwtTokenProvider jwtTokenProvider;
+    private final ProductService productService;
 
     public boolean createAdminUser(CreateAdminMember createAdminMember) {
         memberRepository.findByEmail(createAdminMember.getEmail())
@@ -71,6 +75,40 @@ public class AdminMemberService {
     @Transactional(readOnly = true)
     public Page<Member> getAdminUserList(Pageable pageable) {
         return memberRepository.findAllByMemberRoles(MemberRole.COMMERCE_MEMBER, pageable);
+    }
+
+    public AdminMemberResponse createProviderAdminUser(Long id, CreateProviderAdminMemberRequest request) {
+
+        log.info("entered provider id: {}", request.getProviderId());
+
+        ReadProvider provider = productService.getProviderInfo(request.getProviderId());
+        log.info("provider id: {}, memberId: {}", provider.getProviderId(), provider.getMemberId());
+
+        if(provider.getMemberId() != null) {
+            throw new IllegalArgumentException("이미 발급된 관리자 계정이 존재합니다.");
+        }
+        CreateAdminMember createAdminMember = request.mapToCommand();
+
+        memberRepository.findByEmail(createAdminMember.getEmail())
+            .ifPresent(member -> {
+                throw new IllegalArgumentException("이미 존재하는 이메일입니다.");
+            });
+        Member member = Member.builder()
+            .nickName(createAdminMember.getUserName())
+            .userName(createAdminMember.getUserName())
+            .email(createAdminMember.getEmail())
+            .password(passwordEncoder.encode(createAdminMember.getPassword()))
+            .phone(createAdminMember.getPhone())
+            .memberState(MemberState.ACTIVE)
+            .socialType(SocialType.DIRECT)
+            .memberRoles(Set.of(MemberRole.PROVIDER_MEMBER))
+            .build();
+
+
+        memberRepository.save(member);
+        productService.updateProviderMemberId(UpdateProviderMemberIdRequest.of(provider.getProviderId(), member.getId()));
+
+        return AdminMemberResponse.from(member);
     }
 
 }

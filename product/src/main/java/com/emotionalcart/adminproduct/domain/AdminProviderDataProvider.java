@@ -28,4 +28,11 @@ public class AdminProviderDataProvider {
         return providerRepository.save(provider);
     }
 
+    public void updateProviderMemberId(Long providerId, Long memberId) {
+        Provider provider = providerRepository.findByIdAndIsDeletedIsFalse(providerId)
+            .orElseThrow(() -> new ProductException(ErrorCode.NOT_FOUND_PROVIDER));
+        provider.updateMemberId(memberId);
+        saveProvider(provider);
+    }
+
 }

@@ -25,7 +25,8 @@ public class CreateProviderRequest {
 
         return Provider.of(
                 name,
-                description
+                description,
+                null
         );
     }
 }

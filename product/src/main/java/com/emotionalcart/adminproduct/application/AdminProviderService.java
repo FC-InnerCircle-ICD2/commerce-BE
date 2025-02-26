@@ -1,7 +1,6 @@
 package com.emotionalcart.adminproduct.application;
 
 import com.emotionalcart.adminproduct.domain.AdminProviderDataProvider;
-import com.emotionalcart.adminproduct.infrastructure.AdminProducts;
 import com.emotionalcart.adminproduct.infrastructure.AdminProviders;
 import com.emotionalcart.adminproduct.presentation.dto.*;
 import com.emotionalcart.core.feature.provider.Provider;
@@ -45,4 +44,13 @@ public class AdminProviderService {
         return new CreateProviderResponse(savedProvider.getId());
     }
 
+    public ReadProviderResponse readProvider(Long providerId) {
+        Provider provider = adminProviderDataProvider.findProviderById(providerId);
+
+        return new ReadProviderResponse(provider.getId(), provider.getName(), provider.getDescription(), provider.getMemberId());
+    }
+
+    public void updateProviderMemberId(UpdateProviderMemberIdRequest request) {
+        adminProviderDataProvider.updateProviderMemberId(request.getProviderId(), request.getMemberId());
+    }
 }

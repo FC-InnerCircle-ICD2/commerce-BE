@@ -49,3 +49,6 @@ aws:
   s3:
     access-key: test
     secret-key: test
+product:
+  find:
+    feign-endpoint: ${PRODUCT_SERVER_URL:http://localhost:8080}

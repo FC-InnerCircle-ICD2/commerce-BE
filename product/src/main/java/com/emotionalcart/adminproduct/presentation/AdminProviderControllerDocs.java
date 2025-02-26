@@ -39,4 +39,10 @@ public interface AdminProviderControllerDocs {
 
     @Operation(summary = "판매처 (공급자) 목록 조회")
     public ResponseEntity<Page<ReadAdminProvidersResponse>> readProviders(ReadAdminProvidersRequest request);
+
+    @Operation(summary = "판매처 (공급자) 조회")
+    public ResponseEntity<ReadProviderResponse> readProvider(Long providerId);
+
+    void updateProviderMemberId(UpdateProviderMemberIdRequest request);
+
 }
