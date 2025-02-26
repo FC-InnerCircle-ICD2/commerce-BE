@@ -39,7 +39,7 @@ public class OrderDetailService {
      */
     public Page<UserOrder> getOrderListByUserId(Long userId, Pageable request) {
         PageRequest pageRequest = PageRequest.of(request.getPageNumber(), request.getPageSize(), Sort.by(Sort.Order.desc("orderAt")));
-        Page<Orders> orderList = orderRepository.findByUserId(userId, pageRequest);
+        Page<Orders> orderList = orderRepository.findByOrderMemberId(userId, pageRequest);
         List<List<ProductDetail>> productDetailsByOrders =
             orderList.stream().map(order -> order.getOrderItems().stream().map(orderItem -> productService.getProductDetail(orderItem.getProductId())).toList()).toList();
 
@@ -49,6 +49,12 @@ public class OrderDetailService {
 
         // 최종적으로 Page<UserOrder> 반환
         return new PageImpl<>(userOrders, request, orderList.getTotalElements());
+    }
+
+    public Boolean validateOrderByMember(Long userId, Long orderId) {
+        return orderRepository.findByIdAndOrderMemberId(orderId, userId)
+            .map(Orders::isCompleted)
+            .orElse(false);
     }
 
 }

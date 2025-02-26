@@ -44,7 +44,6 @@ dependencyManagement {
     }
 }
 
-
 tasks.test {
     useJUnitPlatform()
 }

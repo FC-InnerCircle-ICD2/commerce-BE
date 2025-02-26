@@ -58,4 +58,8 @@ public class ProductOptionDetail extends BaseEntity {
                 productOption
         );
     }
+
+    public void delete() {
+        this.setIsDeleted(true);
+    }
 }

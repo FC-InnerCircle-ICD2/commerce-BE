@@ -10,6 +10,10 @@ public class ReadProductsValidate {
     public static class Request {
         @NotNull
         private Long productId;
+
+        @NotNull
+        private Integer quantity;
+
         @NotNull
         private List<OptionRequest> productOptions;
 
@@ -19,8 +23,6 @@ public class ReadProductsValidate {
             private Long productOptionId;
             @NotNull
             private Long productOptionDetailId;
-            @NotNull
-            private Integer quantity;
         }
     }
 }

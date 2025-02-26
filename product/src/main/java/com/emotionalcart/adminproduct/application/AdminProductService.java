@@ -3,17 +3,21 @@ package com.emotionalcart.adminproduct.application;
 import com.emotionalcart.adminproduct.domain.AdminCategoryDataProvider;
 import com.emotionalcart.adminproduct.domain.AdminProductDataProvider;
 import com.emotionalcart.adminproduct.domain.AdminProviderDataProvider;
-import com.emotionalcart.adminproduct.presentation.dto.CreateProductRequest;
-import com.emotionalcart.adminproduct.presentation.dto.CreateProductResponse;
+import com.emotionalcart.adminproduct.infrastructure.AdminProducts;
+import com.emotionalcart.adminproduct.presentation.dto.*;
 import com.emotionalcart.core.exception.ErrorCode;
 import com.emotionalcart.core.exception.ProductException;
+import com.emotionalcart.core.feature.category.Category;
 import com.emotionalcart.core.feature.product.Product;
 import com.emotionalcart.core.feature.product.ProductImage;
 import com.emotionalcart.core.feature.product.ProductImageType;
+import com.emotionalcart.core.feature.provider.Provider;
 import com.emotionalcart.core.feature.review.ReviewStatistic;
 import com.emotionalcart.s3.S3Utils;
 import com.emotionalcart.s3.config.S3Constants;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
@@ -26,6 +30,7 @@ import java.util.stream.IntStream;
 @RequiredArgsConstructor
 @Transactional(readOnly = true)
 public class AdminProductService {
+
     private final AdminProductDataProvider adminProductDataProvider;
     private final AdminProviderDataProvider adminProviderDataProvider;
     private final AdminCategoryDataProvider adminCategoryDataProvider;
@@ -49,8 +54,8 @@ public class AdminProductService {
         // 상품 이미지 저장
         ProductImage mainProductImage = uploadAndSaveProductImage(savedProduct, ProductImageType.MAIN, request.getMainImage(), 1);
         List<ProductImage> detailProductImages = IntStream.range(0, request.getDetailImages().size())
-                .mapToObj(i -> uploadAndSaveProductImage(savedProduct, ProductImageType.DETAIL, request.getDetailImages().get(i), i + 1))
-                .toList();
+            .mapToObj(i -> uploadAndSaveProductImage(savedProduct, ProductImageType.DETAIL, request.getDetailImages().get(i), i + 1))
+            .toList();
         List<ProductImage> productImages = new ArrayList<>();
         productImages.add(mainProductImage);
         productImages.addAll(detailProductImages);
@@ -62,21 +67,64 @@ public class AdminProductService {
     /**
      * 상품 이미지 entity 생성 및 s3 저장
      */
-    private ProductImage uploadAndSaveProductImage(Product product, ProductImageType productImageType, MultipartFile file, Integer fileOrder) {
+    private ProductImage uploadAndSaveProductImage(Product product,
+                                                   ProductImageType productImageType,
+                                                   MultipartFile file,
+                                                   Integer fileOrder) {
         try {
             String fileUrl = s3Utils.uploadFile(S3Constants.PRODUCT_DIRECTORY, product.getId().toString(), file);
             return ProductImage.of(
-                    product,
-                    productImageType,
-                    S3Constants.BUCKET_NAME,
-                    file.getOriginalFilename(),
-                    fileUrl,
-                    file.getContentType(),
-                    file.getSize(),
-                    fileOrder
+                product,
+                productImageType,
+                S3Constants.BUCKET_NAME,
+                file.getOriginalFilename(),
+                fileUrl,
+                file.getContentType(),
+                file.getSize(),
+                fileOrder
             );
         } catch (Exception e) {
             throw new ProductException(ErrorCode.S3_UPLOAD_FAILED);
         }
     }
+
+    public Page<ReadAdminProductsResponse> readProducts(ReadAdminProductsRequest request) {
+        Page<AdminProducts> products = adminProductDataProvider.findAllProduct(request.getPageable());
+        List<ReadAdminProductsResponse> responseList = products.getContent().stream()
+            .map(this::mapToResponse)
+            .toList();
+        return new PageImpl<>(responseList, request.getPageable(), products.getTotalElements());
+    }
+
+    private ReadAdminProductsResponse mapToResponse(AdminProducts product) {
+        return new ReadAdminProductsResponse(
+            product.getId(),
+            product.getName(),
+            product.getPrice(),
+            product.getCategoryName(),
+            product.getProviderName(),
+            product.getMainImageUrl()
+        );
+    }
+
+    /**
+     * 상품 상세 조회
+     */
+    public ReadAdminProductDetailResponse readProduct(Long productId) {
+        Product product = adminProductDataProvider.findProductById(productId);
+        Provider provider = adminProviderDataProvider.findProviderById(product.getProviderId());
+        Category category = adminCategoryDataProvider.findCategory(product.getCategoryId());
+        return ReadAdminProductDetailResponse.toResponse(product, category, provider);
+    }
+
+    /**
+     * 상품 삭제 (논리삭제 isDeleted = ture)
+     */
+    @Transactional
+    public void deleteProduct(Long productId) {
+        Product product = adminProductDataProvider.findProductById(productId);
+        // TODO provider 확인 필요해보임
+        product.delete();
+    }
+
 }
