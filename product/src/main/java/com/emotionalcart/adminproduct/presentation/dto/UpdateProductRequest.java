@@ -5,6 +5,7 @@ import jakarta.validation.Valid;
 import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.NotNull;
 import lombok.Data;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -29,5 +30,12 @@ public class UpdateProductRequest {
     private List<Long> deletedOptionIds = new ArrayList<>();
     @Schema(description = "삭제할 옵션 상세 항목 ID 목록")
     private List<Long> deletedDetailIds = new ArrayList<>();
+
+    @Schema(description = "새로운 메인 이미지")
+    private MultipartFile mainImage;
+    @Schema(description = "새로운 상세 이미지 목록")
+    private List<MultipartFile> detailImages = new ArrayList<>();
+    @Schema(description = "삭제할 이미지 ID 목록")
+    private List<Long> deletedImageIds = new ArrayList<>();
 
 }

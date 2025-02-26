@@ -15,6 +15,6 @@ public class OptionUpdateRequest {
     @NotNull(message = "옵션 이름은 필수입니다.")
     private String name;
     @Schema(description = "옵션 상세 항목")
-    private List<OptionDetailUpdateRequest> details = new ArrayList<>();
+    private List<OptionDetailUpdateRequest> optionDetails = new ArrayList<>();
 
 }

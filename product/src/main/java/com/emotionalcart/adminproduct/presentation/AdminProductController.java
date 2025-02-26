@@ -45,7 +45,7 @@ public class AdminProductController implements AdminProductControllerDocs {
 
     @Override
     @PatchMapping("/{productId}")
-    public ResponseEntity<Void> updateProduct(@PathVariable Long productId, @Valid @RequestBody UpdateProductRequest request) {
+    public ResponseEntity<Void> updateProduct(@PathVariable Long productId, @Valid @ModelAttribute UpdateProductRequest request) {
         adminProductService.updateProduct(productId, request);
         return ResponseEntity.ok().build();
     }

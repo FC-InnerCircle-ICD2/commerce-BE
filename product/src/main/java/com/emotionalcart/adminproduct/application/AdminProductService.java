@@ -138,6 +138,30 @@ public class AdminProductService {
         }
         handleOptionDeletions(product, request);
         handleOptionDetailDeletions(product, request);
+        handleProductImageUpdates(product, request);
+    }
+
+    /**
+     * 상품 이미지 수정
+     */
+    private void handleProductImageUpdates(Product product, UpdateProductRequest request) {
+        if (request.getMainImage() != null) {
+            product.deleteMainImage();
+            ProductImage mainImage = uploadAndSaveProductImage(product, ProductImageType.MAIN, request.getMainImage(), 1);
+            product.addImage(mainImage);
+        }
+
+        if (request.getDetailImages() != null && !request.getDetailImages().isEmpty()) {
+            int nextOrder = product.getNextDetailImageOrder();
+            for (MultipartFile image : request.getDetailImages()) {
+                ProductImage detailImage = uploadAndSaveProductImage(product, ProductImageType.DETAIL, image, nextOrder++);
+                product.addImage(detailImage);
+            }
+        }
+
+        if (request.getDeletedImageIds() != null && !request.getDeletedImageIds().isEmpty()) {
+            product.deleteDetailImages(request.getDeletedImageIds());
+        }
     }
 
     /**
@@ -152,7 +176,7 @@ public class AdminProductService {
                 .findFirst()
                 .orElseThrow(() -> new ProductException(ErrorCode.NOT_FOUND_PRODUCT_OPTION));
         } else {
-            if (optionRequest.getDetails() == null || optionRequest.getDetails().isEmpty()) {
+            if (optionRequest.getOptionDetails() == null || optionRequest.getOptionDetails().isEmpty()) {
                 throw new ProductException(ErrorCode.AT_LEAST_ONE_OPTION_DETAIL_REQUIRED);
             }
             option = product.addOption(ProductOption.of(optionRequest.getName()));
@@ -165,7 +189,7 @@ public class AdminProductService {
      * 옵션 상세 수정 / 생성
      */
     private void updateOrCreateProductOptionDetail(ProductOption option, OptionUpdateRequest optionRequest) {
-        for (OptionDetailUpdateRequest detailRequest : optionRequest.getDetails()) {
+        for (OptionDetailUpdateRequest detailRequest : optionRequest.getOptionDetails()) {
             if (detailRequest.getId() != null) {
                 ProductOptionDetail detail = option.getDetails().stream()
                     .filter(d -> d.getId().equals(detailRequest.getId()))
