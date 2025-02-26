@@ -10,35 +10,37 @@ import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import com.emotionalcart.common.jwt.JwtAuthentication;
 
 @Tag(name = "장바구니 API", description = "장바구니 관련 API")
 public interface CartControllerDocs {
 
-    @GetMapping("/{userId}")
-    @Operation(summary = "장바구니 조회", description = "사용자의 장바구니를 조회합니다.")
-    ResponseEntity<ReadCart.Response> readCart(@PathVariable Long userId);
+        @GetMapping("/{userId}")
+        @Operation(summary = "장바구니 조회", description = "사용자의 장바구니를 조회합니다.")
+        ResponseEntity<ReadCart.Response> readCart(@AuthenticationPrincipal JwtAuthentication jwt);
 
-    @PostMapping("/{userId}")
-    @Operation(summary = "장바구니 아이템 추가", description = "장바구니에 아이템을 추가합니다.")
-    ResponseEntity<ReadCart.Response> addCart(@PathVariable Long userId,
-            @RequestBody AddCartItemRequest request);
+        @PostMapping("/{userId}")
+        @Operation(summary = "장바구니 아이템 추가", description = "장바구니에 아이템을 추가합니다.")
+        ResponseEntity<ReadCart.Response> addCart(@AuthenticationPrincipal JwtAuthentication jwt,
+                        @RequestBody AddCartItemRequest request);
 
-    @PutMapping("/{userId}")
-    @Operation(summary = "장바구니 아이템 수량 변경", description = "장바구니 아이템의 수량을 변경합니다.")
-    ResponseEntity<ReadCart.Response> updateCartItemQuantity(@PathVariable Long userId,
-            @RequestBody UpdateCartItemQuantityRequest request);
+        @PutMapping("/{userId}")
+        @Operation(summary = "장바구니 아이템 수량 변경", description = "장바구니 아이템의 수량을 변경합니다.")
+        ResponseEntity<ReadCart.Response> updateCartItemQuantity(@AuthenticationPrincipal JwtAuthentication jwt,
+                        @RequestBody UpdateCartItemQuantityRequest request);
 
-    @PatchMapping("/{userId}")
-    @Operation(summary = "장바구니 아이템 선택", description = "장바구니 아이템을 선택합니다.")
-    ResponseEntity<ReadCart.Response> selectCartItem(@PathVariable Long userId,
-            @RequestBody SelectCartItemRequest request);
+        @PatchMapping("/{userId}")
+        @Operation(summary = "장바구니 아이템 선택", description = "장바구니 아이템을 선택합니다.")
+        ResponseEntity<ReadCart.Response> selectCartItem(@AuthenticationPrincipal JwtAuthentication jwt,
+                        @RequestBody SelectCartItemRequest request);
 
-    @DeleteMapping("/{userId}")
-    @Operation(summary = "장바구니 비우기", description = "장바구니를 비웁니다.")
-    ResponseEntity<DeleteCartResponse> clearCart(@PathVariable Long userId);
+        @DeleteMapping("/{userId}")
+        @Operation(summary = "장바구니 비우기", description = "장바구니를 비웁니다.")
+        ResponseEntity<DeleteCartResponse> clearCart(@AuthenticationPrincipal JwtAuthentication jwt);
 
-    @DeleteMapping("/items/{userId}")
-    @Operation(summary = "장바구니 아이템 삭제", description = "장바구니에서 아이템을 삭제합니다.")
-    ResponseEntity<ReadCart.Response> deleteCartItems(@PathVariable Long userId,
-            @RequestBody DeleteCartItemsRequest request);
+        @DeleteMapping("/items/{userId}")
+        @Operation(summary = "장바구니 아이템 삭제", description = "장바구니에서 아이템을 삭제합니다.")
+        ResponseEntity<ReadCart.Response> deleteCartItems(@AuthenticationPrincipal JwtAuthentication jwt,
+                        @RequestBody DeleteCartItemsRequest request);
 }
