@@ -25,6 +25,11 @@ spring:
       hibernate:
         dialect: org.hibernate.dialect.MySQL8Dialect
         format_sql: true
+  data:
+    redis:
+      host: ${REDIS_SERVER_HOST:localhost}   # Redis server IP address
+      port: ${REDIS_SERVER_PORT:6379}             # Redis server port
+      timeout: 2000           # Connection timeout (in milliseconds)
 
 aws:
   s3:
@@ -38,3 +43,4 @@ stock:
 order:
   find:
     feign-endpoint: ${ORDER_SERVER_URL:http://localhost:9999}
+
