@@ -24,7 +24,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 
 @RestController
-@RequestMapping("/v1/carts")
+@RequestMapping("/api/v1/carts")
 @RequiredArgsConstructor
 public class CartController implements CartControllerDocs {
 
