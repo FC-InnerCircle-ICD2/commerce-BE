@@ -37,3 +37,6 @@ product:
 stock:
   find:
     feign-endpoint: ${STOCK_SERVER_URL:http://localhost:9992}
+shipment:
+  find:
+    feign-endpoint: ${SHIPMENT_SERVER_URL:http://localhost:7777}

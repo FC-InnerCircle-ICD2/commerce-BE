@@ -20,6 +20,8 @@ import com.emotionalcart.order.infra.product.dto.ProductPrice;
 import com.emotionalcart.order.infra.product.dto.ProductPriceRequest;
 import com.emotionalcart.order.infra.product.dto.ProductQuantityValidateRequest;
 import com.emotionalcart.order.infra.product.dto.ProductStockRequest;
+import com.emotionalcart.order.infra.shipment.ShipmentService;
+import com.emotionalcart.order.infra.shipment.dto.OrderShipmentRequest;
 import com.emotionalcart.order.infra.stock.StockService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -46,6 +48,7 @@ public class CreateOrderService {
     private final PaymentService paymentService;
     private final ProductService productService;
     private final RedissonMultiLockProvider redissonMultiLockProvider;
+    private final ShipmentService shipmentService;
     private final StockService stockService;
 
     /**
@@ -65,9 +68,9 @@ public class CreateOrderService {
             if (multiLock.tryLock(10, 10, TimeUnit.SECONDS)) {
                 log.error("now Time :: {}", LocalDateTime.now());
                 validateQuantity(createOrder);
-                requestOriginalPriceAndValidatePrice(createOrder);
+                List<ProductPrice> productPriceList = requestOriginalPriceAndValidatePrice(createOrder);
                 payment(orders, createOrder.getCardInfo());
-                shipment(orders);
+                shipment(orders, productPriceList);
                 orderHistory(orders);
                 updateQuantity(orders);
                 orderStatistics(orders.getOrderItems());
@@ -127,7 +130,7 @@ public class CreateOrderService {
         return orders;
     }
 
-    private void requestOriginalPriceAndValidatePrice(CreateOrder createOrder) {
+    private List<ProductPrice> requestOriginalPriceAndValidatePrice(CreateOrder createOrder) {
         List<ProductPriceRequest> productPriceRequests = new ArrayList<>();
         for (CreateOrderItem orderItem : createOrder.getOrderItems()) {
             ProductPriceRequest productPriceRequest = ProductPriceRequest.of(orderItem.getProductId(), orderItem.getPrice());
@@ -137,10 +140,10 @@ public class CreateOrderService {
             productPriceRequests.add(productPriceRequest);
         }
         log.info("request product price: {}", productPriceRequests);
-        validatePrice(productPriceRequests);
+        return validatePrice(productPriceRequests);
     }
 
-    private void validatePrice(List<ProductPriceRequest> productPriceRequests) {
+    private List<ProductPrice> validatePrice(List<ProductPriceRequest> productPriceRequests) {
         List<ProductPrice> productPriceList = productService.getProductPrice(productPriceRequests);
         Map<Long, Double> productPriceMap = productPriceList.stream()
             .collect(Collectors.toMap(
@@ -158,6 +161,7 @@ public class CreateOrderService {
                 throw new InvalidValueRequestException("상품 가격이 변경되었습니다. 새로고침 이후 다시 이용 부탁드립니다.");
             }
         }
+        return productPriceList;
     }
 
     private Map<Long, Double> getProductPriceByRequest(List<ProductPriceRequest> productPriceRequests) {
@@ -192,10 +196,15 @@ public class CreateOrderService {
         orders.requestPayment();
     }
 
-    private void shipment(Orders orders) {
+    private void shipment(Orders orders, List<ProductPrice> productPriceList) {
         log.info("request shipment orders.id: {}", orders.getId());
-        // TODO 배송 서비스 호출
-        orders.requestShipment();
+        OrderShipmentRequest orderShipmentRequest = OrderShipmentRequest.of(orders.getId(), orders.getOrderRecipient(), productPriceList);
+        if (shipmentService.createShipment(orderShipmentRequest)) {
+            orders.requestShipment();
+            return;
+        }
+        log.error("request fail shipment orders.id: {}", orders.getId());
+        orders.failRequest();
     }
 
 }
