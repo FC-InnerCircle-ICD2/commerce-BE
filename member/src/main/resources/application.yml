@@ -13,7 +13,7 @@ spring:
         - common
   jpa:
     hibernate:
-      ddl-auto: none  # (옵션: create, update, validate, none. 개발 시 `update` 추천)
+      ddl-auto: none # (옵션: create, update, validate, none. 개발 시 `update` 추천)
     properties:
       hibernate:
         dialect: org.hibernate.dialect.MySQLDialect
@@ -21,14 +21,14 @@ spring:
 
   sql:
     init:
-      mode: always  # SQL 초기화 활성화
+      mode: always # SQL 초기화 활성화
   devtools:
     restart:
-      enabled: true  # 개발 도구로 자동 재시작 활성화
+      enabled: true # 개발 도구로 자동 재시작 활성화
 
 logging:
   level:
-    org.hibernate.SQL: DEBUG   # (선택) Hibernate 쿼리 로깅 활성화
+    org.hibernate.SQL: DEBUG # (선택) Hibernate 쿼리 로깅 활성화
     org.springframework: DEBUG
 server:
   port: 8081
