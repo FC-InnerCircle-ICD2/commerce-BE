@@ -6,6 +6,7 @@ import java.util.List;
 import java.util.ArrayList;
 
 import com.emotionalcart.product.presentation.dto.request.AddCartItemRequest;
+import com.emotionalcart.product.presentation.dto.support.Carts;
 
 public class ReadCart {
 
@@ -31,9 +32,9 @@ public class ReadCart {
         private String productName;
         private int price;
         private int subTotalPrice;
-        private Option option;
-        private Image images;
-        private Provider provider;
+        private List<Carts.Option> options = new ArrayList<>();
+        private Carts.Image images;
+        private Carts.Provider provider;
         private boolean isSelected;
 
         public static CartItem from(AddCartItemRequest request) {
@@ -42,53 +43,36 @@ public class ReadCart {
             cartItem.productName = request.getProductName();
             cartItem.price = request.getPrice();
             cartItem.subTotalPrice = request.getSubTotalPrice();
-            Option option = new Option();
-            option.id = request.getOptionId();
-            option.name = request.getOptionName();
-            OptionDetail optionDetail = new OptionDetail();
-            optionDetail.id = request.getOptionDetailId();
-            optionDetail.value = request.getOptionDetailValue();
-            optionDetail.quantity = request.getOptionDetailQuantity();
-            optionDetail.additionalPrice = request.getOptionDetailAdditionalPrice();
-            option.optionDetail = optionDetail;
-            cartItem.option = option;
-            Image image = new Image();
-            image.id = request.getImageId();
-            image.url = request.getImageUrl();
+
+            List<Carts.Option> readCartOptions = new ArrayList<>();
+            for (Carts.Option reqOption : request.getOptions()) {
+                Carts.Option option = new Carts.Option();
+                option.setId(reqOption.getId());
+                option.setName(reqOption.getName());
+
+                Carts.OptionDetail optionDetail = new Carts.OptionDetail();
+                optionDetail.setId(reqOption.getOptionDetail().getId());
+                optionDetail.setValue(reqOption.getOptionDetail().getValue());
+                optionDetail.setQuantity(reqOption.getOptionDetail().getQuantity());
+                optionDetail.setAdditionalPrice(reqOption.getOptionDetail().getAdditionalPrice());
+
+                option.setOptionDetail(optionDetail);
+                readCartOptions.add(option);
+            }
+            cartItem.options = readCartOptions;
+
+            Carts.Image image = new Carts.Image();
+            image.setId(request.getImages().getId());
+            image.setUrl(request.getImages().getUrl());
             cartItem.images = image;
-            Provider provider = new Provider();
-            provider.id = request.getProviderId();
-            provider.name = request.getProviderName();
+
+            Carts.Provider provider = new Carts.Provider();
+            provider.setId(request.getProvider().getId());
+            provider.setName(request.getProvider().getName());
             cartItem.provider = provider;
+
             cartItem.isSelected = true;
             return cartItem;
         }
-    }
-
-    @Data
-    public static class Option {
-        private Long id;
-        private String name;
-        private OptionDetail optionDetail;
-    }
-
-    @Data
-    public static class OptionDetail {
-        private Long id;
-        private String value;
-        private int quantity;
-        private int additionalPrice;
-    }
-
-    @Data
-    public static class Image {
-        private Long id;
-        private String url;
-    }
-
-    @Data
-    public static class Provider {
-        private Long id;
-        private String name;
     }
 }

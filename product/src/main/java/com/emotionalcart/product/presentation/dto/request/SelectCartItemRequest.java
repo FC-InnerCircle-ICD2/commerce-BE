@@ -1,12 +1,16 @@
 package com.emotionalcart.product.presentation.dto.request;
 
+import java.util.List;
+import java.util.Map;
+
 import lombok.Getter;
 import lombok.Setter;
 
 @Getter
 @Setter
 public class SelectCartItemRequest {
+
     private Long productId;
-    private Long optionId;
-    private Long optionDetailId;
+    // 상품 옵션 및 상품 상세 옵션 맵 배열
+    private List<Map<Long, Long>> optionDetailIdMapList;
 }
