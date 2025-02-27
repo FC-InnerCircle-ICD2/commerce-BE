@@ -69,6 +69,8 @@ public class UserOrder {
 
         private int quantity;
 
+        private List<ProductOption> productOptions;
+
         public OrderProduct(OrderItem orderItem, ProductDetail productDetail) {
             this.productId = orderItem.getProductId();
             this.providerId = productDetail.getProviderId();
@@ -77,10 +79,61 @@ public class UserOrder {
             this.productImage = productDetail.getProductImage();
             this.productPrice = orderItem.getItemPrice();
             this.quantity = orderItem.getQuantity();
+            this.productOptions = productDetail.getProductOptions().stream().map(ProductOption::from).toList();
         }
 
         public static OrderProduct from(OrderItem orderItem, ProductDetail productDetail) {
             return new OrderProduct(orderItem, productDetail);
+        }
+
+        @Getter
+        @NoArgsConstructor(access = AccessLevel.PROTECTED)
+        public static class ProductOption {
+
+            private Long productOptionId;
+
+            private String productOptionName;
+
+            private Long productOptionDetailId;
+
+            private String productOptionDetailName;
+
+            public ProductOption(Long id, String name, List<ProductDetail.ProductOptionDetail> optionDetails) {
+                this.productOptionId = id;
+                this.productOptionName = name;
+
+                if (!optionDetails.isEmpty()) {
+                    ProductDetail.ProductOptionDetail productOptionDetail = optionDetails.getFirst();
+                    this.productOptionDetailId = productOptionDetail.getId();
+                    this.productOptionDetailName = productOptionDetail.getValue();
+                }
+            }
+
+            public static ProductOption from(ProductDetail.ProductDetailOption productDetailOption) {
+                return new ProductOption(productDetailOption.getId(),
+                                         productDetailOption.getName(),
+                                         productDetailOption.getOptionDetails());
+            }
+
+        }
+
+        @Getter
+        @NoArgsConstructor(access = AccessLevel.PROTECTED)
+        public static class ProductOptionDetail {
+
+            private Long productOptionDetailId;
+
+            private String productOptionName;
+
+            public ProductOptionDetail(ProductDetail.ProductOptionDetail productOptionDetail) {
+                this.productOptionDetailId = productOptionDetail.getId();
+                this.productOptionName = productOptionDetail.getValue();
+            }
+
+            public static ProductOptionDetail from(ProductDetail.ProductOptionDetail productOptionDetail) {
+                return new ProductOptionDetail(productOptionDetail);
+            }
+
         }
 
     }
