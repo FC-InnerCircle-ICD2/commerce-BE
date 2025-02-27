@@ -1,5 +1,7 @@
 package com.emotionalcart.member.presentation.dto;
 
+import com.emotionalcart.core.exception.ErrorCode;
+import com.emotionalcart.core.exception.MemberException;
 import com.emotionalcart.core.feature.enums.MemberState;
 import com.emotionalcart.member.application.UpdateAdminMember;
 import io.swagger.v3.oas.annotations.media.Schema;
@@ -16,7 +18,7 @@ public class UpdateAdminMemberRequest {
         try {
             state = MemberState.valueOf(memberState.toUpperCase());
         } catch (IllegalArgumentException e) {
-            throw new IllegalArgumentException("부적절한 입력 값입니다.");
+            throw new MemberException(ErrorCode.INVALID_MEMBER_ROLE_VALUE);
         }
         return UpdateAdminMember.builder()
             .memberState(state)

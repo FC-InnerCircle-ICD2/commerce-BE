@@ -1,6 +1,8 @@
 package com.emotionalcart.member.application;
 
 import com.emotionalcart.common.jwt.JwtTokenProvider;
+import com.emotionalcart.core.exception.ErrorCode;
+import com.emotionalcart.core.exception.MemberException;
 import com.emotionalcart.core.feature.Member;
 import com.emotionalcart.core.feature.enums.MemberRole;
 import com.emotionalcart.core.feature.enums.MemberState;
@@ -9,9 +11,7 @@ import com.emotionalcart.member.infrasturcture.MemberRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
-import org.springframework.data.domain.Sort;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -84,14 +84,14 @@ public class AdminMemberService {
     public Member getAdminMemberInfo(Long jwtId, Long memberId) {
         validateAdminUser(jwtId);
         return memberRepository.findByIdAndMemberRoles(memberId, MemberRole.ADMIN_MEMBER)
-            .orElseThrow(() -> new IllegalArgumentException("존재하지 않는 관리자 계정 입니다."));
+            .orElseThrow(() -> new MemberException(ErrorCode.INVALID_ADMIN_MEMBER));
     }
 
     @Transactional
     public Member updateAdminMemberInfo(Long jwtId, Long memberId, UpdateAdminMember updateAdminMember) {
         validateAdminUser(jwtId);
         Member member = memberRepository.findByIdAndMemberRoles(memberId, MemberRole.ADMIN_MEMBER)
-            .orElseThrow(() -> new IllegalArgumentException("존재하지 않는 관리자 계정 입니다."));
+            .orElseThrow(() -> new MemberException(ErrorCode.INVALID_ADMIN_MEMBER));
         member.changeAdminMemberInfo(updateAdminMember.getMemberState());
         memberRepository.save(member);
         return member;
