@@ -37,7 +37,6 @@ public class AdminProductService {
     @Transactional
     public CreateProductResponse createProduct(CreateProductRequest request) {
         // category, provider 유효성 체크
-        adminProviderDataProvider.findProviderById(request.getProviderId());
         adminCategoryDataProvider.validateCategory(request.getCategoryId());
 
         Product product = request.toEntity();
