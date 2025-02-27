@@ -8,9 +8,7 @@ import com.emotionalcart.adminproduct.presentation.dto.*;
 import com.emotionalcart.core.exception.ErrorCode;
 import com.emotionalcart.core.exception.ProductException;
 import com.emotionalcart.core.feature.category.Category;
-import com.emotionalcart.core.feature.product.Product;
-import com.emotionalcart.core.feature.product.ProductImage;
-import com.emotionalcart.core.feature.product.ProductImageType;
+import com.emotionalcart.core.feature.product.*;
 import com.emotionalcart.core.feature.provider.Provider;
 import com.emotionalcart.core.feature.review.ReviewStatistic;
 import com.emotionalcart.s3.S3Utils;
@@ -124,6 +122,125 @@ public class AdminProductService {
         Product product = adminProductDataProvider.findProductById(productId);
         // TODO provider 확인 필요해보임
         product.delete();
+    }
+
+    /**
+     * 상품 수정
+     */
+    @Transactional
+    public void updateProduct(Long productId, UpdateProductRequest request) {
+        Product product = adminProductDataProvider.findProductById(productId);
+        product.updateBasicInfo(request.getName(), request.getPrice(), request.getDescription());
+        for (OptionUpdateRequest optionRequest : request.getOptions()) {
+            ProductOption option = updateOrCreateProductOption(product, optionRequest);
+            updateOrCreateProductOptionDetail(option, optionRequest);
+        }
+        handleOptionDeletions(product, request);
+        handleOptionDetailDeletions(product, request);
+        handleProductImageUpdates(product, request);
+    }
+
+    /**
+     * 상품 이미지 수정
+     */
+    private void handleProductImageUpdates(Product product, UpdateProductRequest request) {
+        if (request.getMainImage() != null) {
+            product.deleteMainImage();
+            ProductImage mainImage = uploadAndSaveProductImage(product, ProductImageType.MAIN, request.getMainImage(), 1);
+            product.addImage(mainImage);
+        }
+
+        if (request.getDetailImages() != null && !request.getDetailImages().isEmpty()) {
+            int nextOrder = product.getNextDetailImageOrder();
+            for (MultipartFile image : request.getDetailImages()) {
+                ProductImage detailImage = uploadAndSaveProductImage(product, ProductImageType.DETAIL, image, nextOrder++);
+                product.addImage(detailImage);
+            }
+        }
+
+        if (request.getDeletedImageIds() != null && !request.getDeletedImageIds().isEmpty()) {
+            product.deleteDetailImages(request.getDeletedImageIds());
+        }
+    }
+
+    /**
+     * 옵션 수정 / 생성
+     */
+    private ProductOption updateOrCreateProductOption(Product product, OptionUpdateRequest optionRequest) {
+        ProductOption option;
+
+        if (optionRequest.getId() != null) {
+            option = product.getOptions().stream()
+                .filter(o -> o.getId().equals(optionRequest.getId()))
+                .findFirst()
+                .orElseThrow(() -> new ProductException(ErrorCode.NOT_FOUND_PRODUCT_OPTION));
+        } else {
+            if (optionRequest.getOptionDetails() == null || optionRequest.getOptionDetails().isEmpty()) {
+                throw new ProductException(ErrorCode.AT_LEAST_ONE_OPTION_DETAIL_REQUIRED);
+            }
+            option = product.addOption(ProductOption.of(optionRequest.getName()));
+        }
+
+        return option;
+    }
+
+    /**
+     * 옵션 상세 수정 / 생성
+     */
+    private void updateOrCreateProductOptionDetail(ProductOption option, OptionUpdateRequest optionRequest) {
+        for (OptionDetailUpdateRequest detailRequest : optionRequest.getOptionDetails()) {
+            if (detailRequest.getId() != null) {
+                ProductOptionDetail detail = option.getDetails().stream()
+                    .filter(d -> d.getId().equals(detailRequest.getId()))
+                    .findFirst()
+                    .orElseThrow(() -> new ProductException(ErrorCode.NOT_FOUND_PRODUCT_OPTION_DETAIL));
+                detail.updateValue(detailRequest.getValue(), detailRequest.getAdditionalPrice());
+            } else {
+                option.addDetail(ProductOptionDetail.of(detailRequest.getValue(),
+                                                        detailRequest.getOptionOrder(),
+                                                        detailRequest.getAdditionalPrice(),
+                                                        option));
+            }
+        }
+    }
+
+    /**
+     * 상품 옵션 삭제
+     * 최소 1개의 옵션이 남아있어야 함
+     */
+    private void handleOptionDeletions(Product product, UpdateProductRequest request) {
+        List<Long> deletedOptionIds = request.getDeletedOptionIds();
+
+        if (deletedOptionIds != null && !deletedOptionIds.isEmpty()) {
+            long remainingOptions = product.getOptions().stream()
+                .filter(option -> !option.getIsDeleted() && !deletedOptionIds.contains(option.getId())) // 삭제할 옵션 제외
+                .count();
+            if (remainingOptions <= 0) {
+                throw new ProductException(ErrorCode.AT_LEAST_ONE_OPTION_REQUIRED);
+            }
+            adminProductDataProvider.deleteProductOptions(product, deletedOptionIds);
+        }
+    }
+
+    /**
+     * 상품 옵션 상세 삭제
+     * 최소 1개의 옵션 상세 항목이 남아있어야 함
+     */
+    private void handleOptionDetailDeletions(Product product, UpdateProductRequest request) {
+        List<Long> deletedDetailIds = request.getDeletedDetailIds();
+        List<ProductOption> options = product.getOptions();
+
+        if (deletedDetailIds != null && !deletedDetailIds.isEmpty()) {
+            for (ProductOption option : options) {
+                long remainingDetails = option.getDetails().stream()
+                    .filter(detail -> !detail.getIsDeleted() && !deletedDetailIds.contains(detail.getId())) // 삭제할 세부 항목 제외
+                    .count();
+                if (remainingDetails <= 0) {
+                    throw new ProductException(ErrorCode.AT_LEAST_ONE_OPTION_DETAIL_REQUIRED);
+                }
+            }
+            adminProductDataProvider.deleteProductOptionDetails(options, deletedDetailIds);
+        }
     }
 
 }

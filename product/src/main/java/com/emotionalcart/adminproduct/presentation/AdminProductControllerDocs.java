@@ -14,6 +14,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestBody;
 
 @Tag(name = "백오피스 상품 API", description = "백오피스 상품 관련 API")
 public interface AdminProductControllerDocs {
@@ -46,5 +47,8 @@ public interface AdminProductControllerDocs {
 
     @Operation(summary = "상품 상세 조회")
     public ResponseEntity<ReadAdminProductDetailResponse> readProduct(@PathVariable Long productId);
+
+    @Operation(summary = "상품 상세 수정", description = "상품 이미지 관련 수정은 따로 제공 예정")
+    public ResponseEntity<Void> updateProduct(@PathVariable Long productId, @Valid @RequestBody UpdateProductRequest request);
 
 }
