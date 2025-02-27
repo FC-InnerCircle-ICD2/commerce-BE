@@ -49,3 +49,7 @@ aws:
   s3:
     access-key: test
     secret-key: test
+ecommerce:
+  urls:
+    - name: Product
+      url: ${PRODUCT_SERVER_URL:http://localhost:8080}
