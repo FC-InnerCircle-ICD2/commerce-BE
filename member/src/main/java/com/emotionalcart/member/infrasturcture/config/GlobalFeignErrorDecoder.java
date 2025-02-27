@@ -1,7 +1,9 @@
 package com.emotionalcart.member.infrasturcture.config;
 
+import com.emotionalcart.core.exception.ErrorCode;
 import com.emotionalcart.core.exception.ErrorResponse;
 import com.emotionalcart.core.exception.FeignClientDecodingException;
+import com.emotionalcart.core.exception.MemberException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import feign.Response;
 import feign.codec.ErrorDecoder;
@@ -31,9 +33,8 @@ public class GlobalFeignErrorDecoder implements ErrorDecoder {
                 log.error("Error responseBody : {}", responseBody);
                 ErrorResponse errorResponse = objectMapper.readValue(responseBody, ErrorResponse.class);
                 switch (errorResponse.getErrorCode()) {
-                    case "PRODUCT-0007" -> throw new IllegalArgumentException("오류입니다.");
-                    case "PRODUCT-0009" -> throw new IllegalArgumentException("오류입니다.");
-                    default -> throw new IllegalArgumentException("오류입니다.");
+                    case "PRODUCT-0009" -> throw new MemberException(ErrorCode.NOT_FOUND_PROVIDER);
+                    default -> throw new MemberException(ErrorCode.NOT_FOUND_PROVIDER);
 
                 }
             } catch (IOException e) {
