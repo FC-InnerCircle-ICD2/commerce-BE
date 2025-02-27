@@ -44,11 +44,11 @@ public class Product extends BaseEntity {
     private List<ProductImage> images = new ArrayList<>();
 
     private Product(
-            String name,
-            String description,
-            Integer price,
-            Long providerId,
-            Long categoryId
+        String name,
+        String description,
+        Integer price,
+        Long providerId,
+        Long categoryId
     ) {
         this.name = name;
         this.description = description;
@@ -58,18 +58,18 @@ public class Product extends BaseEntity {
     }
 
     public static Product of(
-            String name,
-            String description,
-            Integer price,
-            Long providerId,
-            Long categoryId
+        String name,
+        String description,
+        Integer price,
+        Long providerId,
+        Long categoryId
     ) {
         return new Product(
-                name,
-                description,
-                price,
-                providerId,
-                categoryId
+            name,
+            description,
+            price,
+            providerId,
+            categoryId
         );
     }
 
@@ -85,6 +85,12 @@ public class Product extends BaseEntity {
         }
     }
 
+    public ProductOption addOption(ProductOption option) {
+        this.options.add(option);
+        option.setProduct(this);
+        return option;
+    }
+
     public void setImages(List<ProductImage> images) {
         this.images = images != null ? images : new ArrayList<>();
         for (ProductImage image : this.images) {
@@ -92,8 +98,44 @@ public class Product extends BaseEntity {
         }
     }
 
+    public void addImage(ProductImage image) {
+        this.images.add(image);
+        image.setProduct(this);
+    }
+
     public void delete() {
         this.setIsDeleted(true);
         this.options.forEach(ProductOption::delete);
     }
+
+    public void updateBasicInfo(String name, Integer price, String description) {
+        this.name = name;
+        this.price = price;
+        this.description = description;
+    }
+
+    public void deleteMainImage() {
+        this.images.stream()
+            .filter(image -> image.getImageType() == ProductImageType.MAIN)
+            .findFirst()
+            .ifPresent(ProductImage::delete);
+    }
+
+    public void deleteDetailImages(List<Long> imageIds) {
+        List<ProductImage> imagesToDelete = this.images.stream()
+            .filter(image -> image.getImageType() == ProductImageType.DETAIL
+                && imageIds.contains(image.getId())
+                && !image.getIsDeleted())
+            .toList();
+        imagesToDelete.forEach(ProductImage::delete);
+    }
+
+    public int getNextDetailImageOrder() {
+        return images.stream()
+            .filter(image -> image.getImageType() == ProductImageType.DETAIL)
+            .mapToInt(ProductImage::getFileOrder)
+            .max()
+            .orElse(0) + 1;
+    }
+
 }
