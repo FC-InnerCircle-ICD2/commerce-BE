@@ -49,3 +49,9 @@ aws:
   s3:
     access-key: test
     secret-key: test
+app:
+  allow-domains:
+    - https://auth-api.emmotional-cart.click
+    - https://member-api.emmotional-cart.click
+    - https://product-api.emmotional-cart.click
+    - https://order-api.emmotional-cart.click
