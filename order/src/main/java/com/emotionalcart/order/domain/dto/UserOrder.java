@@ -42,8 +42,8 @@ public class UserOrder {
         this.orderStatus = orders.getStatus().getStatusName();
         this.orderAt = orders.getOrderAt();
         this.orderProductList =
-            IntStream.range(0, orders.getOrderItems().size()).mapToObj(i -> OrderProduct.from(orders.getOrderItems().get(i),
-                                                                                              productDetails.get(i))).toList();
+                IntStream.range(0, orders.getOrderItems().size()).mapToObj(i -> OrderProduct.from(orders.getOrderItems().get(i),
+                        productDetails.get(i))).toList();
     }
 
     public static UserOrder from(Orders orders, List<ProductDetail> productDetails) {
@@ -111,8 +111,8 @@ public class UserOrder {
 
             public static ProductOption from(ProductDetail.ProductDetailOption productDetailOption) {
                 return new ProductOption(productDetailOption.getId(),
-                                         productDetailOption.getName(),
-                                         productDetailOption.getOptionDetails());
+                        productDetailOption.getName(),
+                        productDetailOption.getOptionDetails());
             }
 
         }
@@ -123,11 +123,11 @@ public class UserOrder {
 
             private Long productOptionDetailId;
 
-            private String productOptionName;
+            private String productOptionDetailName;
 
             public ProductOptionDetail(ProductDetail.ProductOptionDetail productOptionDetail) {
                 this.productOptionDetailId = productOptionDetail.getId();
-                this.productOptionName = productOptionDetail.getValue();
+                this.productOptionDetailName = productOptionDetail.getValue();
             }
 
             public static ProductOptionDetail from(ProductDetail.ProductOptionDetail productOptionDetail) {
