@@ -23,13 +23,42 @@ public class Provider extends BaseEntity {
 
     private String description;
 
+    private Long memberId;
+
     private Provider(
             Long id,
             String name,
-            String description) {
+            String description,
+            Long memberId) {
         this.id = id;
         this.name = name;
         this.description = description;
+        this.memberId = memberId;
     }
 
+    public Provider(
+        String name,
+        String description,
+        Long memberId
+    ) {
+        this.name = name;
+        this.description = description;
+        this.memberId = memberId;
+    }
+
+    public static Provider of(
+        String name,
+        String description,
+        Long memberId
+    ) {
+        return new Provider(
+            name,
+            description,
+            memberId
+        );
+    }
+
+    public void updateMemberId(Long memberId) {
+        this.memberId = memberId;
+    }
 }
