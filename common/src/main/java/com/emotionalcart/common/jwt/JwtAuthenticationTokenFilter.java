@@ -19,6 +19,7 @@ import java.io.IOException;
 import java.util.Collection;
 import java.util.List;
 import java.util.Optional;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 import static java.util.Objects.nonNull;
@@ -59,9 +60,10 @@ public class JwtAuthenticationTokenFilter extends GenericFilterBean {
     private void setNewAuthenticationToken(HttpServletRequest req, String authorizationToken) {
         Long id = tokenProvider.getId(authorizationToken);
         String username = tokenProvider.getUsername(authorizationToken);
+        Set<MemberRole> roles = tokenProvider.getRoles(authorizationToken).stream().map(MemberRole::valueOf).collect(Collectors.toSet());
 
         if (nonNull(id) && !isEmpty(username)) {
-            JwtAuthenticationToken authentication = new JwtAuthenticationToken(new JwtAuthentication(id, username), null,
+            JwtAuthenticationToken authentication = new JwtAuthenticationToken(new JwtAuthentication(id, username, roles), null,
                                                                                this.authorities(authorizationToken));
             authentication.setDetails(new WebAuthenticationDetailsSource().buildDetails(req));
             SecurityContextHolder.getContext().setAuthentication(authentication);
