@@ -11,6 +11,7 @@ import org.springframework.security.core.authority.SimpleGrantedAuthority;
 
 import java.util.Collection;
 import java.util.List;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 /**
@@ -31,8 +32,9 @@ public abstract class DefaultJwtAuthenticationProvider implements Authentication
         try {
             Member account = getMember(principal.id());
             CredentialInfo credentialInfo = new CredentialInfo(principal.id());
+            Set<MemberRole> roles = account.roles().stream().map(MemberRole::valueOf).collect(Collectors.toSet());
             JwtAuthenticationToken authenticationToken = new JwtAuthenticationToken(
-                new JwtAuthentication(account.userId(), account.name()),
+                new JwtAuthentication(account.userId(), account.name(), roles),
                 credentialInfo,
                 this.authorities(account.roles()));
             authenticationToken.setDetails(account);
