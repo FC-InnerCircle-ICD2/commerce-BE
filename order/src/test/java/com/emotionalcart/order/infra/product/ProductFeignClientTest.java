@@ -1,7 +1,6 @@
 package com.emotionalcart.order.infra.product;
 
 import com.emotionalcart.order.infra.advice.exceptions.ProductPriceException;
-import com.emotionalcart.order.infra.advice.exceptions.ProductStockException;
 import com.emotionalcart.order.infra.advice.exceptions.ProductValidationException;
 import com.emotionalcart.order.infra.config.TestContainerConfiguration;
 import com.emotionalcart.order.infra.utils.FileUtils;
@@ -23,7 +22,8 @@ import java.util.List;
 import static com.github.tomakehurst.wiremock.client.WireMock.*;
 import static org.junit.Assert.assertThrows;
 import static org.junit.Assert.assertTrue;
-import static org.springframework.http.HttpStatus.*;
+import static org.springframework.http.HttpStatus.BAD_REQUEST;
+import static org.springframework.http.HttpStatus.OK;
 import static org.springframework.http.MediaType.APPLICATION_JSON_VALUE;
 
 @Slf4j
@@ -32,7 +32,7 @@ import static org.springframework.http.MediaType.APPLICATION_JSON_VALUE;
 @Import(TestContainerConfiguration.class)
 @AutoConfigureWireMock(port = 0)
 @TestPropertySource(properties = {
-    "product.find.feign-endpoint=http://localhost:${wiremock.server.port}"
+        "product.find.feign-endpoint=http://localhost:${wiremock.server.port}"
 })
 class ProductFeignClientTest {
 
@@ -50,12 +50,12 @@ class ProductFeignClientTest {
 
         // when
         ResponseDefinition response = stubFor(post(urlEqualTo("/api/v1/products/price"))
-                                                  .withRequestBody(equalToJson(request))
-                                                  .willReturn(aResponse()
-                                                                  .withStatus(OK.value())
-                                                                  .withHeader("Content-Type", APPLICATION_JSON_VALUE)
-                                                                  .withBody(expect)
-                                                  )).getResponse();
+                .withRequestBody(equalToJson(request))
+                .willReturn(aResponse()
+                        .withStatus(OK.value())
+                        .withHeader("Content-Type", APPLICATION_JSON_VALUE)
+                        .withBody(expect)
+                )).getResponse();
         // then
         Assertions.assertEquals(200, response.getStatus());
     }
@@ -68,12 +68,12 @@ class ProductFeignClientTest {
         String expect = FileUtils.readFileAsString("testcase/product/price/product_price_fail_404.txt");
         // when
         stubFor(post(urlEqualTo("/api/v1/products/price"))
-                    .withRequestBody(equalToJson(request))
-                    .willReturn(aResponse()
-                                    .withStatus(BAD_REQUEST.value())
-                                    .withHeader("Content-Type", APPLICATION_JSON_VALUE)
-                                    .withBody(expect)
-                    )).getResponse();
+                .withRequestBody(equalToJson(request))
+                .willReturn(aResponse()
+                        .withStatus(BAD_REQUEST.value())
+                        .withHeader("Content-Type", APPLICATION_JSON_VALUE)
+                        .withBody(expect)
+                )).getResponse();
         // then
         Exception exception = assertThrows(ProductPriceException.class, () -> {
             productService.getProductPrice(objectMapper.readValue(request, List.class)); // 예시
@@ -82,27 +82,6 @@ class ProductFeignClientTest {
         assertTrue(exception.getMessage().contains("해당 상품 옵션을 찾을 수 없습니다."));
     }
 
-    @Test
-    @DisplayName("상품 재고 변경 실패 - 409")
-    void test_case_3() throws Exception {
-        // given
-        String request = FileUtils.readFileAsString("testcase/product/stock/product_stock_request_1.txt");
-        String expect = FileUtils.readFileAsString("testcase/product/stock/product_stock_fail_409.txt");
-        // when
-        stubFor(post(urlEqualTo("/api/v1/products/stock"))
-                    .withRequestBody(equalToJson(request))
-                    .willReturn(aResponse()
-                                    .withStatus(CONFLICT.value())
-                                    .withHeader("Content-Type", APPLICATION_JSON_VALUE)
-                                    .withBody(expect)
-                    )).getResponse();
-        // then
-        Exception exception = assertThrows(ProductStockException.class, () -> {
-            productService.updateProductStock(objectMapper.readValue(request, List.class)); // 예시
-        });
-
-        assertTrue(exception.getMessage().contains("상품의 재고가 부족합니다."));
-    }
 
     @Test
     @DisplayName("상품 유효성 검사 실패 - 400")
@@ -112,12 +91,12 @@ class ProductFeignClientTest {
         String expect = FileUtils.readFileAsString("testcase/product/valid/product_valid_fail_400.txt");
         // when
         stubFor(post(urlEqualTo("/api/v1/products/validate"))
-                    .withRequestBody(equalToJson(request))
-                    .willReturn(aResponse()
-                                    .withStatus(BAD_REQUEST.value())
-                                    .withHeader("Content-Type", APPLICATION_JSON_VALUE)
-                                    .withBody(expect)
-                    )).getResponse();
+                .withRequestBody(equalToJson(request))
+                .willReturn(aResponse()
+                        .withStatus(BAD_REQUEST.value())
+                        .withHeader("Content-Type", APPLICATION_JSON_VALUE)
+                        .withBody(expect)
+                )).getResponse();
         // then
         Exception exception = assertThrows(ProductValidationException.class, () -> {
             productService.isValidProduct(objectMapper.readValue(request, List.class)); // 예시
