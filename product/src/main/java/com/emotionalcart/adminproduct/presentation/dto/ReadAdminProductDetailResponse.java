@@ -10,6 +10,7 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import java.time.LocalDateTime;
+import java.util.Comparator;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -17,6 +18,7 @@ import java.util.stream.Collectors;
 @NoArgsConstructor
 @AllArgsConstructor
 public class ReadAdminProductDetailResponse {
+
     @JsonSerialize(using = ToStringSerializer.class)
     private Long id;
     private String name;
@@ -37,13 +39,15 @@ public class ReadAdminProductDetailResponse {
         this.category = ReadAdminProductCategoryResponse.toResponse(category);
         this.provider = ReadAdminProviderResponse.toResponse(provider);
         this.options = product.getOptions().stream()
-                .filter(option -> !option.getIsDeleted())
-                .map(ReadAdminProductOptionResponse::toResponse)
-                .collect(Collectors.toList());
+            .filter(option -> !option.getIsDeleted())
+            .map(ReadAdminProductOptionResponse::toResponse)
+            .collect(Collectors.toList());
         this.images = product.getImages().stream()
-                .filter(image -> !image.getIsDeleted())
-                .map(ReadAdminProductImageResponse::toResponse)
-                .collect(Collectors.toList());
+            .filter(image -> !image.getIsDeleted())
+            .sorted(Comparator.comparing(ProductImage::getImageType)
+                        .thenComparing(ProductImage::getFileOrder))
+            .map(ReadAdminProductImageResponse::toResponse)
+            .collect(Collectors.toList());
         this.createdAt = product.getCreatedAt();
         this.updatedAt = product.getUpdatedAt();
     }
@@ -58,6 +62,7 @@ public class ReadAdminProductDetailResponse {
 @NoArgsConstructor
 @AllArgsConstructor
 class ReadAdminProductCategoryResponse {
+
     private Long id;
     private String name;
     private Long parentCategoryId;
@@ -73,12 +78,14 @@ class ReadAdminProductCategoryResponse {
     public static ReadAdminProductCategoryResponse toResponse(Category category) {
         return new ReadAdminProductCategoryResponse(category);
     }
+
 }
 
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
 class ReadAdminProviderResponse {
+
     private Long id;
     private String name;
 
@@ -90,12 +97,14 @@ class ReadAdminProviderResponse {
     public static ReadAdminProviderResponse toResponse(Provider provider) {
         return new ReadAdminProviderResponse(provider);
     }
+
 }
 
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
 class ReadAdminProductOptionResponse {
+
     @JsonSerialize(using = ToStringSerializer.class)
     private Long id;
     private String name;
@@ -105,20 +114,22 @@ class ReadAdminProductOptionResponse {
         this.id = option.getId();
         this.name = option.getName();
         this.optionDetails = option.getDetails().stream()
-                .filter(detail -> !detail.getIsDeleted())
-                .map(ReadProductOptionDetailResponse::new)
-                .collect(Collectors.toList());
+            .filter(detail -> !detail.getIsDeleted())
+            .map(ReadProductOptionDetailResponse::new)
+            .collect(Collectors.toList());
     }
 
     public static ReadAdminProductOptionResponse toResponse(ProductOption option) {
         return new ReadAdminProductOptionResponse(option);
     }
+
 }
 
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
 class ReadProductOptionDetailResponse {
+
     @JsonSerialize(using = ToStringSerializer.class)
     private Long id;
     private String value;
@@ -137,12 +148,14 @@ class ReadProductOptionDetailResponse {
     public static ReadProductOptionDetailResponse toResponse(ProductOptionDetail optionDetail) {
         return new ReadProductOptionDetailResponse(optionDetail);
     }
+
 }
 
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
 class ReadAdminProductImageResponse {
+
     private Long id;
     private String imageUrl;
     private ProductImageType productImageType;
@@ -158,4 +171,5 @@ class ReadAdminProductImageResponse {
     public static ReadAdminProductImageResponse toResponse(ProductImage image) {
         return new ReadAdminProductImageResponse(image);
     }
+
 }

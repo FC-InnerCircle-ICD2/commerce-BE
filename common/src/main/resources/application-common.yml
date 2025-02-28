@@ -10,4 +10,9 @@ app:
     - ${AUTH_SERVER_URL:http://localhost:8082}
     - ${FRONT_SERVER_URL:http://localhost:3000}
     - ${FRONT_SERVER_ADMIN_URL:http://localhost:5173}
-    - https://www.emmotional-cart.click/
+    - https://www.emmotional-cart.click
+    - https://auth-api.emmotional-cart.click
+    - https://member-api.emmotional-cart.click
+    - https://product-api.emmotional-cart.click
+    - https://order-api.emmotional-cart.click
+

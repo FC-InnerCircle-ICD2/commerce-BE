@@ -22,11 +22,14 @@ public enum ErrorCode {
     S3_UPLOAD_FAILED("PRODUCT-0015", "이미지 등록에 실패했습니다.", HttpStatus.INTERNAL_SERVER_ERROR),
     REQUIRED_OPTION_MISSING("PRODUCT-0016", "상품의 필수 옵션이 선택되지 않았습니다.", HttpStatus.CONFLICT),
     OUT_OF_STOCK("PRODUCT-0017", "상품의 재고가 부족합니다.", HttpStatus.CONFLICT),
-    PRODUCT_IMAGE_REQUIRED("PRODUCT_0018", "상품 이미지는 필수입니다.", HttpStatus.BAD_REQUEST),
-    CATEGORY_MUST_BE_DEPTH_2("PRODUCT_0019", "카테고리는 Depth 2 만 입력 가능합니다.", HttpStatus.BAD_REQUEST),
-    NOT_FOUND_PRODUCT_BANNER("PRODUCT-0020","상품배너를 찾을 수 없습니다.", HttpStatus.NOT_FOUND ),
-    NOT_FOUND_ORDER("PRODUCT_0020", "주문 내역을 찾을 수 없습니다.", HttpStatus.NOT_FOUND),
-    ;
+    PRODUCT_IMAGE_REQUIRED("PRODUCT-0018", "상품 이미지는 필수입니다.", HttpStatus.BAD_REQUEST),
+    CATEGORY_MUST_BE_DEPTH_2("PRODUCT-0019", "카테고리는 Depth 2 만 입력 가능합니다.", HttpStatus.BAD_REQUEST),
+    NOT_FOUND_PRODUCT_BANNER("PRODUCT-0020", "상품배너를 찾을 수 없습니다.", HttpStatus.NOT_FOUND),
+    NOT_FOUND_ORDER("PRODUCT_0021", "주문 내역을 찾을 수 없습니다.", HttpStatus.NOT_FOUND),
+    CART_NOT_FOUND("PRODUCT_0022", "장바구니가 비어있습니다.", HttpStatus.NOT_FOUND),
+    CART_ACCESS_ERROR("PRODUCT_0023", "장바구니 접근에 실패했습니다.", HttpStatus.INTERNAL_SERVER_ERROR),
+    AT_LEAST_ONE_OPTION_REQUIRED("PRODUCT-0021", "최소 하나의 옵션이 필요합니다.", HttpStatus.BAD_REQUEST),
+    AT_LEAST_ONE_OPTION_DETAIL_REQUIRED("PRODUCT-0022", "최소 하나의 옵션 상세 값이 필요합니다.", HttpStatus.BAD_REQUEST);
 
     private final String errorCode;
     private final String message;

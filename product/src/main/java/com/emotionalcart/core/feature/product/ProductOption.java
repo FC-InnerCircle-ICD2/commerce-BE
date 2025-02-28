@@ -47,6 +47,14 @@ public class ProductOption extends BaseEntity {
         }
     }
 
+    public void addDetail(ProductOptionDetail detail) {
+        if (this.details == null) {
+            this.details = new ArrayList<>();
+        }
+        this.details.add(detail);
+        detail.setProductOption(this);
+    }
+
 
     public Long getProductId() {
         return product.getId();
