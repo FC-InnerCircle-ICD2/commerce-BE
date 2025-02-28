@@ -1,0 +1,65 @@
+name: Deploy to EC2
+
+on:
+  workflow_dispatch:  # 버튼 클릭 시 실행
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Set up JDK
+        uses: actions/setup-java@v4
+        with:
+          java-version: '21'
+          distribution: 'corretto'
+
+      - name: Build with Gradle
+        run: ./gradlew bootJar
+
+      - name: Upload Artifact
+        uses: actions/upload-artifact@v3
+        with:
+          name: app-jar
+          path: build/libs/*.jar
+
+  deploy:
+    needs: build
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Download Artifact
+        uses: actions/download-artifact@v3
+        with:
+          name: app-jar
+          path: app
+
+      - name: Deploy to EC2
+        env:
+          PRIVATE_KEY: ${{ secrets.EC2_SSH_KEY }}
+          HOST: ${{ secrets.EC2_HOST }}
+          USER: ${{ secrets.EC2_USER }}
+        run: |
+          echo "$PRIVATE_KEY" > private_key.pem
+          # 현재 파일 권한 확인
+          CURRENT_PERM=$(stat -c "%a" private_key.pem)
+          
+          # 파일 권한이 400이 아닐 경우에만 chmod 400 실행
+          if [ "$CURRENT_PERM" != "400" ]; then
+          chmod 400 private_key.pem
+          fi
+          
+          scp -i private_key.pem app/*.jar $USER@$HOST:/home/$USER/app.jar
+          ssh -i private_key.pem $USER@$HOST << 'EOF'
+            # 실행 중인 프로세스 종료
+            PID=$(ps aux | grep 'java -jar /home/ubuntu/app.jar' | grep -v grep | awk '{print $2}')
+            if [ ! -z "$PID" ]; then
+              echo "Stopping existing application (PID: $PID)"
+              kill -9 $PID
+            fi
+            nohup java -jar /home/ubuntu/app.jar > /home/ubuntu/app.log 2>&1 &
+            echo "Application Started"
+          EOF
