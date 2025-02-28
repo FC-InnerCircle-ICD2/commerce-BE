@@ -44,32 +44,31 @@ public class OrderDetailService {
         PageRequest pageRequest = PageRequest.of(request.getPageNumber(), request.getPageSize(), Sort.by(Sort.Order.desc("orderAt")));
         Page<Orders> orderList = orderRepository.findByOrderMemberId(userId, pageRequest);
         List<List<ProductDetail>> productDetailsByOrders =
-            orderList.stream().map(order -> order.getOrderItems().stream().map(orderItem -> {
-                ProductDetail productDetail = productService.getProductDetail(orderItem.getProductId());
-                Map<Long, Long> optionMap = orderItem.getOrderItemOptions().stream()
-                    .collect(Collectors.toMap(
-                        OrderItemOption::getProductOptionId,
-                        OrderItemOption::getProductOptionDetailId,
-                        (existing, replacement) -> replacement
-                    ));
-                productDetail.getProductOptions().forEach(option -> {
-                    if (optionMap.containsKey(option.getId())) {
-                        option.updateOptionDetail(optionMap.get(option.getId()));
-                    }
-                });
-                return productDetail;
-            }).toList()).toList();
+                orderList.stream().map(order -> order.getOrderItems().stream().map(orderItem -> {
+                    ProductDetail productDetail = productService.getProductDetail(orderItem.getProductId());
+                    Map<Long, Long> optionMap = orderItem.getOrderItemOptions().stream()
+                            .collect(Collectors.toMap(
+                                    OrderItemOption::getProductOptionId,
+                                    OrderItemOption::getProductOptionDetailId
+                            ));
+                    List<ProductDetail.ProductDetailOption> filteredOptions = productDetail.getProductOptions().stream()
+                            .filter(option -> optionMap.containsKey(option.getId()))
+                            .peek(option -> option.updateOptionDetail(optionMap.get(option.getId())))
+                            .toList();
+                    productDetail.setProductOptions(filteredOptions);
+                    return productDetail;
+                }).toList()).toList();
         List<UserOrder> userOrders = IntStream.range(0, orderList.getContent().size())
-            .mapToObj(i -> UserOrder.from(orderList.getContent().get(i), productDetailsByOrders.get(i)))
-            .toList();
+                .mapToObj(i -> UserOrder.from(orderList.getContent().get(i), productDetailsByOrders.get(i)))
+                .toList();
 
         return new PageImpl<>(userOrders, request, orderList.getTotalElements());
     }
 
     public Boolean validateOrderByMember(Long userId, Long orderId) {
         return orderRepository.findByIdAndOrderMemberId(orderId, userId)
-            .map(Orders::isCompleted)
-            .orElse(false);
+                .map(Orders::isCompleted)
+                .orElse(false);
     }
 
 }

@@ -3,6 +3,7 @@ package com.emotionalcart.order.infra.product.dto;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import lombok.Setter;
 
 import java.util.List;
 
@@ -20,6 +21,7 @@ public class ProductDetail {
 
     private String productImage;
 
+    @Setter
     private List<ProductDetailOption> productOptions;
 
     public ProductDetail(ProductDetailResponse response) {
@@ -28,8 +30,8 @@ public class ProductDetail {
         this.providerId = response.getProvider().getId();
         this.providerName = response.getProvider().getName();
         this.productImage =
-            response.getImages().stream().filter(image -> image.getType().toString().equals("MAIN")).map(ProductDetailResponse.ProductDetailImages::getUrl).findFirst().orElse(
-                "");
+                response.getImages().stream().filter(image -> image.getType().toString().equals("MAIN")).map(ProductDetailResponse.ProductDetailImages::getUrl).findFirst().orElse(
+                        "");
 
         this.productOptions = response.getOptions().stream().map(ProductDetailOption::from).toList();
 
@@ -61,8 +63,8 @@ public class ProductDetail {
 
         public void updateOptionDetail(Long optionItem) {
             this.optionDetails = this.optionDetails.stream()
-                .filter(detail -> optionItem.equals(detail.getId()))
-                .toList();
+                    .filter(detail -> optionItem.equals(detail.getId()))
+                    .toList();
         }
 
     }
