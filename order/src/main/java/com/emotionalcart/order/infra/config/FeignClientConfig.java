@@ -23,7 +23,7 @@ public class FeignClientConfig {
 
     @Bean
     public RequestInterceptor requestInterceptor() {
-        return requestTemplate -> requestTemplate.header("Authorization", getToken());
+        return requestTemplate -> requestTemplate.header("Authorization", "Bearer " + getToken());
     }
 
     private String getToken() {
