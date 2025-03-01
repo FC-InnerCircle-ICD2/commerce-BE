@@ -36,16 +36,25 @@ springdoc:
   swagger-ui:
     urls:
       - name: Order Service
-        url: ${ORDER_SERVER_URL:http://localhost:9999}/v3/api-docs
+        url: https://order-api.emmotional-cart.click/v3/api-docs
       - name: Product Service
-        url: ${PRODUCT_SERVER_URL:http://localhost:8080}/v3/api-docs
+        url: https://product-api.emmotional-cart.click/v3/api-docs
       - name: Stock Service
         url: ${STOCK_SERVER_URL:http://localhost:9992}/v3/api-docs
       - name: Member Service
-        url: ${MEMBER_SERVER_URL:http://localhost:8081}/v3/api-docs
+        url: https://member-api.emmotional-cart.click/v3/api-docs
       - name: Auth Service
-        url: ${AUTH_SERVER_URL:http://localhost:8082}/v3/api-docs
+        url: https://auth-api.emmotional-cart.click/v3/api-docs
 aws:
   s3:
     access-key: test
     secret-key: test
+product:
+  find:
+    feign-endpoint: ${PRODUCT_SERVER_URL:http://localhost:8080}
+app:
+  allow-domains:
+    - https://auth-api.emmotional-cart.click
+    - https://member-api.emmotional-cart.click
+    - https://product-api.emmotional-cart.click
+    - https://order-api.emmotional-cart.click
