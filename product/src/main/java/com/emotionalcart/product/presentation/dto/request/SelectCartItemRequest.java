@@ -10,7 +10,5 @@ import lombok.Setter;
 @Setter
 public class SelectCartItemRequest {
 
-    private Long productId;
-    // 상품 옵션 및 상품 상세 옵션 맵 배열
-    private List<Map<Long, Long>> optionDetailIdMapList;
+    private String itemId;
 }

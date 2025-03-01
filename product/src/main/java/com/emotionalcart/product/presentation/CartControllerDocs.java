@@ -4,7 +4,6 @@ import com.emotionalcart.product.presentation.dto.ReadCart;
 import com.emotionalcart.product.presentation.dto.request.AddCartItemRequest;
 import com.emotionalcart.product.presentation.dto.request.DeleteCartItemsRequest;
 import com.emotionalcart.product.presentation.dto.request.DeleteCartResponse;
-import com.emotionalcart.product.presentation.dto.request.SelectCartItemRequest;
 import com.emotionalcart.product.presentation.dto.request.UpdateCartItemQuantityRequest;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
@@ -30,10 +29,10 @@ public interface CartControllerDocs {
         ResponseEntity<ReadCart.Response> updateCartItemQuantity(@AuthenticationPrincipal JwtAuthentication jwt,
                         @RequestBody UpdateCartItemQuantityRequest request);
 
-        @PatchMapping
+        @PatchMapping("/{itemId}")
         @Operation(summary = "장바구니 아이템 선택", description = "장바구니 아이템을 선택합니다.")
         ResponseEntity<ReadCart.Response> selectCartItem(@AuthenticationPrincipal JwtAuthentication jwt,
-                        @RequestBody SelectCartItemRequest request);
+                        @PathVariable String itemId);
 
         @DeleteMapping
         @Operation(summary = "장바구니 비우기", description = "장바구니를 비웁니다.")

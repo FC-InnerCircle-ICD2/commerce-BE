@@ -14,10 +14,8 @@ public class AddCartItemRequest {
     private Long productId;
     private String productName;
     private int price;
-    private int subTotalPrice;
     private List<Carts.Option> options;
     private Carts.Image images;
     private Carts.Provider provider;
-    private boolean isSelected = true;
 
 }

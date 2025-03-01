@@ -28,6 +28,7 @@ public class ReadCart {
     @Data
     public static class CartItem implements Serializable {
         private static final long serialVersionUID = 1L;
+        private String itemId;
         private Long productId;
         private String productName;
         private int price;
@@ -36,13 +37,16 @@ public class ReadCart {
         private Carts.Image images;
         private Carts.Provider provider;
         private boolean isSelected;
+        private int itemOrder;
 
-        public static CartItem from(AddCartItemRequest request) {
+        public static CartItem from(AddCartItemRequest request, String itemId, int itemOrder, int subTotalPrice) {
             CartItem cartItem = new CartItem();
+            cartItem.itemId = itemId;
+            cartItem.itemOrder = itemOrder;
             cartItem.productId = request.getProductId();
             cartItem.productName = request.getProductName();
             cartItem.price = request.getPrice();
-            cartItem.subTotalPrice = request.getSubTotalPrice();
+            cartItem.subTotalPrice = subTotalPrice;
 
             List<Carts.Option> readCartOptions = new ArrayList<>();
             for (Carts.Option reqOption : request.getOptions()) {
