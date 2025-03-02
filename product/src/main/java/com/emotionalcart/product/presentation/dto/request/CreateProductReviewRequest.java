@@ -1,6 +1,8 @@
 package com.emotionalcart.product.presentation.dto.request;
 
 import com.emotionalcart.core.feature.review.Review;
+import com.fasterxml.jackson.databind.annotation.JsonSerialize;
+import com.fasterxml.jackson.databind.ser.std.ToStringSerializer;
 import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.validation.constraints.Max;
 import jakarta.validation.constraints.Min;
@@ -17,6 +19,7 @@ public class CreateProductReviewRequest {
 
     @NotNull
     @Schema(name = "주문번호")
+    @JsonSerialize(using = ToStringSerializer.class)
     private Long orderId;
     private String productName;
     private String productOptionId;
