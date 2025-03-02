@@ -5,6 +5,8 @@ import com.emotionalcart.auth.presentation.handler.CustomSuccessHandler;
 import com.emotionalcart.auth.presentation.handler.OAuth2AuthorizationRequestCustomizer;
 import com.emotionalcart.common.security.AppProperties;
 import com.emotionalcart.common.security.CustomAuthenticationEntryPoint;
+import com.emotionalcart.core.util.CookieUtil;
+import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -47,11 +49,21 @@ public class SecurityConfig {
             //oauth2
             .oauth2Login(oauth2 -> oauth2
                 .authorizationEndpoint(endpoint -> endpoint
-                                .authorizationRequestResolver(authorizationRequestCustomizer)
-                        )
+                    .authorizationRequestResolver(authorizationRequestCustomizer)
+                )
                 .userInfoEndpoint(userInfoEndpointConfig -> userInfoEndpointConfig
                     .userService(customOAuth2UserService))
                 .successHandler(customSuccessHandler)
+            )
+            .logout(logout -> logout
+                .logoutUrl("/logout")
+                .logoutSuccessUrl("/")
+                .invalidateHttpSession(true)
+                .addLogoutHandler(((request, response, authentication) -> {
+                    CookieUtil.deleteCookie(response, "Access-Token");
+                    CookieUtil.deleteCookie(response, "Refresh-Token");
+                }))
+                .logoutSuccessHandler((request, response, authentication) -> response.setStatus(HttpServletResponse.SC_OK))
             )
             //경로별 인가 작업(권한 및 인증 설정)
             .authorizeHttpRequests(auth -> auth

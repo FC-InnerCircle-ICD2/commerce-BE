@@ -1,7 +1,9 @@
 package com.emotionalcart.adminproduct.infrastructure.repository;
 
 import com.emotionalcart.adminproduct.infrastructure.AdminProducts;
+import com.emotionalcart.core.feature.product.Product;
 import com.emotionalcart.core.feature.product.ProductImageType;
+import com.emotionalcart.core.feature.product.ProductOption;
 import com.querydsl.core.types.Projections;
 import com.querydsl.jpa.impl.JPAQuery;
 import com.querydsl.jpa.impl.JPAQueryFactory;
@@ -15,6 +17,8 @@ import java.util.List;
 import static com.emotionalcart.core.feature.category.QCategory.category;
 import static com.emotionalcart.core.feature.product.QProduct.product;
 import static com.emotionalcart.core.feature.product.QProductImage.productImage;
+import static com.emotionalcart.core.feature.product.QProductOption.productOption;
+import static com.emotionalcart.core.feature.product.QProductOptionDetail.productOptionDetail;
 import static com.emotionalcart.core.feature.provider.QProvider.provider;
 
 @RequiredArgsConstructor
@@ -57,6 +61,30 @@ public class AdminQueryDslProductRepositoryImpl implements AdminQueryDslProductR
             Long result = count.fetchOne();
             return result != null ? result : 0L;
         });
+    }
+
+    @Override
+    public void deleteProductOptions(Product product, List<Long> productOptionIds) {
+        queryFactory
+            .update(productOption)
+            .set(productOption.isDeleted, true)
+            .where(
+                productOption.id.in(productOptionIds),
+                productOption.product.eq(product)
+            )
+            .execute();
+    }
+
+    @Override
+    public void deleteProductOptionDetails(List<ProductOption> options, List<Long> productOptionDetailIds) {
+        queryFactory
+            .update(productOptionDetail)
+            .set(productOptionDetail.isDeleted, true)
+            .where(
+                productOptionDetail.id.in(productOptionDetailIds),
+                productOptionDetail.productOption.in(options)
+            )
+            .execute();
     }
 
 }

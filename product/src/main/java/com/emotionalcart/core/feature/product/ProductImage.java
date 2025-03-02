@@ -63,4 +63,8 @@ public class ProductImage extends BaseImageEntity {
         );
     }
 
+    public void delete() {
+        this.setIsDeleted(true);
+    }
+
 }

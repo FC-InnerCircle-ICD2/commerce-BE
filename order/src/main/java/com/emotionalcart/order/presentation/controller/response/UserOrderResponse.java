@@ -103,6 +103,8 @@ public class UserOrderResponse {
         @Schema(description = "구매 수량", example = "1")
         private int quantity;
 
+        private List<ProductOption> productOptions;
+
         public OrderProduct(Long productId, String productName, int quantity, double orderItemPrice) {
             this.productId = productId;
             this.productName = productName;
@@ -118,6 +120,7 @@ public class UserOrderResponse {
             this.productPrice = orderProduct.getProductPrice();
             this.productImage = orderProduct.getProductImage();
             this.quantity = orderProduct.getQuantity();
+            this.productOptions = orderProduct.getProductOptions().stream().map(po -> ProductOption.from(po)).toList();
         }
 
         public static OrderProduct of(Long productId, String productName, int quantity, double orderItemPrice) {
@@ -126,6 +129,48 @@ public class UserOrderResponse {
 
         public static OrderProduct from(UserOrder.OrderProduct orderProduct) {
             return new OrderProduct(orderProduct);
+        }
+
+    }
+
+    @Getter
+    @NoArgsConstructor(access = AccessLevel.PROTECTED)
+    public static class ProductOption {
+
+        private Long productOptionId;
+        private String productOptionName;
+
+        private Long productOptionDetailId;
+        private String productOptionDetailName;
+
+        public ProductOption(UserOrder.OrderProduct.ProductOption po) {
+            this.productOptionId = po.getProductOptionId();
+            this.productOptionName = po.getProductOptionName();
+            this.productOptionDetailId = po.getProductOptionDetailId();
+            this.productOptionDetailName = po.getProductOptionDetailName();
+        }
+
+        public static ProductOption from(UserOrder.OrderProduct.ProductOption po) {
+            return new ProductOption(po);
+        }
+
+    }
+
+    @Getter
+    @NoArgsConstructor(access = AccessLevel.PROTECTED)
+    public static class ProductOptionDetail {
+
+        private Long productOptionDetailId;
+
+        private String productOptionDetailName;
+
+        public ProductOptionDetail(Long productOptionDetailId, String productOptionDetailName) {
+            this.productOptionDetailId = productOptionDetailId;
+            this.productOptionDetailName = productOptionDetailName;
+        }
+
+        public static ProductOptionDetail from(Long productOptionDetailId, String productOptionDetailName) {
+            return new ProductOptionDetail(productOptionDetailId, productOptionDetailName);
         }
 
     }

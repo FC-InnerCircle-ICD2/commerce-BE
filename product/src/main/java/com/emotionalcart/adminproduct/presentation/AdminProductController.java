@@ -13,12 +13,13 @@ import org.springframework.web.bind.annotation.*;
 @RequestMapping("/api/admin/v1/products")
 @RequiredArgsConstructor
 public class AdminProductController implements AdminProductControllerDocs {
+
     private final AdminProductService adminProductService;
 
     @Override
     @PostMapping(consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     public ResponseEntity<CreateProductResponse> createProduct(
-            @Valid @ModelAttribute CreateProductRequest request) {
+        @Valid @ModelAttribute CreateProductRequest request) {
         return ResponseEntity.ok(adminProductService.createProduct(request));
     }
 
@@ -31,7 +32,7 @@ public class AdminProductController implements AdminProductControllerDocs {
     @Override
     @GetMapping("/{productId}")
     public ResponseEntity<ReadAdminProductDetailResponse> readProduct(
-            @PathVariable Long productId) {
+        @PathVariable Long productId) {
         return ResponseEntity.ok(adminProductService.readProduct(productId));
     }
 
@@ -41,4 +42,12 @@ public class AdminProductController implements AdminProductControllerDocs {
         adminProductService.deleteProduct(productId);
         return ResponseEntity.ok().build();
     }
+
+    @Override
+    @PatchMapping("/{productId}")
+    public ResponseEntity<Void> updateProduct(@PathVariable Long productId, @Valid @ModelAttribute UpdateProductRequest request) {
+        adminProductService.updateProduct(productId, request);
+        return ResponseEntity.ok().build();
+    }
+
 }

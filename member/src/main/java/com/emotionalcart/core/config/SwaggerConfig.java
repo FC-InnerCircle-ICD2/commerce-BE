@@ -1,10 +1,13 @@
 package com.emotionalcart.core.config;
 
 import io.swagger.v3.oas.models.info.Info;
+import io.swagger.v3.oas.models.servers.Server;
 import lombok.RequiredArgsConstructor;
 import org.springdoc.core.models.GroupedOpenApi;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+
+import java.util.List;
 
 @RequiredArgsConstructor
 @Configuration
@@ -14,7 +17,13 @@ public class SwaggerConfig {
     public GroupedOpenApi openAPI() {
         return GroupedOpenApi.builder()
                 .group("Group API")
-                .addOpenApiCustomizer(openAPI -> openAPI.info(apiInfo())).build();
+                .addOpenApiCustomizer(openAPI -> openAPI.info(apiInfo()).servers(servers())).build();
+    }
+
+    private List<Server> servers() {
+        return List.of(
+                new Server().url("https://member-api.emmotional-cart.click").description("Production Server")
+        );
     }
 
     private Info apiInfo() {
@@ -22,5 +31,5 @@ public class SwaggerConfig {
                 .title("Member API")
                 .description("회원 도메인 API Docs");
     }
-    
+
 }

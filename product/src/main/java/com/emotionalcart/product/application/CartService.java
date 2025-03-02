@@ -1,9 +1,11 @@
 package com.emotionalcart.product.application;
 
+import java.util.Comparator;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
 import java.util.concurrent.atomic.AtomicBoolean;
+import java.util.UUID;
 
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Service;
@@ -15,9 +17,9 @@ import com.emotionalcart.product.presentation.dto.ReadCart;
 import com.emotionalcart.product.presentation.dto.request.AddCartItemRequest;
 import com.emotionalcart.product.presentation.dto.request.DeleteCartItemsRequest;
 import com.emotionalcart.product.presentation.dto.request.DeleteCartResponse;
-import com.emotionalcart.product.presentation.dto.request.SelectCartItemRequest;
 import com.emotionalcart.product.presentation.dto.request.UpdateCartItemQuantityRequest;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.emotionalcart.product.presentation.dto.support.Carts;
 
 import lombok.RequiredArgsConstructor;
 
@@ -53,23 +55,57 @@ public class CartService {
         List<ReadCart.CartItem> cartItems = cart.getItems();
 
         boolean itemExists = false;
+        int subTotalPrice = 0;
 
+        // 장바구니에 아이템 존재 여부 확인
         for (ReadCart.CartItem item : cartItems) {
-            if (item.getProductId().equals(request.getProductId())
-                    && item.getOption().getId().equals(request.getOptionId())
-                    && item.getOption().getOptionDetail().getId().equals(request.getOptionDetailId())) {
-                itemExists = true;
-                int itemQuantity = item.getOption().getOptionDetail().getQuantity();
-                int addQuantity = request.getOptionDetailQuantity();
-                item.getOption().getOptionDetail().setQuantity(itemQuantity + addQuantity);
-                item.setSubTotalPrice((item.getPrice() + item.getOption().getOptionDetail().getAdditionalPrice())
-                        * (itemQuantity + addQuantity));
+            if (item.getProductId().equals(request.getProductId())) {
+                boolean allOptionsMatch = true;
+                for (Carts.Option reqOption : request.getOptions()) {
+                    boolean optionMatch = item.getOptions().stream()
+                            .anyMatch(option -> option.getId().equals(reqOption.getId()) &&
+                                    option.getOptionDetail().getId().equals(reqOption.getOptionDetail().getId()));
+                    if (!optionMatch) {
+                        allOptionsMatch = false;
+                        break;
+                    }
+                }
+                // 장바구니에 아이템 존재한다면 수량 증가 및 subTotalPrice 재계산, 선택 처리
+                if (allOptionsMatch) {
+                    itemExists = true;
+                    for (Carts.Option reqOption : request.getOptions()) {
+                        for (Carts.Option option : item.getOptions()) {
+                            if (option.getId().equals(reqOption.getId()) &&
+                                    option.getOptionDetail().getId().equals(reqOption.getOptionDetail().getId())) {
+                                int itemQuantity = option.getOptionDetail().getQuantity();
+                                int addQuantity = reqOption.getOptionDetail().getQuantity();
+                                option.getOptionDetail().setQuantity(itemQuantity + addQuantity);
+                                subTotalPrice = (item.getPrice() + option.getOptionDetail().getAdditionalPrice())
+                                        * (itemQuantity + addQuantity);
+                                item.setSubTotalPrice(subTotalPrice);
+                                item.setSelected(true);
+                            }
+                        }
+                    }
+                }
             }
         }
 
-        // 장바구니에 상품이 없다면 상품 추가
+        // 장바구니에 해당 아이템이 없다면 추가 및 subTotalPrice 계산 후 삽입
         if (!itemExists) {
-            cartItems.add(ReadCart.CartItem.from(request));
+            int itemOrder = cartItems.size() + 1;
+            String itemId = UUID.randomUUID().toString();
+
+            int totalAdditionalPrice = 0;
+            int addQuantity = 0;
+
+            for (Carts.Option reqOption : request.getOptions()) {
+                totalAdditionalPrice += reqOption.getOptionDetail().getAdditionalPrice();
+                addQuantity = reqOption.getOptionDetail().getQuantity();
+            }
+
+            subTotalPrice = (request.getPrice() + totalAdditionalPrice) * addQuantity;
+            cartItems.add(ReadCart.CartItem.from(request, itemId, itemOrder, subTotalPrice));
         }
 
         cart.setCartId(cartId);
@@ -78,6 +114,9 @@ public class CartService {
         // 장바구니 총 상품가격 재계산
         int total = cart.calculateTotal();
         cart.setTotalPrice(total);
+
+        // 장바구니 내 아이템 itemOrder 순 내림차순 정렬
+        cartItems.sort(Comparator.comparingInt(ReadCart.CartItem::getItemOrder).reversed());
 
         try {
             redisTemplate.opsForValue().set(cartId, cart, 24, TimeUnit.HOURS); // 24시간 만료
@@ -98,14 +137,17 @@ public class CartService {
         boolean wasSelected = false;
 
         for (ReadCart.CartItem item : cartItems) {
-            if (item.getProductId().equals(request.getProductId())
-                    && item.getOption().getId().equals(request.getOptionId())
-                    && item.getOption().getOptionDetail().getId().equals(request.getOptionDetailId())) {
+            if (item.getItemId().equals(request.getItemId())) {
                 itemExists = true;
-                wasSelected = item.isSelected(); // 기존에 선택된 상태인지 확인
-                item.getOption().getOptionDetail().setQuantity(request.getOptionDetailQuantity());
-                item.setSubTotalPrice((item.getPrice() + item.getOption().getOptionDetail().getAdditionalPrice())
-                        * request.getOptionDetailQuantity());
+                wasSelected = item.isSelected();
+                int totalSubTotalPrice = 0;
+                int totalAdditionalPrice = 0;
+                for (Carts.Option option : item.getOptions()) {
+                    option.getOptionDetail().setQuantity(request.getOptionDetailQuantity());
+                    totalAdditionalPrice += option.getOptionDetail().getAdditionalPrice();
+                }
+                totalSubTotalPrice = (item.getPrice() + totalAdditionalPrice) * request.getOptionDetailQuantity();
+                item.setSubTotalPrice(totalSubTotalPrice);
             }
         }
 
@@ -129,7 +171,7 @@ public class CartService {
     }
 
     // 장바구니 내 아이템 선택
-    public ReadCart.Response selectCartItem(Long userId, SelectCartItemRequest request) {
+    public ReadCart.Response selectCartItem(Long userId, String itemId) {
         String cartId = CART_KEY_PREFIX + userId;
         ReadCart.Response cart = readCart(userId);
         List<ReadCart.CartItem> cartItems = cart.getItems();
@@ -137,11 +179,9 @@ public class CartService {
         boolean itemExists = false;
 
         for (ReadCart.CartItem item : cartItems) {
-            if (item.getProductId().equals(request.getProductId())
-                    && item.getOption().getId().equals(request.getOptionId())
-                    && item.getOption().getOptionDetail().getId().equals(request.getOptionDetailId())) {
+            if (item.getItemId().equals(itemId)) {
                 itemExists = true;
-                item.setSelected(item.isSelected() ? false : true);
+                item.setSelected(!item.isSelected());
             }
         }
 
@@ -175,10 +215,8 @@ public class CartService {
         AtomicBoolean wasAnySelected = new AtomicBoolean(false);
         List<ReadCart.CartItem> updatedCartItems = cartItems.stream()
                 .filter(item -> {
-                    boolean isToDelete = request.getItems().stream()
-                            .anyMatch(reqItem -> reqItem.getProductId().equals(item.getProductId())
-                                    && reqItem.getOptionId().equals(item.getOption().getId())
-                                    && reqItem.getOptionDetailId().equals(item.getOption().getOptionDetail().getId()));
+                    boolean isToDelete = request.getItemIds() != null &&
+                            request.getItemIds().stream().anyMatch(itemId -> itemId.equals(item.getItemId()));
                     if (isToDelete && item.isSelected()) {
                         wasAnySelected.set(true); // 선택된 아이템이 삭제 대상인 경우
                     }
@@ -193,6 +231,9 @@ public class CartService {
             int total = cart.calculateTotal();
             cart.setTotalPrice(total);
         }
+
+        // 장바구니 내 아이템 itemOrder 순 내림차순 정렬
+        cartItems.sort(Comparator.comparingInt(ReadCart.CartItem::getItemOrder).reversed());
 
         try {
             redisTemplate.opsForValue().set(cartId, cart, 24, TimeUnit.HOURS); // 24시간 만료
