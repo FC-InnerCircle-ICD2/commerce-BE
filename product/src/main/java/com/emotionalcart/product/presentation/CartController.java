@@ -6,7 +6,6 @@ import com.emotionalcart.product.presentation.dto.ReadCart;
 import com.emotionalcart.product.presentation.dto.request.AddCartItemRequest;
 import com.emotionalcart.product.presentation.dto.request.DeleteCartItemsRequest;
 import com.emotionalcart.product.presentation.dto.request.DeleteCartResponse;
-import com.emotionalcart.product.presentation.dto.request.SelectCartItemRequest;
 import com.emotionalcart.product.presentation.dto.request.UpdateCartItemQuantityRequest;
 
 import lombok.RequiredArgsConstructor;
@@ -14,12 +13,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
-import org.springframework.web.bind.annotation.DeleteMapping;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 
@@ -53,8 +47,8 @@ public class CartController implements CartControllerDocs {
     // 장바구니 아이템 선택
     @Override
     public ResponseEntity<ReadCart.Response> selectCartItem(@AuthenticationPrincipal JwtAuthentication jwt,
-            @RequestBody SelectCartItemRequest request) {
-        return ResponseEntity.ok(cartService.selectCartItem(jwt.id(), request));
+            @PathVariable String itemId) {
+        return ResponseEntity.ok(cartService.selectCartItem(jwt.id(), itemId));
     }
 
     // 장바구니 비우기
