@@ -11,6 +11,6 @@ import org.springframework.web.bind.annotation.RequestBody;
 public interface OrderShipmentApiDocs {
 
     @Operation(summary = "배송 요청 API")
-    ResponseEntity<Void> createShipment(@Valid @RequestBody OrderShipmentRequest orderShipmentRequest);
+    ResponseEntity<Boolean> createShipment(@Valid @RequestBody OrderShipmentRequest orderShipmentRequest);
 
 }

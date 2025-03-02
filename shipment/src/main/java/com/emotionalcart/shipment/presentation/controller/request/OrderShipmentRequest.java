@@ -25,8 +25,9 @@ public class OrderShipmentRequest {
      * 주문 한 건에 여러 상품이 들어올 수가 있음
      * 해당 상품 들은 각자 업체가 다를 수가 있음
      */
-    @NotNull(message = "업체 번호는 필수입니다.")
-    private List<Long> providerIds;
+    @Valid
+    @NotNull(message = "업체 정보는 필수입니다.")
+    private List<ProviderProductRequest> providerProductRequests;
 
     /**
      * 배송 정본
@@ -65,6 +66,22 @@ public class OrderShipmentRequest {
          * 배송 메모 선택 값
          */
         private String deliveryMemo;
+
+    }
+
+    @Getter
+    @NoArgsConstructor(access = AccessLevel.PROTECTED)
+    public static class ProviderProductRequest {
+
+        private Long providerId;
+
+        public ProviderProductRequest(Long providerId) {
+            this.providerId = providerId;
+        }
+
+        public static ProviderProductRequest from(Long providerId) {
+            return new ProviderProductRequest(providerId);
+        }
 
     }
 

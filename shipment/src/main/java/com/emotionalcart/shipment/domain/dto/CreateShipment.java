@@ -24,7 +24,8 @@ public class CreateShipment {
 
     protected CreateShipment(OrderShipmentRequest request) {
         this.orderId = request.getOrderId();
-        this.providerIds = request.getProviderIds();
+        this.providerIds =
+            request.getProviderProductRequests().stream().map(OrderShipmentRequest.ProviderProductRequest::getProviderId).toList();
         this.name = request.getDeliveryInfo().getName();
         this.phoneNumber = request.getDeliveryInfo().getPhoneNumber();
         this.address = request.getDeliveryInfo().getAddress();
