@@ -2,6 +2,7 @@ package com.emotionalcart.core.config;
 
 import com.emotionalcart.common.jwt.JwtHeaderValidator;
 import feign.RequestInterceptor;
+import feign.okhttp.OkHttpClient;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.context.annotation.Bean;
@@ -15,6 +16,11 @@ import org.springframework.web.context.request.ServletRequestAttributes;
 public class FeignClientConfig {
 
     private final JwtHeaderValidator jwtHeaderValidator;
+
+    @Bean
+    public feign.Client feignClient() {
+        return new OkHttpClient();
+    }
 
     @Bean
     public RequestInterceptor requestInterceptor() {
