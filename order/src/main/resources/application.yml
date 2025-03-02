@@ -12,9 +12,9 @@ spring:
     password: ${DATASOURCE_PASSWORD:1234}
   data:
     redis:
-      host: ${REDIS_SERVER_HOST:localhost}   # Redis server IP address
-      port: ${REDIS_SERVER_PORT:6379}             # Redis server port
-      timeout: 2000           # Connection timeout (in milliseconds)
+      host: ${REDIS_SERVER_HOST:localhost} # Redis server IP address
+      port: ${REDIS_SERVER_PORT:6379} # Redis server port
+      timeout: 2000 # Connection timeout (in milliseconds)
   jpa:
     hibernate:
       ddl-auto: validate
