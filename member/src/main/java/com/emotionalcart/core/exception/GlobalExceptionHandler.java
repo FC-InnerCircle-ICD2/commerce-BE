@@ -1,6 +1,7 @@
 package com.emotionalcart.core.exception;
 
 import org.springframework.http.ResponseEntity;
+import org.springframework.http.converter.HttpMessageNotReadableException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 
@@ -16,6 +17,16 @@ public class GlobalExceptionHandler {
                 ex.getMessage()
         );
         return new ResponseEntity<>(errorResponse, ex.getHttpStatus());
+    }
+
+    @ExceptionHandler(HttpMessageNotReadableException.class)
+    public ResponseEntity<ErrorResponse> handleJsonParseException(HttpMessageNotReadableException ex) {
+
+        ErrorResponse errorResponse = new ErrorResponse(
+            ErrorCode.INVALID_MEMBER_ROLE_VALUE.getErrorCode(),
+            ErrorCode.INVALID_MEMBER_ROLE_VALUE.getMessage()
+        );
+        return new ResponseEntity<>(errorResponse, ErrorCode.INVALID_MEMBER_ROLE_VALUE.getHttpStatus());
     }
 
     // 그 외 모든 예외 처리
