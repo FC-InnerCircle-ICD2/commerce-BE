@@ -50,4 +50,16 @@ public class AdminProductController implements AdminProductControllerDocs {
         return ResponseEntity.ok().build();
     }
 
+    @Override
+    @PostMapping("/stock/{productId}")
+    public ResponseEntity<ReadAdminProductDetailResponse> generateOptionCombinationsAndSaveStock(@PathVariable(value = "productId") Long productId) {
+        return ResponseEntity.ok(adminProductService.generateOptionCombinationsAndSaveStock(productId));
+    }
+
+    @Override
+    @PatchMapping("/stock/{productId}")
+    public ResponseEntity<ReadAdminProductDetailResponse> updateStockQuantity(@PathVariable Long productId, @Valid @RequestBody UpdateStockQuantityRequest request) {
+        return ResponseEntity.ok(adminProductService.updateStockQuantity(productId, request));
+    }
+
 }
