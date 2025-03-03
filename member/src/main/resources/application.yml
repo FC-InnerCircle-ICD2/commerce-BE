@@ -58,3 +58,9 @@ app:
     - https://member-api.emmotional-cart.click
     - https://product-api.emmotional-cart.click
     - https://order-api.emmotional-cart.click
+swagger-config:
+  servers:
+    - url: https://member-api.emmotional-cart.click
+      description: Production Server
+    - url: http://localhost:8081
+      description: Local Server
