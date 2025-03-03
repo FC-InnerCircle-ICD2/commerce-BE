@@ -4,6 +4,8 @@ import com.emotionalcart.stock.domain.*;
 import com.emotionalcart.stock.domain.repository.ProductRepository;
 import com.emotionalcart.stock.domain.repository.StockOptionRepository;
 import com.emotionalcart.stock.domain.repository.StockRepository;
+import com.emotionalcart.stock.infra.advice.exceptions.NotExistsStockException;
+import com.emotionalcart.stock.infra.advice.exceptions.OutOfStockException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -136,7 +138,7 @@ public class StockCommandService {
     public UpdatedStock updateStockQuantity(Long productId, List<Long> optionDetailIds, int quantity) {
         log.info("재고 수량 변경 - 상품 식별자: {}, 옵션 디테일 식별자: {}, 수량: {}", productId, optionDetailIds, quantity);
         Stock stock = stockRepository.getStockByOptionIds(StockQuantitySearchCondition.of(productId, optionDetailIds))
-            .orElseThrow(() -> new IllegalArgumentException("해당 상품은 재고가 존재하지 않습니다."));
+            .orElseThrow(NotExistsStockException::new);
         stock.changeQuantity(quantity);
         return UpdatedStock.of(stock.getId(), optionDetailIds, quantity);
     }
@@ -146,7 +148,7 @@ public class StockCommandService {
         for (StockQuantityOptionValidateCommand optionValidateCommand : optionValidateCommands) {
             Stock stock = stockRepository.getStockByOptionIds(StockQuantitySearchCondition.of(command.getProductId(),
                                                                                               optionValidateCommand.getOptionDetailsIds()))
-                .orElseThrow(() -> new IllegalArgumentException("해당 상품은 재고가 존재하지 않습니다."));
+                .orElseThrow(NotExistsStockException::new);
             if (stock.getQuantity() < optionValidateCommand.getQuantity()) {
                 return false;
             }
@@ -169,10 +171,10 @@ public class StockCommandService {
     public DeductedStockInfo deductStockQuantity(Long productId, List<Long> optionDetailIds, int quantity) {
         log.info("재고 차감 - 상품 식별자: {}, 옵션 디테일 식별자: {}, 수량: {}", productId, optionDetailIds, quantity);
         Stock stock = stockRepository.getStockByOptionIds(StockQuantitySearchCondition.of(productId, optionDetailIds))
-            .orElseThrow(() -> new IllegalArgumentException("해당 상품은 재고가 존재하지 않습니다."));
+            .orElseThrow(NotExistsStockException::new);
         int remainQuantity = stock.getQuantity() - quantity;
         if (remainQuantity < 0) {
-            throw new IllegalArgumentException("재고가 부족합니다.");
+            throw new OutOfStockException();
         }
         stock.minusQuantity(quantity);
         log.info("재고 차감 완료 - 상품 식별자: {}, 옵션 디테일 식별자: {}, 차감 수량: {}, 잔여 수량: {}", productId, optionDetailIds, quantity, remainQuantity);
