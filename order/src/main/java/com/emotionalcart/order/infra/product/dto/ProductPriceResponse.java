@@ -20,6 +20,11 @@ public class ProductPriceResponse {
     private Long productId;
 
     /**
+     * 업체 아이디
+     */
+    private Long providerId;
+
+    /**
      * 가격
      */
     private double price;

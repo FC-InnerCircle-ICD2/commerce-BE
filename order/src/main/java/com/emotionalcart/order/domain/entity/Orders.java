@@ -146,4 +146,11 @@ public class Orders extends BaseEntity {
         return this.getStatus() == OrderStatus.DELIVERED;
     }
 
+    /**
+     * 배송 요청 실패
+     */
+    public void failRequest() {
+        this.status = OrderStatus.SHIP_REQUESTED_PENDING;
+    }
+
 }
