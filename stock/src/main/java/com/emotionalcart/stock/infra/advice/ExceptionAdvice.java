@@ -20,7 +20,7 @@ public class ExceptionAdvice {
     @ExceptionHandler(Exception.class)
     public ResponseEntity<ExceptionResponse> handleGenericException(Exception e) {
         log.error("Exception : {}", e.getMessage(), e);
-        return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(ExceptionResponse.of("STOCK_003", e.getMessage()));
+        return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(ExceptionResponse.of("STOCK-003", e.getMessage()));
     }
 
     @ResponseStatus(HttpStatus.BAD_REQUEST)
@@ -34,25 +34,25 @@ public class ExceptionAdvice {
             log.error("HandlerMethodValidation Exception 발생: {}", ex.getMessage());
             message = e.getAllErrors().getFirst().getDefaultMessage();
         }
-        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(ExceptionResponse.of("STOCK_004", message));
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(ExceptionResponse.of("STOCK-004", message));
     }
 
     @ResponseStatus(HttpStatus.NOT_FOUND)
     @ExceptionHandler({OutOfStockException.class, NotExistsStockException.class})
     public ResponseEntity<ExceptionResponse> handleNotFound(Exception e) {
-        return ResponseEntity.status(HttpStatus.NOT_FOUND).body(ExceptionResponse.of("STOCK_001", e.getMessage()));
+        return ResponseEntity.status(HttpStatus.NOT_FOUND).body(ExceptionResponse.of("STOCK-001", e.getMessage()));
     }
 
     @ResponseStatus(HttpStatus.BAD_REQUEST)
     @ExceptionHandler({BadRequestException.class})
     public ResponseEntity<ExceptionResponse> handleBadRequest(Exception e) {
-        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(ExceptionResponse.of("STOCK_002", e.getMessage()));
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(ExceptionResponse.of("STOCK-002", e.getMessage()));
     }
 
     @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
     @ExceptionHandler({HttpServerErrorException.InternalServerError.class})
     public ResponseEntity<ExceptionResponse> handleInternalServerError(Exception e) {
-        return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(ExceptionResponse.of("STOCK_002", e.getMessage()));
+        return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(ExceptionResponse.of("STOCK-002", e.getMessage()));
     }
 
 }
