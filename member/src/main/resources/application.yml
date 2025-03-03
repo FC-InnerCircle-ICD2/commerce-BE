@@ -49,6 +49,9 @@ aws:
   s3:
     access-key: test
     secret-key: test
+product:
+  find:
+    feign-endpoint: ${PRODUCT_SERVER_URL:http://localhost:8080}
 app:
   allow-domains:
     - https://auth-api.emmotional-cart.click

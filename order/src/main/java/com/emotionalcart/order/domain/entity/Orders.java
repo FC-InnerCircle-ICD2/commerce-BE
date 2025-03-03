@@ -99,6 +99,7 @@ public class Orders extends BaseEntity {
         Orders orders = new Orders();
         orders.orderAt = LocalDateTime.now();
         orders.paymentMethod = createOrder.getPaymentMethod();
+        orders.status = OrderStatus.COMPLETED;
         orders.totalPrice =
             Money.sum(createOrder.getOrderItemsPriceAndQuantity());
         orders.createOrderItems(createOrder.getOrderItems());
@@ -120,9 +121,11 @@ public class Orders extends BaseEntity {
 
     /**
      * 주문 상태를 결제 요청으로 변경한다.
+     * 실제로 결제하도록 처리하는 로직이 없어 요청 후 바로 완료로 처리할 수 있도록 상태값 변경
      */
     public void requestPayment() {
         this.status = OrderStatus.PAYMENT_REQUESTED;
+        this.status = OrderStatus.PAYMENT_COMPLETED;
     }
 
     /**

@@ -7,6 +7,8 @@ import com.emotionalcart.shipment.domain.dto.CreateShipment;
 import com.emotionalcart.shipment.domain.entity.Shipment;
 import com.emotionalcart.shipment.domain.enums.ShipmentStatus;
 import com.emotionalcart.shipment.domain.repository.OrderShipmentRepository;
+import com.emotionalcart.shipment.infra.repository.orders.OrdersRepository;
+import com.emotionalcart.shipment.infra.repository.orders.entity.Orders;
 import com.emotionalcart.shipment.infra.repository.provider.ProviderRepository;
 import com.emotionalcart.shipment.infra.repository.provider.entity.Provider;
 import com.emotionalcart.shipment.presentation.controller.request.ShipmentUpdateRequest;
@@ -19,6 +21,7 @@ import org.springframework.security.authorization.AuthorizationDeniedException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.Arrays;
 import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
@@ -31,6 +34,7 @@ public class OrderShipmentService {
     private final OrderShipmentRepository orderShipmentRepository;
     private final ProviderRepository providerRepository;
     private final ShipmentStatusConverter shipmentStatusConverter;
+    private final OrdersRepository ordersRepository;
 
     /**
      * 배송 요청 메소드
@@ -104,13 +108,49 @@ public class OrderShipmentService {
         return Boolean.TRUE;
     }
 
+    /**
+     * 주문 상태 업데이트
+     *
+     * @param orderId 주문 번호
+     */
     private void updateOrderStatus(Long orderId) {
 
         List<Shipment> orderList = orderShipmentRepository.findByOrderId(orderId);
 
         Set<ShipmentStatus> shipmentStatuses = orderList.stream()
             .map(Shipment::getStatus).collect(Collectors.toSet());
-        
+
+        Orders order = ordersRepository.findById(orderId)
+            .orElseThrow(() -> new IllegalArgumentException("Order not found with id: " + orderId));
+
+        order.updateStatus(determineOrderStatus(shipmentStatuses, order.getStatus()));
+    }
+
+    private Orders.OrderStatus determineOrderStatus(Set<ShipmentStatus> shipmentStatuses, Orders.OrderStatus status) {
+        if (containsAny(shipmentStatuses, ShipmentStatus.DELIVERING, ShipmentStatus.OUT_FOR_DELIVERY, ShipmentStatus.SHIPPED)) {
+            return Orders.OrderStatus.SHIPPING; // 하나라도 배송 중 관련 상태면 배송 중 처리
+        }
+        if (isSingleStatus(shipmentStatuses, ShipmentStatus.DELIVERED)) {
+            return Orders.OrderStatus.DELIVERED; // 모든 값이 배송 완료면 배송 완료 처리
+        }
+        if (isSingleStatus(shipmentStatuses, ShipmentStatus.SHIP_REQUESTED)) {
+            return Orders.OrderStatus.SHIP_REQUESTED; // 모든 값이 배송 요청이면 배송 요청 처리
+        }
+        if (isSingleStatus(shipmentStatuses, ShipmentStatus.CANCELLED)) {
+            return Orders.OrderStatus.CANCELLED; // 모든 값이 배송 취소면 배송 취소 처리
+        }
+        if (isSingleStatus(shipmentStatuses, ShipmentStatus.PENDING)) {
+            return Orders.OrderStatus.PENDING; // 모든 값이 배송 준비 중이면 배송 준비 중 처리
+        }
+        return status; // 기존 상태 유지
+    }
+
+    private boolean containsAny(Set<ShipmentStatus> shipmentStatuses, ShipmentStatus... statuses) {
+        return Arrays.stream(statuses).anyMatch(shipmentStatuses::contains);
+    }
+
+    private boolean isSingleStatus(Set<ShipmentStatus> shipmentStatuses, ShipmentStatus status) {
+        return shipmentStatuses.size() == 1 && shipmentStatuses.contains(status);
     }
 
     /**

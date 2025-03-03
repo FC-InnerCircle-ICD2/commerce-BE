@@ -2,18 +2,24 @@ package com.emotionalcart.shipment.domain.converter;
 
 import com.emotionalcart.shipment.domain.enums.ShipmentStatus;
 import com.emotionalcart.shipment.presentation.controller.request.ShipmentUpdateRequest;
+import lombok.AccessLevel;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
 import org.springframework.stereotype.Component;
 
-import java.util.HashMap;
+import java.util.EnumMap;
 import java.util.Map;
 
 /**
  * order 배송 상태와 변환 시켜주는 convertor
  */
+@Getter
 @Component
+@NoArgsConstructor(access = AccessLevel.PRIVATE)
 public class ShipmentStatusConverter {
 
-    private static final Map<ShipmentUpdateRequest.ShipmentUpdateStatus, ShipmentStatus> statusMap = new HashMap<>();
+    private static final Map<ShipmentUpdateRequest.ShipmentUpdateStatus, ShipmentStatus> statusMap =
+        new EnumMap<>(ShipmentUpdateRequest.ShipmentUpdateStatus.class);
 
     static {
         statusMap.put(ShipmentUpdateRequest.ShipmentUpdateStatus.SHIP_REQUESTED, ShipmentStatus.SHIP_REQUESTED);

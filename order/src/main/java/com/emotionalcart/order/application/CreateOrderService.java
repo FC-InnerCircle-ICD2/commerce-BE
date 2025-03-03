@@ -200,7 +200,7 @@ public class CreateOrderService {
         log.info("request shipment orders.id: {}", orders.getId());
         OrderShipmentRequest orderShipmentRequest = OrderShipmentRequest.of(orders.getId(), orders.getOrderRecipient(), productPriceList);
         if (Boolean.TRUE.equals(shipmentService.createShipment(orderShipmentRequest))) {
-            orders.requestShipment();
+            return;
         }
         log.error("request fail shipment orders.id: {}", orders.getId());
         orders.failRequest();
