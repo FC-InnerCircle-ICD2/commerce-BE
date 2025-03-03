@@ -20,7 +20,8 @@ dependencies {
     implementation("io.jsonwebtoken:jjwt-jackson:0.12.3")
     implementation("org.springframework.boot:spring-boot-starter-data-jpa")
     api("org.springdoc:springdoc-openapi-starter-webmvc-ui:2.7.0")
-
+    // https://mvnrepository.com/artifact/com.github.gavlyukovskiy/p6spy-spring-boot-starter
+    api("com.github.gavlyukovskiy:p6spy-spring-boot-starter:1.10.0")
     compileOnly("org.projectlombok:lombok")
     annotationProcessor("org.projectlombok:lombok")
     testImplementation(platform("org.junit:junit-bom:5.10.0"))
