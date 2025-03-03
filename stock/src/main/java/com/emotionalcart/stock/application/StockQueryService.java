@@ -1,9 +1,13 @@
 package com.emotionalcart.stock.application;
 
 import com.emotionalcart.stock.domain.repository.StockRepository;
+import com.emotionalcart.stock.presentation.StockQuantity;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
+
+import java.util.ArrayList;
+import java.util.List;
 
 @Slf4j
 @Service
@@ -22,6 +26,19 @@ public class StockQueryService {
      */
     public int getStockQuantityByOptionIds(StockQuantitySearchQuery query) {
         return stockRepository.findStockQuantityByOptionIds(query.mapToCondition());
+    }
+
+    public List<StockQuantity> getStockQuantitiesByOptionIds(List<StockQuantitySearchQuery> queries) {
+        List<StockQuantity> quantities = new ArrayList<>();
+        for (StockQuantitySearchQuery query : queries) {
+            int quantity = stockRepository.findStockQuantityByOptionIds(query.mapToCondition());
+            quantities.add(StockQuantity.builder()
+                               .productId(query.getProductId())
+                               .optionDetailsIds(query.getOptionDetailsIds())
+                               .quantity(quantity)
+                               .build());
+        }
+        return quantities;
     }
 
 }
