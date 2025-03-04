@@ -24,12 +24,15 @@ dependencies {
     implementation("org.springframework.boot:spring-boot-starter")
     implementation("org.springframework.boot:spring-boot-starter-web")
     implementation("org.springframework.boot:spring-boot-starter-data-jpa")
+    implementation("org.springframework.boot:spring-boot-starter-validation")
     runtimeOnly("com.mysql:mysql-connector-j")
     implementation("com.querydsl:querydsl-jpa:5.0.0:jakarta")
     annotationProcessor("com.querydsl:querydsl-apt:5.0.0:jakarta")
     annotationProcessor("jakarta.persistence:jakarta.persistence-api")
     annotationProcessor("org.projectlombok:lombok")
     // https://mvnrepository.com/artifact/org.projectlombok/lombok
+    implementation("org.springframework.boot:spring-boot-starter-actuator")
+
     compileOnly("org.projectlombok:lombok")
     testImplementation(platform("org.junit:junit-bom:5.10.0"))
     testImplementation("org.junit.jupiter:junit-jupiter")

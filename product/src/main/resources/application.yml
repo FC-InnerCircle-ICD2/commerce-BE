@@ -2,6 +2,8 @@ server:
   port: 8080
 
 spring:
+  application:
+    name: product-service
   servlet:
     multipart:
       max-file-size: 10MB
@@ -23,8 +25,27 @@ spring:
       hibernate:
         dialect: org.hibernate.dialect.MySQL8Dialect
         format_sql: true
-
+  data:
+    redis:
+      host: ${REDIS_SERVER_HOST:localhost}   # Redis server IP address
+      port: ${REDIS_SERVER_PORT:6379}             # Redis server port
+      timeout: 2000           # Connection timeout (in milliseconds)
 aws:
   s3:
     access-key: ${AWS_S3_ACCESS_KEY}
     secret-key: ${AWS_S3_SECRET_KEY}
+stock:
+  find:
+    feign-endpoint: ${STOCK_SERVER_URL:http://localhost:9992}
+order:
+  find:
+    feign-endpoint: ${ORDER_SERVER_URL:http://localhost:9999}
+app:
+  allow-domains:
+    - https://product-api.emmotional-cart.click
+swagger-config:
+  servers:
+    - url: https://product-api.emmotional-cart.click
+      description: Production Server
+    - url: http://localhost:8080
+      description: Local Server

@@ -19,6 +19,7 @@ dependencies {
     implementation("org.springframework.boot:spring-boot-starter-validation")
     implementation("org.springframework.boot:spring-boot-starter-web")
     implementation("org.springframework.cloud:spring-cloud-starter-openfeign")
+    implementation("io.github.openfeign","feign-okhttp")
     implementation("org.springframework.boot:spring-boot-starter-security")
     implementation("com.querydsl:querydsl-jpa:5.1.0:jakarta")
     annotationProcessor("com.querydsl:querydsl-apt:5.1.0:jakarta")
@@ -36,6 +37,11 @@ dependencies {
     testImplementation("org.mockito:mockito-core:5.7.0")
     testImplementation("org.mockito:mockito-inline:5.2.0")
     testRuntimeOnly("org.junit.platform:junit-platform-launcher")
+    implementation("org.apache.commons:commons-lang3:3.17.0")
+
+    // REDIS
+    implementation("org.springframework.boot:spring-boot-starter-data-redis")
+    implementation("io.lettuce:lettuce-core:6.5.3.RELEASE") // Redis 클라이언트
 }
 
 dependencyManagement {
@@ -43,7 +49,6 @@ dependencyManagement {
         mavenBom("org.springframework.cloud:spring-cloud-dependencies:$springCloudVersion")
     }
 }
-
 
 tasks.test {
     useJUnitPlatform()

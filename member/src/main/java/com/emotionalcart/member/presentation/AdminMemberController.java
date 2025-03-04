@@ -4,11 +4,13 @@ import com.emotionalcart.common.jwt.JwtAuthentication;
 import com.emotionalcart.core.feature.Member;
 import com.emotionalcart.member.application.AdminMemberService;
 import com.emotionalcart.member.application.TokenInfo;
-import com.emotionalcart.member.presentation.dto.*;
+import com.emotionalcart.member.presentation.dto.AdminMemberResponse;
+import com.emotionalcart.member.presentation.dto.CreateAdminMemberRequest;
+import com.emotionalcart.member.presentation.dto.CreateProviderAdminMemberRequest;
+import com.emotionalcart.member.presentation.dto.LoginAdminRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
@@ -55,4 +57,10 @@ public class AdminMemberController {
         Member member = adminMemberService.updateAdminMemberInfo(jwt.id(), memberId, request.mapToCommand());
         return ResponseEntity.ok().body(AdminMemberInfoResponse.from(member));
     }
+
+    @PostMapping("/provider")
+    public ResponseEntity<AdminMemberResponse> createProviderAdminUser(@AuthenticationPrincipal JwtAuthentication jwt, @RequestBody @Valid CreateProviderAdminMemberRequest request) {
+        return ResponseEntity.ok(adminMemberService.createProviderAdminUser(jwt.id(), request));
+    }
+
 }

@@ -22,6 +22,7 @@ public class CookieUtil {
         cookie.setHttpOnly(true);
         cookie.setSecure(true);
         cookie.setMaxAge(0); // 즉시 만료
+        cookie.setAttribute("SameSite", "None");
         response.addCookie(cookie);
     }
 

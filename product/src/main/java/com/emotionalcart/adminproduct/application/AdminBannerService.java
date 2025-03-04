@@ -2,8 +2,7 @@ package com.emotionalcart.adminproduct.application;
 
 import com.emotionalcart.adminproduct.domain.AdminBannerDataProvider;
 import com.emotionalcart.adminproduct.domain.AdminProductDataProvider;
-import com.emotionalcart.adminproduct.presentation.dto.CreateBannerRequest;
-import com.emotionalcart.adminproduct.presentation.dto.CreateBannerResponse;
+import com.emotionalcart.adminproduct.presentation.dto.*;
 import com.emotionalcart.core.exception.ErrorCode;
 import com.emotionalcart.core.exception.ProductException;
 import com.emotionalcart.core.feature.banner.Banner;
@@ -17,6 +16,9 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
+
+import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -90,4 +92,61 @@ public class AdminBannerService {
             throw new ProductException(ErrorCode.S3_UPLOAD_FAILED);
         }
     }
+
+    @Transactional(readOnly = true)
+    public List<ReadBannersResponse> readBanners() {
+        List<Banner> banners = adminBannerDataProvider.findAllBanners();
+
+        return banners.stream()
+                .map(ReadBannersResponse::toResponse)
+                .collect(Collectors.toList());
+    }
+
+    @Transactional(readOnly = true)
+    public ReadBannerDetailResponse readBannerDetail(Long bannerId) {
+        Banner banner = adminBannerDataProvider.findBannerById(bannerId);
+        ProductBanner productBanner = adminBannerDataProvider.findProductBanner(banner.getId());
+        return ReadBannerDetailResponse.toResponse(banner, productBanner);
+    }
+
+    @Transactional
+    public void deleteBanner(Long bannerId) {
+        Banner banner = adminBannerDataProvider.findBannerById(bannerId);
+        banner.delete();
+
+        ProductBanner productBanner = adminBannerDataProvider.findProductBanner(bannerId);
+        productBanner.delete();
+    }
+
+    @Transactional
+    public void updateBanner(Long bannerId, UpdateBannerRequest request) {
+        Banner banner = adminBannerDataProvider.findBannerById(bannerId);
+
+        banner.update(
+            request.getType(),
+            request.getTitle(),
+            request.getDescription(),
+            request.getBannerOrder(),
+            request.getStartDate(),
+            request.getEndDate()
+        );
+
+        if (request.getIconImage() != null) {
+            String iconPath = uploadAndCreateIconImage(banner, request.getIconImage());
+            banner.updateIconPath(iconPath);
+        }
+
+        if (request.getBannerImage() != null) {
+            BannerImage newBannerImage = uploadAndCreateBannerImage(banner, request.getBannerImage());
+            adminBannerDataProvider.saveBannerImage(newBannerImage);
+            banner.updateBannerImage(newBannerImage);
+        }
+
+        if (request.getType() == BannerType.PRODUCT && request.getProductId() != null) {
+            Product product = adminProductDataProvider.findProductById(request.getProductId());
+            ProductBanner productBanner = adminBannerDataProvider.findProductBanner(bannerId);
+            productBanner.update(product, banner, request.getLinkUrl(), request.getLinkType());
+        }
+    }
+
 }

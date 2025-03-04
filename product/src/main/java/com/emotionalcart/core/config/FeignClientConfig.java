@@ -1,23 +1,32 @@
 package com.emotionalcart.core.config;
 
+import com.emotionalcart.common.jwt.JwtHeaderValidator;
 import feign.RequestInterceptor;
-import jakarta.servlet.http.HttpServletRequest;
+import feign.okhttp.OkHttpClient;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.web.context.request.RequestContextHolder;
 import org.springframework.web.context.request.ServletRequestAttributes;
 
+@Slf4j
 @RequiredArgsConstructor
 @Configuration
 public class FeignClientConfig {
-    
+
+    private final JwtHeaderValidator jwtHeaderValidator;
+
+    @Bean
+    public feign.Client feignClient() {
+        return new OkHttpClient();
+    }
+
     @Bean
     public RequestInterceptor requestInterceptor() {
         return requestTemplate -> {
-            String token = getToken();
-            if (token != null) {
-                requestTemplate.header("Authorization", "Bearer " + token);
+            if (!requestTemplate.url().contains("/quantity")) {
+                requestTemplate.header("Authorization", "Bearer " + getToken());
             }
         };
     }
@@ -25,15 +34,14 @@ public class FeignClientConfig {
     private String getToken() {
         ServletRequestAttributes attributes = (ServletRequestAttributes)RequestContextHolder.getRequestAttributes();
         if (attributes == null) {
-            return null; // 현재 요청이 없으면 null 반환
+            throw new IllegalStateException("Request attributes are not available. Ensure this method is called in a web request context.");
         }
 
-        HttpServletRequest request = attributes.getRequest();
-        String bearerToken = request.getHeader("Authorization");
-        if (bearerToken != null && bearerToken.startsWith("Bearer ")) {
-            return bearerToken.substring(7); // "Bearer " 제거 후 JWT 반환
-        }
-        return null;
+        return jwtHeaderValidator.obtainAuthorizationToken(attributes.getRequest())
+            .orElseThrow(() -> {
+                log.error("JWT processing failed: Authorization token is missing.");
+                return new IllegalStateException("Authorization token is required but missing.");
+            });
     }
 
 }

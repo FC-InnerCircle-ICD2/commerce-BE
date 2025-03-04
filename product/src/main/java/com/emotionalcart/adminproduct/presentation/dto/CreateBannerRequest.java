@@ -32,8 +32,6 @@ public class CreateBannerRequest {
 
     private MultipartFile iconImage;
 
-    private Boolean isDeleted;
-
     // 상품 배너 관련 필드
     private Long productId;
     private String linkUrl;

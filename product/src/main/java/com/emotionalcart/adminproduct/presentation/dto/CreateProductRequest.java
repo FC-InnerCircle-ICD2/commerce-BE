@@ -4,6 +4,7 @@ import com.emotionalcart.core.feature.product.Product;
 import com.emotionalcart.core.feature.product.ProductOption;
 import com.emotionalcart.core.feature.product.ProductOptionDetail;
 import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.Size;
 import lombok.Getter;
 import lombok.Setter;
 import org.springframework.web.multipart.MultipartFile;
@@ -14,6 +15,7 @@ import java.util.stream.Collectors;
 @Getter
 @Setter
 public class CreateProductRequest {
+
     @NotNull
     private String name;
     @NotNull
@@ -21,10 +23,9 @@ public class CreateProductRequest {
     @NotNull
     private Integer price;
     @NotNull
-    private Long providerId;
-    @NotNull
     private Long categoryId;
     @NotNull
+    @Size(max = 3, message = "옵션은 3개까지만 등록 가능합니다.")
     private List<CreateProductOption> options;
     @NotNull
     private MultipartFile mainImage;
@@ -34,6 +35,7 @@ public class CreateProductRequest {
     @Getter
     @Setter
     static class CreateProductOption {
+
         private String name;
         private List<CreateProductOptionDetail> optionDetails;
 
@@ -44,19 +46,20 @@ public class CreateProductRequest {
             // 옵션 상세 추가
             if (optionDetails != null) {
                 List<ProductOptionDetail> details = optionDetails.stream()
-                        .map(option -> option.toEntity(productOption))
-                        .collect(Collectors.toList());
+                    .map(option -> option.toEntity(productOption))
+                    .collect(Collectors.toList());
                 productOption.setDetails(details);
             }
 
             return productOption;
         }
-    }
 
+    }
 
     @Getter
     @Setter
     static class CreateProductOptionDetail {
+
         @NotNull
         private String value;
         @NotNull
@@ -65,33 +68,35 @@ public class CreateProductRequest {
 
         public ProductOptionDetail toEntity(ProductOption productOption) {
             return ProductOptionDetail.of(
-                    value,
-                    optionOrder,
-                    additionalPrice,
-                    productOption
+                value,
+                optionOrder,
+                additionalPrice,
+                productOption
             );
         }
+
     }
 
     public Product toEntity() {
         Product product = Product.of(
-                name,
-                description,
-                price,
-                providerId,
-                categoryId
+            name,
+            description,
+            price,
+            4004431118744621651L, // TODO 공급자 하드코딩
+            categoryId
         );
 
         // 옵션 추가
         if (options != null) {
             List<ProductOption> productOptions = options.stream()
-                    .map(option -> option.toEntity(product))
-                    .collect(Collectors.toList());
+                .map(option -> option.toEntity(product))
+                .collect(Collectors.toList());
             product.setOptions(productOptions);
         }
 
         return product;
     }
+
 }
 
 

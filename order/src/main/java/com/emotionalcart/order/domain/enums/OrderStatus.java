@@ -30,6 +30,9 @@ public enum OrderStatus {
      * 주문 취소
      */
     CANCELLED("주문 취소"),
+
+    SHIP_REQUESTED_PENDING("배송 요청 대기"),
+
     /**
      * 배송 요청
      */

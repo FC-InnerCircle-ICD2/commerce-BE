@@ -14,22 +14,28 @@
           "productOptionId": 4004431091915682753,
           "productOptionDetailId": 4004431091914229334,
           "quantity": 1,
-          "additionalPrice": 0
+          "additionalPrice": 7900
+        },
+{
+          "productOptionId": 4004431091917370153,
+          "productOptionDetailId": 4004431091922540803,
+          "quantity": 1,
+          "additionalPrice": 3700
         }
       ],
       "categoryId": 502994,
       "productName": "string",
-      "price": 1000,
+      "price": 5160,
       "quantity": 1
     }
   ],
   "delivery": {
-    "name": "string",
+    "name": "테스트",
     "phoneNumber": "010-1111-2222",
-    "zoneCode": "string",
-    "address": "string",
-    "detailAddress": "string",
-    "deliveryMemo": "string"
+    "zoneCode": "13842",
+    "address": "서울시 강서구",
+    "detailAddress": "하늘길",
+    "deliveryMemo": "빨리보내주세요"
   },
   "cvc": "string",
   "expirationDate": "string",

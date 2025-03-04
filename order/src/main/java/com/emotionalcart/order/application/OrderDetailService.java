@@ -2,6 +2,7 @@ package com.emotionalcart.order.application;
 
 import com.emotionalcart.order.domain.dto.OrderDetail;
 import com.emotionalcart.order.domain.dto.UserOrder;
+import com.emotionalcart.order.domain.entity.OrderItemOption;
 import com.emotionalcart.order.domain.entity.Orders;
 import com.emotionalcart.order.infra.advice.exceptions.InvalidValueRequestException;
 import com.emotionalcart.order.infra.order.OrderRepository;
@@ -14,6 +15,8 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
+import java.util.Map;
+import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
 @Slf4j
@@ -41,13 +44,25 @@ public class OrderDetailService {
         PageRequest pageRequest = PageRequest.of(request.getPageNumber(), request.getPageSize(), Sort.by(Sort.Order.desc("orderAt")));
         Page<Orders> orderList = orderRepository.findByOrderMemberId(userId, pageRequest);
         List<List<ProductDetail>> productDetailsByOrders =
-            orderList.stream().map(order -> order.getOrderItems().stream().map(orderItem -> productService.getProductDetail(orderItem.getProductId())).toList()).toList();
-
+            orderList.stream().map(order -> order.getOrderItems().stream().map(orderItem -> {
+                ProductDetail productDetail = productService.getProductDetail(orderItem.getProductId());
+                Map<Long, Long> optionMap = orderItem.getOrderItemOptions().stream()
+                    .collect(Collectors.toMap(
+                        OrderItemOption::getProductOptionId,
+                        OrderItemOption::getProductOptionDetailId,
+                        (existing, replacement) -> replacement
+                    ));
+                productDetail.getProductOptions().forEach(option -> {
+                    if (optionMap.containsKey(option.getId())) {
+                        option.updateOptionDetail(optionMap.get(option.getId()));
+                    }
+                });
+                return productDetail;
+            }).toList()).toList();
         List<UserOrder> userOrders = IntStream.range(0, orderList.getContent().size())
             .mapToObj(i -> UserOrder.from(orderList.getContent().get(i), productDetailsByOrders.get(i)))
             .toList();
 
-        // 최종적으로 Page<UserOrder> 반환
         return new PageImpl<>(userOrders, request, orderList.getTotalElements());
     }
 

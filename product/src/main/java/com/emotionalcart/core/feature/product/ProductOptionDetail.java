@@ -2,7 +2,6 @@ package com.emotionalcart.core.feature.product;
 
 import com.emotionalcart.core.base.BaseEntity;
 import jakarta.persistence.*;
-import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.NotNull;
 import lombok.AccessLevel;
 import lombok.Getter;
@@ -26,7 +25,6 @@ public class ProductOptionDetail extends BaseEntity {
     @Column(nullable = false)
     private Integer quantity = 0;
 
-    @Min(1)
     @NotNull
     private Integer optionOrder = 1;
 
@@ -38,13 +36,13 @@ public class ProductOptionDetail extends BaseEntity {
     private ProductOption productOption;
 
     private ProductOptionDetail(
-            String value,
-            Integer optionOrder,
-            Integer additionalPrice,
-            ProductOption productOption
+        String value,
+        Integer optionOrder,
+        Integer additionalPrice,
+        ProductOption productOption
     ) {
         this.value = value;
-        this.optionOrder = optionOrder;
+        this.optionOrder = optionOrder == null ? 1 : optionOrder;
         this.additionalPrice = additionalPrice;
         this.productOption = productOption;
         this.quantity = 0;
@@ -52,14 +50,19 @@ public class ProductOptionDetail extends BaseEntity {
 
     public static ProductOptionDetail of(String value, Integer optionOrder, Integer additionalPrice, ProductOption productOption) {
         return new ProductOptionDetail(
-                value,
-                optionOrder,
-                additionalPrice,
-                productOption
+            value,
+            optionOrder,
+            additionalPrice,
+            productOption
         );
     }
 
     public void delete() {
         this.setIsDeleted(true);
+    }
+
+    public void updateValue(String value, Integer additionalPrice) {
+        this.value = value;
+        this.additionalPrice = additionalPrice;
     }
 }
