@@ -69,19 +69,10 @@ public interface AdminBannerControllerDocs {
     @Operation(
         summary = "배너 수정",
         description = "기존 배너 정보를 수정합니다.",
-        requestBody = @io.swagger.v3.oas.annotations.parameters.RequestBody(
-            description = "배너 수정 요청",
-            required = true,
-            content = @Content(
-                mediaType = "multipart/form-data",
-                schema = @Schema(implementation = UpdateBannerRequest.class)
-            )
-        ),
         responses = {
             @ApiResponse(responseCode = "200", description = "배너 수정 성공",
                 content = @Content(mediaType = "application/json",
-                    schema = @Schema(implementation = ReadBannerDetailResponse.class),
-                    examples = @ExampleObject(name = "배너 수정 성공", value = "{ \"bannerId\": 1 }")
+                    schema = @Schema(implementation = ReadBannerDetailResponse.class)
                 )),
 
             @ApiResponse(responseCode = "400", description = "잘못된 요청 (유효성 검사 실패)",

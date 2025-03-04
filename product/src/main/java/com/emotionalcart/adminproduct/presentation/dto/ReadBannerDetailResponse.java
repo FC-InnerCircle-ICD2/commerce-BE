@@ -3,6 +3,8 @@ package com.emotionalcart.adminproduct.presentation.dto;
 import com.emotionalcart.core.feature.banner.Banner;
 import com.emotionalcart.core.feature.banner.BannerType;
 import com.emotionalcart.core.feature.banner.ProductBanner;
+import com.fasterxml.jackson.databind.annotation.JsonSerialize;
+import com.fasterxml.jackson.databind.ser.std.ToStringSerializer;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.Getter;
@@ -48,6 +50,7 @@ public class ReadBannerDetailResponse {
 
     @Data
     public static class ReadProductBanners {
+        @JsonSerialize(using = ToStringSerializer.class)
         private Long id;
         private String linkUrl;
         private String linkType;
