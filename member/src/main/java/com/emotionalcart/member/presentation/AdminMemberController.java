@@ -4,10 +4,12 @@ import com.emotionalcart.common.jwt.JwtAuthentication;
 import com.emotionalcart.core.feature.Member;
 import com.emotionalcart.member.application.AdminMemberService;
 import com.emotionalcart.member.application.TokenInfo;
-import com.emotionalcart.member.presentation.dto.AdminMemberResponse;
+import com.emotionalcart.member.presentation.dto.AdminMemberInfoResponse;
+import com.emotionalcart.member.presentation.dto.AdminMembersResponse;
 import com.emotionalcart.member.presentation.dto.CreateAdminMemberRequest;
 import com.emotionalcart.member.presentation.dto.CreateProviderAdminMemberRequest;
 import com.emotionalcart.member.presentation.dto.LoginAdminRequest;
+import com.emotionalcart.member.presentation.dto.UpdateAdminMemberRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -19,7 +21,6 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 
-@Slf4j
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("/api/v1/admin/members/auth")
@@ -59,7 +60,7 @@ public class AdminMemberController {
     }
 
     @PostMapping("/provider")
-    public ResponseEntity<AdminMemberResponse> createProviderAdminUser(@AuthenticationPrincipal JwtAuthentication jwt, @RequestBody @Valid CreateProviderAdminMemberRequest request) {
+    public ResponseEntity<AdminMembersResponse> createProviderAdminUser(@AuthenticationPrincipal JwtAuthentication jwt, @RequestBody @Valid CreateProviderAdminMemberRequest request) {
         return ResponseEntity.ok(adminMemberService.createProviderAdminUser(jwt.id(), request));
     }
 

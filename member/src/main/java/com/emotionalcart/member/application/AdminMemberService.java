@@ -11,7 +11,7 @@ import com.emotionalcart.member.infrasturcture.MemberRepository;
 import com.emotionalcart.member.infrasturcture.product.ProductService;
 import com.emotionalcart.member.infrasturcture.product.dto.ReadProvider;
 import com.emotionalcart.member.infrasturcture.product.dto.UpdateProviderMemberIdRequest;
-import com.emotionalcart.member.presentation.dto.AdminMemberResponse;
+import com.emotionalcart.member.presentation.dto.AdminMembersResponse;
 import com.emotionalcart.member.presentation.dto.CreateProviderAdminMemberRequest;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -103,7 +103,7 @@ public class AdminMemberService {
         return member;
     }
 
-    public AdminMemberResponse createProviderAdminUser(Long id, CreateProviderAdminMemberRequest request) {
+    public AdminMembersResponse createProviderAdminUser(Long id, CreateProviderAdminMemberRequest request) {
 
         log.info("entered provider id: {}", request.getProviderId());
 
@@ -134,7 +134,7 @@ public class AdminMemberService {
         memberRepository.save(member);
         productService.updateProviderMemberId(UpdateProviderMemberIdRequest.of(provider.getProviderId(), member.getId()));
 
-        return AdminMemberResponse.from(member);
+        return AdminMembersResponse.from(member);
     }
 
 }
