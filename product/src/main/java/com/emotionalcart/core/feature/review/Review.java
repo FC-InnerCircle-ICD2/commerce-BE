@@ -38,33 +38,21 @@ public class Review extends BaseEntity {
 
     private Review(
         Long productId,
-        String productName,
-        String productOptionId,
-        String productOptionName,
         Integer rating,
         String content
     ) {
         this.productId = productId;
-        this.productName = productName;
-        this.productOptionId = productOptionId;
-        this.productOptionName = productOptionName;
         this.rating = rating;
         this.content = content;
     }
 
     public static Review of(
         Long productId,
-        String productName,
-        String productOptionId,
-        String productOptionName,
         Integer rating,
         String content
     ) {
         return new Review(
             productId,
-            productName,
-            productOptionId,
-            productOptionName,
             rating,
             content
         );

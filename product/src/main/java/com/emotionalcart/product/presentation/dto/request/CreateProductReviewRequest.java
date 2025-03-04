@@ -21,9 +21,6 @@ public class CreateProductReviewRequest {
     @Schema(name = "주문번호")
     @JsonSerialize(using = ToStringSerializer.class)
     private Long orderId;
-    private String productName;
-    private String productOptionId;
-    private String productOptionName;
     @NotNull
     @Min(1)
     @Max(5)
@@ -34,9 +31,6 @@ public class CreateProductReviewRequest {
     public Review toReviewEntity(Long productId) {
         return Review.of(
             productId,
-            productName,
-            productOptionId,
-            productOptionName,
             rating,
             content
         );
