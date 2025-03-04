@@ -65,5 +65,4 @@ public class ProductOptionDetail extends BaseEntity {
         this.value = value;
         this.additionalPrice = additionalPrice;
     }
-
 }
