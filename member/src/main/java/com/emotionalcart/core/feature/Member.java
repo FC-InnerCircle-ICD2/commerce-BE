@@ -78,4 +78,8 @@ public class Member extends BaseEntity {
         );
     }
 
+    public void changeAdminMemberInfo(MemberState memberState) {
+        this.memberState = memberState;
+    }
+
 }

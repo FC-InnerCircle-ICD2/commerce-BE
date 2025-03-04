@@ -14,6 +14,9 @@ public enum ErrorCode {
 
     // 유저
 
+    // 백오피스
+    INVALID_MEMBER_ROLE_VALUE(HttpStatus.BAD_REQUEST, "MEMBER-1000", "memberRole 값에 부적절한 입력 값이 포함되어 있습니다."),
+    INVALID_ADMIN_MEMBER(HttpStatus.BAD_REQUEST, "MEMBER-1001", "존재하지 않는 관리자 계정 입니다.");
     NOT_FOUND_PROVIDER(HttpStatus.NOT_FOUND, "MEMBER-1100", "해당 공급자를 찾을 수 없습니다.");
 
 
