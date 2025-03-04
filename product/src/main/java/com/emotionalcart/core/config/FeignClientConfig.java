@@ -24,20 +24,24 @@ public class FeignClientConfig {
 
     @Bean
     public RequestInterceptor requestInterceptor() {
-        return requestTemplate -> requestTemplate.header("Authorization", "Bearer " + getToken());
+        return requestTemplate -> {
+            if (!requestTemplate.url().contains("/quantity")) {
+                requestTemplate.header("Authorization", "Bearer " + getToken());
+            }
+        };
     }
 
     private String getToken() {
-        ServletRequestAttributes attributes = (ServletRequestAttributes) RequestContextHolder.getRequestAttributes();
+        ServletRequestAttributes attributes = (ServletRequestAttributes)RequestContextHolder.getRequestAttributes();
         if (attributes == null) {
             throw new IllegalStateException("Request attributes are not available. Ensure this method is called in a web request context.");
         }
 
         return jwtHeaderValidator.obtainAuthorizationToken(attributes.getRequest())
-                .orElseThrow(() -> {
-                    log.error("JWT processing failed: Authorization token is missing.");
-                    return new IllegalStateException("Authorization token is required but missing.");
-                });
+            .orElseThrow(() -> {
+                log.error("JWT processing failed: Authorization token is missing.");
+                return new IllegalStateException("Authorization token is required but missing.");
+            });
     }
 
 }
