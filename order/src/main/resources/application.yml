@@ -29,6 +29,11 @@ spring:
           new_generator_mappings: true
   flyway:
     enabled: false
+  rabbitmq:
+    host: localhost
+    port: 5672
+    username: guest
+    password: guest
 server:
   port: 9999
 product:
