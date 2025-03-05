@@ -11,7 +11,6 @@ public class Carts {
     public static class Option implements Serializable {
         @Serial
         private static final long serialVersionUID = 5170093473466125631L;
-        //        private static final long serialVersionUID = 1L;
         private Long id;
         private String name;
         private OptionDetail optionDetail;
@@ -21,7 +20,6 @@ public class Carts {
     public static class OptionDetail implements Serializable {
         @Serial
         private static final long serialVersionUID = 5877740958849796845L;
-        //        private static final long serialVersionUID = 1L;
         private Long id;
         private String value;
         private int quantity;
@@ -41,7 +39,6 @@ public class Carts {
     public static class Provider implements Serializable {
         @Serial
         private static final long serialVersionUID = -1260464229945702192L;
-        //        private static final long serialVersionUID = 1L;
         private Long id;
         private String name;
     }
