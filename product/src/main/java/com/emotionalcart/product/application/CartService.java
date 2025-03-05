@@ -10,6 +10,9 @@ import java.util.UUID;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Service;
 import org.springframework.dao.DataAccessException;
+import org.springframework.cache.annotation.Cacheable;
+import org.springframework.cache.annotation.CacheEvict;
+import org.springframework.cache.annotation.CachePut;
 
 import com.emotionalcart.core.exception.ErrorCode;
 import com.emotionalcart.core.exception.ProductException;
@@ -32,6 +35,7 @@ public class CartService {
     private static final String CART_KEY_PREFIX = "cart:";
 
     // 장바구니 조회
+    @Cacheable(value = "cartCache", key = "#userId")
     public ReadCart.Response readCart(Long userId) {
         String cartId = CART_KEY_PREFIX + userId;
         try {
@@ -48,6 +52,7 @@ public class CartService {
     }
 
     // 장바구니 추가
+    @CachePut(value = "cartCache", key = "#userId")
     public ReadCart.Response addCartItem(Long userId, AddCartItemRequest request) {
         String cartId = CART_KEY_PREFIX + userId;
 
@@ -128,6 +133,7 @@ public class CartService {
     }
 
     // 장바구니 아이템 수량 변경
+    @CachePut(value = "cartCache", key = "#userId")
     public ReadCart.Response updateCartItemQuantity(Long userId, UpdateCartItemQuantityRequest request) {
         String cartId = CART_KEY_PREFIX + userId;
         ReadCart.Response cart = readCart(userId);
@@ -171,6 +177,7 @@ public class CartService {
     }
 
     // 장바구니 내 아이템 선택
+    @CachePut(value = "cartCache", key = "#userId")
     public ReadCart.Response selectCartItem(Long userId, String itemId) {
         String cartId = CART_KEY_PREFIX + userId;
         ReadCart.Response cart = readCart(userId);
@@ -206,6 +213,7 @@ public class CartService {
     }
 
     // 장바구니 아이템 삭제
+    @CacheEvict(value = "cartCache", key = "#userId")
     public ReadCart.Response deleteCartItems(Long userId, DeleteCartItemsRequest request) {
         String cartId = CART_KEY_PREFIX + userId;
         ReadCart.Response cart = readCart(userId);
@@ -245,6 +253,7 @@ public class CartService {
     }
 
     // 장바구니 비우기
+    @CacheEvict(value = "cartCache", key = "#userId")
     public DeleteCartResponse clearCart(Long userId) {
         String cartId = CART_KEY_PREFIX + userId;
 
