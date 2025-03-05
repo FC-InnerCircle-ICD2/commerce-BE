@@ -73,7 +73,7 @@ public class CreateOrderService {
                 validateQuantity(createOrder);
                 List<ProductPrice> productPriceList = requestOriginalPriceAndValidatePrice(createOrder);
                 payment(orders, createOrder.getCardInfo());
-                shipment(orders, productPriceList);
+                //shipment(orders, productPriceList);
                 orderHistory(orders);
                 updateQuantity(orders);
                 orderStatistics(orders.getOrderItems());
