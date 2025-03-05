@@ -1,6 +1,8 @@
 package com.emotionalcart.product.presentation.dto;
 
 import lombok.Data;
+
+import java.io.Serial;
 import java.io.Serializable;
 import java.util.List;
 import java.util.ArrayList;
@@ -12,7 +14,8 @@ public class ReadCart {
 
     @Data
     public static class Response implements Serializable {
-        private static final long serialVersionUID = 1L;
+        @Serial
+        private static final long serialVersionUID = 7563541798002866698L;
         private String cartId;
         private int totalPrice;
         private List<CartItem> items = new ArrayList<>(); // 장바구니 항목 리스트.
@@ -27,9 +30,10 @@ public class ReadCart {
 
     @Data
     public static class CartItem implements Serializable {
-        private static final long serialVersionUID = 1L;
+        @Serial
+        private static final long serialVersionUID = -5811050683632008129L;
         private String itemId;
-        private Long productId;
+        private String productId;
         private String productName;
         private int price;
         private int subTotalPrice;
@@ -43,7 +47,7 @@ public class ReadCart {
             CartItem cartItem = new CartItem();
             cartItem.itemId = itemId;
             cartItem.itemOrder = itemOrder;
-            cartItem.productId = request.getProductId();
+            cartItem.productId = String.valueOf(request.getProductId());
             cartItem.productName = request.getProductName();
             cartItem.price = request.getPrice();
             cartItem.subTotalPrice = subTotalPrice;
