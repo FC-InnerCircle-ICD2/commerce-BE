@@ -34,69 +34,76 @@ public class QueryDslProductRepositoryImpl implements QueryDslProductRepository 
 
         // 필터 조건 생성
         BooleanBuilder filterBuilder = ProductQueryHelper.createFilterBuilder(
-                productSearch.getProductId(),
-                productSearch.getCategoryId(),
-                productSearch.getKeyword(),
-                productSearch.getPriceMin(),
-                productSearch.getPriceMax(),
-                productSearch.getRating(),
-                product
+            productSearch.getProductId(),
+            productSearch.getCategoryId(),
+            productSearch.getKeyword(),
+            productSearch.getPriceMin(),
+            productSearch.getPriceMax(),
+            productSearch.getRating(),
+            product
         );
 
-        List<Product> products  = queryFactory
-                .selectDistinct(product)
-                .from(product)
-                .leftJoin(orderStatistics).on(orderStatistics.productId.eq(product.id)) // 명시적 조인
-                .leftJoin(product.reviewStatistic, reviewStatistic).fetchJoin()
-                .where(filterBuilder)
-                .offset(productSearch.getPageRequest().getOffset())
-                .limit(productSearch.getPageRequest().getPageSize())
-                .orderBy(orderSpecifier)
-                .fetch();
+        List<Product> products = queryFactory
+            .selectDistinct(product)
+            .from(product)
+            .leftJoin(orderStatistics).on(orderStatistics.productId.eq(product.id)) // 명시적 조인
+            .leftJoin(product.reviewStatistic, reviewStatistic).fetchJoin()
+            .where(
+                filterBuilder,
+                product.isDeleted.isFalse()
+            )
+            .offset(productSearch.getPageRequest().getOffset())
+            .limit(productSearch.getPageRequest().getPageSize())
+            .orderBy(orderSpecifier)
+            .fetch();
 
         JPAQuery<Long> count = queryFactory.select(product.count())
-                .from(product)
-                .where(filterBuilder);
+            .from(product)
+            .where(
+                filterBuilder,
+                product.isDeleted.isFalse()
+            );
 
-        return PageableExecutionUtils.getPage(products,productSearch.getPageRequest(),count::fetchOne);
+        return PageableExecutionUtils.getPage(products, productSearch.getPageRequest(), count::fetchOne);
     }
 
     @Override
     public List<ProductOption> findProductOptions(List<Long> productIds) {
         return queryFactory
-                .selectDistinct(productOption)
-                .from(productOption)
-                .leftJoin(productOption.details, productOptionDetail).fetchJoin()
-                .where(
-                        productOption.product.id.in(productIds), // productIds 조건
-                        productOption.isDeleted.isFalse(),
-                        productOptionDetail.isDeleted.isFalse()) // ProductOption 삭제 여부
-                .fetch();
+            .selectDistinct(productOption)
+            .from(productOption)
+            .leftJoin(productOption.details, productOptionDetail).fetchJoin()
+            .where(
+                productOption.product.id.in(productIds), // productIds 조건
+                productOption.isDeleted.isFalse(),
+                productOptionDetail.isDeleted.isFalse()) // ProductOption 삭제 여부
+            .fetch();
     }
-  
+
     @Override
     public List<ProductDetail> findAllProductDetail(Set<Long> productIds) {
         return queryFactory.select(
-                        Projections.constructor(
-                                ProductDetail.class,
-                                product.id,
-                                product.providerId,
-                                product.price,
-                                productOption.id,
-                                productOptionDetail.id,
-                                productOptionDetail.additionalPrice
-                        ))
-                .from(product)
-                .leftJoin(productOption)
-                .on(product.id.eq(productOption.product.id))
-                .leftJoin(productOptionDetail)
-                .on(productOption.id.eq(productOptionDetail.productOption.id))
-                .where(
-                        product.id.in(productIds),
-                        product.isDeleted.isFalse(),
-                        productOption.isDeleted.isFalse(),
-                        productOptionDetail.isDeleted.isFalse()
-                )
-                .fetch();
+                Projections.constructor(
+                    ProductDetail.class,
+                    product.id,
+                    product.providerId,
+                    product.price,
+                    productOption.id,
+                    productOptionDetail.id,
+                    productOptionDetail.additionalPrice
+                ))
+            .from(product)
+            .leftJoin(productOption)
+            .on(product.id.eq(productOption.product.id))
+            .leftJoin(productOptionDetail)
+            .on(productOption.id.eq(productOptionDetail.productOption.id))
+            .where(
+                product.id.in(productIds),
+                product.isDeleted.isFalse(),
+                productOption.isDeleted.isFalse(),
+                productOptionDetail.isDeleted.isFalse()
+            )
+            .fetch();
     }
+
 }

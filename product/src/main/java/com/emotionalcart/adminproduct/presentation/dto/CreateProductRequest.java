@@ -25,7 +25,7 @@ public class CreateProductRequest {
     @NotNull
     private Long categoryId;
     @NotNull
-    @Size(max = 3, message = "옵션은 3개까지만 등록 가능합니다.")
+    @Size(min = 1, max = 3, message = "옵션은 3개까지만 등록 가능합니다.")
     private List<CreateProductOption> options;
     @NotNull
     private MultipartFile mainImage;
