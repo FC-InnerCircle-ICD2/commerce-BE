@@ -45,7 +45,7 @@ public class CustomSuccessHandler extends SimpleUrlAuthenticationSuccessHandler 
         Long userId = oauth2User.getUserId();
 
         Collection<? extends GrantedAuthority> authorities = authentication.getAuthorities();
-        List<String> roles = authorities.stream().map(r -> "ROLE_" + r).toList();
+        List<String> roles = authorities.stream().map(Object::toString).toList();
         String accessToken = jwtTokenProvider.createAccessToken(userId, username, roles);
         String refreshToken = jwtTokenProvider.createRefreshToken(userId, username, roles);
 

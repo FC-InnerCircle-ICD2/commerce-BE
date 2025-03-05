@@ -36,6 +36,7 @@ dependencies {
     implementation("org.flywaydb:flyway-mysql")
     implementation("org.thymeleaf.extras:thymeleaf-extras-springsecurity6")
     implementation("org.springframework.boot:spring-boot-starter-actuator")
+    implementation("org.springframework.boot:spring-boot-starter-amqp")
 
     // https://mvnrepository.com/artifact/org.redisson/redisson-spring-boot-starter
     implementation("org.redisson:redisson-spring-boot-starter:$redissonVersion")

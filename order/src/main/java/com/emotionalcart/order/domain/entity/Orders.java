@@ -58,6 +58,9 @@ public class Orders extends BaseEntity {
     @CreatedBy
     private Long orderMemberId;
 
+    // TODO 연동
+    private String orderMemberName;
+
     /**
      * 주문상태
      */

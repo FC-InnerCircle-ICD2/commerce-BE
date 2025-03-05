@@ -31,7 +31,13 @@ public class OrderItemOption extends BaseEntity {
 
     private Long productOptionId;
 
+    // TODO 연동 필요
+    private String productOptionName;
+
     private Long productOptionDetailId;
+
+    // TODO 연동 필요
+    private String productOptionDetailName;
 
     public static OrderItemOption createOrderItemOption(OrderItem item, CreateOrderItemOption itemOption) {
         OrderItemOption option = new OrderItemOption();

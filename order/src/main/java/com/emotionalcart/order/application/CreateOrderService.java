@@ -13,6 +13,8 @@ import com.emotionalcart.order.domain.repository.OrderStatisticsRepository;
 import com.emotionalcart.order.infra.advice.exceptions.InvalidValueRequestException;
 import com.emotionalcart.order.infra.advice.exceptions.RedissonLockException;
 import com.emotionalcart.order.infra.order.OrderRepository;
+import com.emotionalcart.order.infra.order.OrderSaveRequest;
+import com.emotionalcart.order.infra.order.producer.OrderEventProducer;
 import com.emotionalcart.order.infra.payment.PaymentInfo;
 import com.emotionalcart.order.infra.payment.PaymentService;
 import com.emotionalcart.order.infra.product.ProductService;
@@ -50,6 +52,7 @@ public class CreateOrderService {
     private final RedissonMultiLockProvider redissonMultiLockProvider;
     private final ShipmentService shipmentService;
     private final StockService stockService;
+    private final OrderEventProducer salesEventProducer;
 
     /**
      * 주문 생성
@@ -74,6 +77,7 @@ public class CreateOrderService {
                 orderHistory(orders);
                 updateQuantity(orders);
                 orderStatistics(orders.getOrderItems());
+                salesEventProducer.sendSalesEvent(OrderSaveRequest.from(orders));
             } else {
                 throw new RedissonLockException("잠금 획득 실패: 다른 사용자가 처리 중입니다.");
             }

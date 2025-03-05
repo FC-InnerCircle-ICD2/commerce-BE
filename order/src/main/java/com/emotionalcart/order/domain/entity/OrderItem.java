@@ -43,6 +43,9 @@ public class OrderItem extends BaseEntity {
     @Column(nullable = false)
     private Long categoryId;
 
+    // TODO 연동 필요
+    private String categoryName;
+
     /**
      * 상품 이름
      */
@@ -78,7 +81,7 @@ public class OrderItem extends BaseEntity {
         item.quantity = orderItem.getQuantity();
         item.categoryId = orderItem.getCategoryId();
         orderItem.getOrderItemOptions().stream().map(option -> OrderItemOption.createOrderItemOption(item,
-                option)).forEach(item::addOrderItemOption);
+                                                                                                     option)).forEach(item::addOrderItemOption);
         return item;
     }
 
