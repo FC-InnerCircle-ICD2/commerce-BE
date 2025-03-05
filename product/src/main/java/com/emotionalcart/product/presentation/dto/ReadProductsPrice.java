@@ -8,8 +8,10 @@ import lombok.Setter;
 import java.util.List;
 
 public class ReadProductsPrice {
+
     @Getter
     public static class Request {
+
         @NotNull
         private Long productId;
         @NotNull
@@ -17,24 +19,30 @@ public class ReadProductsPrice {
 
         @Getter
         public static class OptionRequest {
+
             @NotNull
             private Long productOptionId;
             @NotNull
             private Long productOptionDetailId;
+
         }
+
     }
 
     @Getter
     @Setter
     public static class Response {
+
         private Long productId;
         private Long providerId;
+        private String providerName;
         private Integer price;
         private List<ProductOption> productOptions;
 
-        private Response(Long productId, Long providerId, Integer price, List<ProductOption> productOptions) {
+        private Response(Long productId, Long providerId, String providerName, Integer price, List<ProductOption> productOptions) {
             this.productId = productId;
             this.providerId = providerId;
+            this.providerName = providerName;
             this.price = price;
             this.productOptions = productOptions;
         }
@@ -42,6 +50,7 @@ public class ReadProductsPrice {
         @Getter
         @Setter
         public static class ProductOption {
+
             private Long productOptionId;
             private Long productOptionDetailId;
             private Integer additionalPrice;
@@ -54,20 +63,23 @@ public class ReadProductsPrice {
 
             public static ProductOption fromProductDetail(ProductDetail productDetail) {
                 return new ProductOption(
-                        productDetail.getProductOptionId(),
-                        productDetail.getProductOptionDetailId(),
-                        productDetail.getProductAdditionalPrice()
+                    productDetail.getProductOptionId(),
+                    productDetail.getProductOptionDetailId(),
+                    productDetail.getProductAdditionalPrice()
                 );
             }
+
         }
+
     }
 
-    public static Response toResponse(Long productId, Long providerId, List<ProductDetail> productDetails) {
+    public static Response toResponse(Long productId, Long providerId, String providerName, List<ProductDetail> productDetails) {
         Integer productPrice = productDetails.getFirst().getProductPrice();
         List<ReadProductsPrice.Response.ProductOption> productOptions = productDetails.stream()
-                .map(Response.ProductOption::fromProductDetail)
-                .toList();
+            .map(Response.ProductOption::fromProductDetail)
+            .toList();
 
-        return new Response(productId, providerId, productPrice, productOptions);
+        return new Response(productId, providerId, providerName, productPrice, productOptions);
     }
+
 }
