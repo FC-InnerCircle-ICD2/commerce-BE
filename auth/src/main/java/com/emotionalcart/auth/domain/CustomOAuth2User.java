@@ -28,7 +28,7 @@ public class CustomOAuth2User implements OAuth2User {
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
         Collection<GrantedAuthority> collection = new ArrayList<>();
-        memberResponse.getRoles().stream().map(m -> new SimpleGrantedAuthority("ROLE_" + m)).forEach(collection::add);
+        memberResponse.getRoles().stream().map(SimpleGrantedAuthority::new).forEach(collection::add);
         return collection;
     }
 
