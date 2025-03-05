@@ -1,6 +1,7 @@
 package com.emotionalcart.stock.presentation;
 
 import com.emotionalcart.stock.application.*;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -21,12 +22,17 @@ public class StockController {
      * </pre>
      */
     @PostMapping("/quantity")
-    public ResponseEntity<Integer> getStockQuantity(@RequestBody StockQuantitySearchRequest request) {
+    public ResponseEntity<Integer> getStockQuantity(@Valid @RequestBody StockQuantitySearchRequest request) {
         return ResponseEntity.ok(stockQueryService.getStockQuantityByOptionIds(request.mapToQuery()));
     }
 
+    @PostMapping("/quantities")
+    public ResponseEntity<List<StockQuantity>> getStockQuantities(@Valid @RequestBody List<StockQuantitySearchRequest> requests) {
+        return ResponseEntity.ok(stockQueryService.getStockQuantitiesByOptionIds(requests.stream().map(StockQuantitySearchRequest::mapToQuery).toList()));
+    }
+
     @PostMapping("/quantity/validate")
-    public ResponseEntity<Boolean> getStockQuantities(@RequestBody StockQuantityValidateRequest requests) {
+    public ResponseEntity<Boolean> getStockQuantities(@Valid @RequestBody StockQuantityValidateRequest requests) {
         return ResponseEntity.ok(stockCommandService.validateStockQuantity(requests.mapToCommand()));
     }
 

@@ -1,5 +1,6 @@
 package com.emotionalcart.core.config;
 
+import com.emotionalcart.common.swagger.SwaggerConfigProperties;
 import io.swagger.v3.oas.models.info.Info;
 import io.swagger.v3.oas.models.servers.Server;
 import lombok.RequiredArgsConstructor;
@@ -13,23 +14,25 @@ import java.util.List;
 @Configuration
 public class SwaggerConfig {
 
+    private final SwaggerConfigProperties swaggerConfigProperties;
+
     @Bean
     public GroupedOpenApi openAPI() {
         return GroupedOpenApi.builder()
-                .group("Group API")
-                .addOpenApiCustomizer(openAPI -> openAPI.info(apiInfo()).servers(servers())).build();
+            .group("Group API")
+            .addOpenApiCustomizer(openAPI -> openAPI.info(apiInfo()).servers(servers())).build();
     }
 
     private List<Server> servers() {
-        return List.of(
-                new Server().url("https://member-api.emmotional-cart.click").description("Production Server")
-        );
+        return swaggerConfigProperties.getServers().stream()
+            .map(config -> new Server().url(config.getUrl()).description(config.getDescription()))
+            .toList();
     }
 
     private Info apiInfo() {
         return new Info()
-                .title("Member API")
-                .description("회원 도메인 API Docs");
+            .title("Member API")
+            .description("회원 도메인 API Docs");
     }
 
 }

@@ -9,11 +9,11 @@ import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
-@Tag(name = "백오피스 관리 계정 조회 API", description = "관리자 계정을 조회하는 API")
+@Tag(name = "백오피스 관리 계정 조회 API", description = "관리자 계정을 조회 하는 API")
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @Schema(description = "백오피스 관리자 계정 조회 응답")
-public class AdminMemberResponse {
+public class AdminMembersResponse {
 
     @JsonSerialize(using = ToStringSerializer.class)
     @Schema(description = "회원 번호", example = "4010584059727534421")
@@ -34,12 +34,12 @@ public class AdminMemberResponse {
     @Schema(description = "계정 상태", example = "ACTIVE")
     private String memberState;
 
-    public AdminMemberResponse(Long memberId,
-                               String email,
-                               String userName,
-                               String phone,
-                               String memberRoles,
-                               String memberState) {
+    public AdminMembersResponse(Long memberId,
+                                String email,
+                                String userName,
+                                String phone,
+                                String memberRoles,
+                                String memberState) {
         this.memberId = memberId;
         this.email = email;
         this.userName = userName;
@@ -48,7 +48,7 @@ public class AdminMemberResponse {
         this.memberState = memberState;
     }
 
-    public AdminMemberResponse(Member member) {
+    public AdminMembersResponse(Member member) {
         this.memberId = member.getId();
         this.email = member.getEmail();
         this.userName = member.getUserName();
@@ -57,16 +57,16 @@ public class AdminMemberResponse {
         this.memberState = member.getMemberState().name();
     }
 
-    public static AdminMemberResponse of(Long memberId,
-                                         String email,
-                                         String userName,
-                                         String phone,
-                                         String memberRoles,
-                                         String memberState) {
-        return new AdminMemberResponse(memberId, email, userName, phone, memberRoles, memberState);
+    public static AdminMembersResponse of(Long memberId,
+                                          String email,
+                                          String userName,
+                                          String phone,
+                                          String memberRoles,
+                                          String memberState) {
+        return new AdminMembersResponse(memberId, email, userName, phone, memberRoles, memberState);
     }
 
-    public static AdminMemberResponse from (Member member) {
-        return new AdminMemberResponse(member);
+    public static AdminMembersResponse from (Member member) {
+        return new AdminMembersResponse(member);
     }
 }

@@ -43,3 +43,9 @@ order:
 app:
   allow-domains:
     - https://product-api.emmotional-cart.click
+swagger-config:
+  servers:
+    - url: https://product-api.emmotional-cart.click
+      description: Production Server
+    - url: http://localhost:8080
+      description: Local Server

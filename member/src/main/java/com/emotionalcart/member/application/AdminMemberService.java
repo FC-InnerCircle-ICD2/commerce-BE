@@ -1,6 +1,8 @@
 package com.emotionalcart.member.application;
 
 import com.emotionalcart.common.jwt.JwtTokenProvider;
+import com.emotionalcart.core.exception.ErrorCode;
+import com.emotionalcart.core.exception.MemberException;
 import com.emotionalcart.core.feature.Member;
 import com.emotionalcart.core.feature.enums.MemberRole;
 import com.emotionalcart.core.feature.enums.MemberState;
@@ -9,7 +11,7 @@ import com.emotionalcart.member.infrasturcture.MemberRepository;
 import com.emotionalcart.member.infrasturcture.product.ProductService;
 import com.emotionalcart.member.infrasturcture.product.dto.ReadProvider;
 import com.emotionalcart.member.infrasturcture.product.dto.UpdateProviderMemberIdRequest;
-import com.emotionalcart.member.presentation.dto.AdminMemberResponse;
+import com.emotionalcart.member.presentation.dto.AdminMembersResponse;
 import com.emotionalcart.member.presentation.dto.CreateProviderAdminMemberRequest;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -73,11 +75,35 @@ public class AdminMemberService {
      * @return
      */
     @Transactional(readOnly = true)
-    public Page<Member> getAdminUserList(Pageable pageable) {
-        return memberRepository.findAllByMemberRoles(MemberRole.COMMERCE_MEMBER, pageable);
+    public void validateAdminUser(Long memberId) {
+        memberRepository.findByIdAndMemberRoles(memberId, MemberRole.ADMIN_MEMBER)
+            .orElseThrow(()-> new IllegalArgumentException("올바른 관리자 계정으로 로그인 해주세요."));
     }
 
-    public AdminMemberResponse createProviderAdminUser(Long id, CreateProviderAdminMemberRequest request) {
+    @Transactional(readOnly = true)
+    public Page<Member> getAdminMembers(Long jwtId, Pageable pageable) {
+        validateAdminUser(jwtId);
+        return memberRepository.findAllByMemberRoles(MemberRole.ADMIN_MEMBER, pageable);
+    }
+
+    @Transactional(readOnly = true)
+    public Member getAdminMemberInfo(Long jwtId, Long memberId) {
+        validateAdminUser(jwtId);
+        return memberRepository.findByIdAndMemberRoles(memberId, MemberRole.ADMIN_MEMBER)
+            .orElseThrow(() -> new MemberException(ErrorCode.INVALID_ADMIN_MEMBER));
+    }
+
+    @Transactional
+    public Member updateAdminMemberInfo(Long jwtId, Long memberId, UpdateAdminMember updateAdminMember) {
+        validateAdminUser(jwtId);
+        Member member = memberRepository.findByIdAndMemberRoles(memberId, MemberRole.ADMIN_MEMBER)
+            .orElseThrow(() -> new MemberException(ErrorCode.INVALID_ADMIN_MEMBER));
+        member.changeAdminMemberInfo(updateAdminMember.getMemberState());
+        memberRepository.save(member);
+        return member;
+    }
+
+    public AdminMembersResponse createProviderAdminUser(Long id, CreateProviderAdminMemberRequest request) {
 
         log.info("entered provider id: {}", request.getProviderId());
 
@@ -108,7 +134,7 @@ public class AdminMemberService {
         memberRepository.save(member);
         productService.updateProviderMemberId(UpdateProviderMemberIdRequest.of(provider.getProviderId(), member.getId()));
 
-        return AdminMemberResponse.from(member);
+        return AdminMembersResponse.from(member);
     }
 
 }

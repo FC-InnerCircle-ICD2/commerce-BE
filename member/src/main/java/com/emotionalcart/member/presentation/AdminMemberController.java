@@ -4,10 +4,12 @@ import com.emotionalcart.common.jwt.JwtAuthentication;
 import com.emotionalcart.core.feature.Member;
 import com.emotionalcart.member.application.AdminMemberService;
 import com.emotionalcart.member.application.TokenInfo;
-import com.emotionalcart.member.presentation.dto.AdminMemberResponse;
+import com.emotionalcart.member.presentation.dto.AdminMemberInfoResponse;
+import com.emotionalcart.member.presentation.dto.AdminMembersResponse;
 import com.emotionalcart.member.presentation.dto.CreateAdminMemberRequest;
 import com.emotionalcart.member.presentation.dto.CreateProviderAdminMemberRequest;
 import com.emotionalcart.member.presentation.dto.LoginAdminRequest;
+import com.emotionalcart.member.presentation.dto.UpdateAdminMemberRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -39,14 +41,26 @@ public class AdminMemberController {
         return ResponseEntity.ok(true);
     }
 
-    @GetMapping("/admin-users")
-    public ResponseEntity<Page<AdminMemberResponse>> getAdminUserList(@PageableDefault(sort = "createdAt", direction = Sort.Direction.DESC) Pageable pageable) {
-        Page<Member> adminMembers = adminMemberService.getAdminUserList(pageable);
-        return ResponseEntity.ok().body(adminMembers.map(AdminMemberResponse::from));
+    @GetMapping("/admin-members")
+    public ResponseEntity<Page<AdminMembersResponse>> getAdminMembers(@AuthenticationPrincipal JwtAuthentication jwt, @PageableDefault(sort = "createdAt", direction = Sort.Direction.DESC) Pageable pageable) {
+        Page<Member> adminMembers = adminMemberService.getAdminMembers(jwt.id(), pageable);
+        return ResponseEntity.ok().body(adminMembers.map(AdminMembersResponse::from));
+    }
+
+    @GetMapping("/admin-member/{memberId}")
+    public ResponseEntity<AdminMemberInfoResponse> getAdminUserInfo(@AuthenticationPrincipal JwtAuthentication jwt, @PathVariable Long memberId) {
+        Member member = adminMemberService.getAdminMemberInfo(jwt.id(), memberId);
+        return ResponseEntity.ok().body(AdminMemberInfoResponse.from(member));
+    }
+
+    @PutMapping("/admin-member/{memberId}")
+    public ResponseEntity<AdminMemberInfoResponse> updateAdminUserInfo(@AuthenticationPrincipal JwtAuthentication jwt, @PathVariable Long memberId, @RequestBody @Valid UpdateAdminMemberRequest request) {
+        Member member = adminMemberService.updateAdminMemberInfo(jwt.id(), memberId, request.mapToCommand());
+        return ResponseEntity.ok().body(AdminMemberInfoResponse.from(member));
     }
 
     @PostMapping("/provider")
-    public ResponseEntity<AdminMemberResponse> createProviderAdminUser(@AuthenticationPrincipal JwtAuthentication jwt, @RequestBody @Valid CreateProviderAdminMemberRequest request) {
+    public ResponseEntity<AdminMembersResponse> createProviderAdminUser(@AuthenticationPrincipal JwtAuthentication jwt, @RequestBody @Valid CreateProviderAdminMemberRequest request) {
         return ResponseEntity.ok(adminMemberService.createProviderAdminUser(jwt.id(), request));
     }
 

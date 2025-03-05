@@ -14,9 +14,12 @@ import com.emotionalcart.product.domain.ProductDataProvider;
 import com.emotionalcart.product.domain.ProviderDataProvider;
 import com.emotionalcart.product.domain.dto.ProductDetail;
 import com.emotionalcart.product.domain.support.*;
-import com.emotionalcart.product.infrastructure.stock.StockService;
-import com.emotionalcart.product.infrastructure.stock.dto.*;
 import com.emotionalcart.product.infrastructure.order.OrderService;
+import com.emotionalcart.product.infrastructure.stock.StockService;
+import com.emotionalcart.product.infrastructure.stock.dto.OptionStockDto;
+import com.emotionalcart.product.infrastructure.stock.dto.OptionStockResult;
+import com.emotionalcart.product.infrastructure.stock.dto.OptionStocksResponse;
+import com.emotionalcart.product.infrastructure.stock.dto.StockQuantityValidateRequest;
 import com.emotionalcart.product.presentation.dto.*;
 import com.emotionalcart.product.presentation.dto.request.CreateProductReviewRequest;
 import com.emotionalcart.product.presentation.dto.response.CreateProductReviewResponse;
@@ -116,7 +119,7 @@ public class ProductService {
 
         // 상품별 옵션 목록 그룹화
         Map<Long, List<ProductOption>> productOptionsMap = productOptions.getOptions().stream()
-                .collect(Collectors.groupingBy(ProductOption::getProductId));
+            .collect(Collectors.groupingBy(ProductOption::getProductId));
 
         // 상품별 옵션 조합 생성
         Map<Long, List<OptionDetailsGroup>> productOptionCombinations = new HashMap<>();
@@ -128,10 +131,10 @@ public class ProductService {
 
         // 상품별 옵션 조합별 재고 조회
         Map<Long, OptionStockResult> stockResults = products.ids().stream()
-                .collect(Collectors.toMap(
-                        productId -> productId,
-                        productId -> fetchOptionStockQuantities(productId, productOptionCombinations.getOrDefault(productId, List.of()))
-                ));
+            .collect(Collectors.toMap(
+                productId -> productId,
+                productId -> fetchOptionStockQuantities(productId, productOptionCombinations.getOrDefault(productId, List.of()))
+            ));
 
         // DTO 변환
         return ReadProducts.Response.toResponse(productPage, productOptions, categories, providers, productImages, stockResults);
@@ -191,37 +194,40 @@ public class ProductService {
             .toResponse(productDataProvider.findProductImages(productId));
 
         return ReadProductDetails.Response.toResponse(product, productOptionsResponses, categoryResponse,
-                providerResponse, reviewStatistic, productImages, stockResult);
+                                                      providerResponse, reviewStatistic, productImages, stockResult);
     }
 
     private List<OptionDetailsGroup> convertToOptionGroups(List<ProductOption> productOptions) {
         return productOptions.stream()
-                .map(productOption -> {
-                    List<OptionStockDto> optionDetails = productOption.getDetails().stream()
-                            .map(optionDetail -> new OptionStockDto(optionDetail.getId(), optionDetail.getValue()))
-                            .toList();
-                    return OptionDetailsGroup.fromDetails(optionDetails);
-                })
-                .toList();
+            .map(productOption -> {
+                List<OptionStockDto> optionDetails = productOption.getDetails().stream()
+                    .map(optionDetail -> new OptionStockDto(optionDetail.getId(), optionDetail.getValue()))
+                    .toList();
+                return OptionDetailsGroup.fromDetails(optionDetails);
+            })
+            .toList();
     }
 
     public OptionStockResult fetchOptionStockQuantities(Long productId, List<OptionDetailsGroup> optionCombinations) {
         // 옵션 조합별 재고 조회
-        List<OptionStocksResponse> optionStocksResponses = optionCombinations.stream()
-                .map(combination -> {
-                    List<Long> optionIds = combination.getOptionIds();
-                    Integer stockQuantity = stockService.getStockQuantity(new StockQuantitySearchRequest(productId, optionIds));
-                    return OptionStocksResponse.toResponse(combination, stockQuantity);
-                })
-                .toList();
+        //        List<OptionStocksResponse> optionStocksResponses = optionCombinations.stream()
+        //            .map(combination -> {
+        //                List<Long> optionIds = combination.getOptionIds();
+        //                Integer stockQuantity = stockService.getStockQuantity(new StockQuantitySearchRequest(productId, optionIds));
+        //                return OptionStocksResponse.toResponse(combination, stockQuantity);
+        //            })
+        //            .toList();
+
+        List<OptionStocksResponse> optionStocksResponses = new ArrayList<>();
 
         // 전체 재고 수량 계산
-        int totalStockQuantity = optionCombinations.stream()
-                .mapToInt(combination -> {
-                    List<Long> optionIds = combination.getOptionIds();
-                    return stockService.getStockQuantity(new StockQuantitySearchRequest(productId, optionIds));
-                })
-                .sum();
+        //        int totalStockQuantity = optionCombinations.stream()
+        //                .mapToInt(combination -> {
+        //                    List<Long> optionIds = combination.getOptionIds();
+        //                    return stockService.getStockQuantity(new StockQuantitySearchRequest(productId, optionIds));
+        //                })
+        //                .sum();
+        int totalStockQuantity = 100;
 
         return new OptionStockResult(optionStocksResponses, totalStockQuantity);
     }

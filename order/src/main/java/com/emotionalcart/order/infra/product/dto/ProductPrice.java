@@ -16,6 +16,11 @@ public class ProductPrice {
     private Long productId;
 
     /**
+     * 업체 아이디
+     */
+    private Long providerId;
+
+    /**
      * 가격
      */
     private double price;
@@ -57,6 +62,7 @@ public class ProductPrice {
 
     public ProductPrice(ProductPriceResponse productPriceResponse) {
         this.productId = productPriceResponse.getProductId();
+        this.providerId = productPriceResponse.getProviderId();
         this.price = productPriceResponse.getPrice();
         this.productOptions = productPriceResponse.getProductOptions().stream().map(ProductOption::from).toList();
     }

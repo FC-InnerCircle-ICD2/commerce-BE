@@ -11,6 +11,8 @@ import com.emotionalcart.core.feature.category.Category;
 import com.emotionalcart.core.feature.product.*;
 import com.emotionalcart.core.feature.provider.Provider;
 import com.emotionalcart.core.feature.review.ReviewStatistic;
+import com.emotionalcart.product.infrastructure.stock.StockService;
+import com.emotionalcart.product.infrastructure.stock.dto.StockQuantityUpdateRequest;
 import com.emotionalcart.s3.S3Utils;
 import com.emotionalcart.s3.config.S3Constants;
 import lombok.RequiredArgsConstructor;
@@ -33,6 +35,7 @@ public class AdminProductService {
     private final AdminProviderDataProvider adminProviderDataProvider;
     private final AdminCategoryDataProvider adminCategoryDataProvider;
     private final S3Utils s3Utils;
+    private final StockService stockService;
 
     @Transactional
     public CreateProductResponse createProduct(CreateProductRequest request) {
@@ -241,6 +244,24 @@ public class AdminProductService {
             }
             adminProductDataProvider.deleteProductOptionDetails(options, deletedDetailIds);
         }
+    }
+
+    public ReadAdminProductDetailResponse generateOptionCombinationsAndSaveStock(Long productId) {
+        stockService.generateOptionCombinationsAndSaveStock(productId);
+
+        Product product = adminProductDataProvider.findProductById(productId);
+        Provider provider = adminProviderDataProvider.findProviderById(product.getProviderId());
+        Category category = adminCategoryDataProvider.findCategory(product.getCategoryId());
+        return ReadAdminProductDetailResponse.toResponse(product, category, provider);
+    }
+
+    public ReadAdminProductDetailResponse updateStockQuantity(Long productId, UpdateStockQuantityRequest request) {
+        stockService.updateStockQuantity(StockQuantityUpdateRequest.of(productId, request.getOptionDetailIds(), request.getQuantity()));
+
+        Product product = adminProductDataProvider.findProductById(productId);
+        Provider provider = adminProviderDataProvider.findProviderById(product.getProviderId());
+        Category category = adminCategoryDataProvider.findCategory(product.getCategoryId());
+        return ReadAdminProductDetailResponse.toResponse(product, category, provider);
     }
 
 }
