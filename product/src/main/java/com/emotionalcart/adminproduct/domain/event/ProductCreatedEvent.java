@@ -1,7 +1,5 @@
 package com.emotionalcart.adminproduct.domain.event;
 
-import lombok.Getter;
-
 import java.util.List;
 
 public record ProductCreatedEvent(

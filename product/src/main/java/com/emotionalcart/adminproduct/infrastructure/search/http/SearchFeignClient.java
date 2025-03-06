@@ -14,14 +14,12 @@ import org.springframework.web.bind.annotation.RequestBody;
 public interface SearchFeignClient {
 
     /**
-     *
      * @param request
      */
     @PostMapping("/providers")
     void indexCreateProvider(@RequestBody IndexCreateProvider request);
 
     /**
-     *
      * @param providerId
      */
     @DeleteMapping("/providers/{providerId}")
@@ -36,4 +34,6 @@ public interface SearchFeignClient {
     @PostMapping("/elastic/product")
     void indexCreateProduct(@RequestBody ProductCreatedEvent event);
 
+    @DeleteMapping("/products/{productId}")
+    void indexDeleteProduct(@PathVariable Long productId);
 }

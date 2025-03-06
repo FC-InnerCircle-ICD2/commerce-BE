@@ -4,6 +4,7 @@ import com.emotionalcart.adminproduct.domain.AdminCategoryDataProvider;
 import com.emotionalcart.adminproduct.domain.AdminProductDataProvider;
 import com.emotionalcart.adminproduct.domain.AdminProviderDataProvider;
 import com.emotionalcart.adminproduct.domain.event.ProductCreatedEvent;
+import com.emotionalcart.adminproduct.domain.event.ProductDeletedEvent;
 import com.emotionalcart.adminproduct.infrastructure.AdminProducts;
 import com.emotionalcart.adminproduct.presentation.dto.*;
 import com.emotionalcart.core.exception.ErrorCode;
@@ -154,8 +155,9 @@ public class AdminProductService {
     @Transactional
     public void deleteProduct(Long productId) {
         Product product = adminProductDataProvider.findProductById(productId);
-        // TODO provider 확인 필요해보임
         product.delete();
+
+        applicationEventPublisher.publishEvent(new ProductDeletedEvent(productId));
     }
 
     /**

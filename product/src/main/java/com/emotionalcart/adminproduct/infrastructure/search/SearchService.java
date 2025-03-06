@@ -1,6 +1,7 @@
 package com.emotionalcart.adminproduct.infrastructure.search;
 
 import com.emotionalcart.adminproduct.domain.event.ProductCreatedEvent;
+import com.emotionalcart.adminproduct.domain.event.ProductDeletedEvent;
 import com.emotionalcart.adminproduct.infrastructure.search.dto.IndexCreateBanner;
 import com.emotionalcart.adminproduct.infrastructure.search.dto.IndexCreateProvider;
 import com.emotionalcart.adminproduct.infrastructure.search.http.SearchFeignClient;
@@ -39,6 +40,13 @@ public class SearchService {
      */
     public void indexCreateProduct(ProductCreatedEvent event) {
         searchFeignClient.indexCreateProduct(event);
+    }
+
+    /**
+     * 상품 삭제
+     */
+    public void indexDeleteProduct(ProductDeletedEvent event) {
+        searchFeignClient.indexDeleteProduct(event.id());
     }
 
 }

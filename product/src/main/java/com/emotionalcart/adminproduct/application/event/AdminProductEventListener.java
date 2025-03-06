@@ -1,6 +1,7 @@
 package com.emotionalcart.adminproduct.application.event;
 
 import com.emotionalcart.adminproduct.domain.event.ProductCreatedEvent;
+import com.emotionalcart.adminproduct.domain.event.ProductDeletedEvent;
 import com.emotionalcart.adminproduct.infrastructure.search.SearchService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -12,11 +13,18 @@ import org.springframework.transaction.event.TransactionalEventListener;
 @Component
 @RequiredArgsConstructor
 public class AdminProductEventListener {
-    private SearchService searchService;
+
+    private final SearchService searchService;
 
     @TransactionalEventListener(phase = TransactionPhase.AFTER_COMMIT)
     public void handleProductCreated(ProductCreatedEvent event) {
         log.info("ProductCreatedEvent: {}", event);
         searchService.indexCreateProduct(event);
+    }
+
+    @TransactionalEventListener(phase = TransactionPhase.AFTER_COMMIT)
+    public void handleProductDeleted(ProductDeletedEvent event) {
+        log.info("ProductDeletedEvent: {}", event);
+        searchService.indexDeleteProduct(event);
     }
 }
