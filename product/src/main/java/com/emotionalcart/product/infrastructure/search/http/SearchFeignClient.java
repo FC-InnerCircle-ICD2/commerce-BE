@@ -1,6 +1,7 @@
 package com.emotionalcart.product.infrastructure.search.http;
 
 import com.emotionalcart.core.config.FeignClientConfig;
+import com.emotionalcart.product.infrastructure.search.dto.IndexCreateBanner;
 import com.emotionalcart.product.infrastructure.search.dto.IndexCreateProvider;
 import org.springframework.cloud.openfeign.FeignClient;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -24,5 +25,11 @@ public interface SearchFeignClient {
      */
     @DeleteMapping("/providers/{providerId}")
     void indexDeleteProvider(@PathVariable Long providerId);
+
+    @PostMapping("/banners")
+    void indexCreateBanner(@RequestBody IndexCreateBanner request);
+
+    @DeleteMapping("/banners/{bannerId}")
+    void indexDeleteBanner(@PathVariable Long bannerId);
 
 }

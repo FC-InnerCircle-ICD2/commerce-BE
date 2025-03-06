@@ -1,5 +1,6 @@
 package com.emotionalcart.product.infrastructure.search;
 
+import com.emotionalcart.product.infrastructure.search.dto.IndexCreateBanner;
 import com.emotionalcart.product.infrastructure.search.dto.IndexCreateProvider;
 import com.emotionalcart.product.infrastructure.search.http.SearchFeignClient;
 import lombok.RequiredArgsConstructor;
@@ -22,5 +23,13 @@ public class SearchService {
 
     public void indexDeleteProvider(@PathVariable Long providerId) {
         searchFeignClient.indexDeleteProvider(providerId);
+    }
+
+    public void indexCreateBanner(@RequestBody IndexCreateBanner request) {
+        searchFeignClient.indexCreateBanner(request);
+    }
+
+    public void indexDeleteBanner(@PathVariable Long bannerId) {
+        searchFeignClient.indexDeleteBanner(bannerId);
     }
 }
