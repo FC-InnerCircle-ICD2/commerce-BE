@@ -118,26 +118,26 @@ public class ProductService {
         ProductImages productImages = ProductImages.from(productDataProvider.findAllProductImages(products.ids()));
 
         // 상품별 옵션 목록 그룹화
-        Map<Long, List<ProductOption>> productOptionsMap = productOptions.getOptions().stream()
-            .collect(Collectors.groupingBy(ProductOption::getProductId));
+        // Map<Long, List<ProductOption>> productOptionsMap = productOptions.getOptions().stream()
+        //     .collect(Collectors.groupingBy(ProductOption::getProductId));
 
-        // 상품별 옵션 조합 생성
-        Map<Long, List<OptionDetailsGroup>> productOptionCombinations = new HashMap<>();
-        for (Long productId : products.ids()) {
-            List<ProductOption> productOptionsList = productOptionsMap.getOrDefault(productId, List.of());
-            List<OptionDetailsGroup> optionCombinations = cartesianProduct(convertToOptionGroups(productOptionsList));
-            productOptionCombinations.put(productId, optionCombinations);
-        }
+        // // 상품별 옵션 조합 생성
+        // Map<Long, List<OptionDetailsGroup>> productOptionCombinations = new HashMap<>();
+        // for (Long productId : products.ids()) {
+        //     List<ProductOption> productOptionsList = productOptionsMap.getOrDefault(productId, List.of());
+        //     List<OptionDetailsGroup> optionCombinations = cartesianProduct(convertToOptionGroups(productOptionsList));
+        //     productOptionCombinations.put(productId, optionCombinations);
+        // }
 
-        // 상품별 옵션 조합별 재고 조회
-        Map<Long, OptionStockResult> stockResults = products.ids().stream()
-            .collect(Collectors.toMap(
-                productId -> productId,
-                productId -> fetchOptionStockQuantities(productId, productOptionCombinations.getOrDefault(productId, List.of()))
-            ));
+        // // 상품별 옵션 조합별 재고 조회
+        // Map<Long, OptionStockResult> stockResults = products.ids().stream()
+        //     .collect(Collectors.toMap(
+        //         productId -> productId,
+        //         productId -> fetchOptionStockQuantities(productId, productOptionCombinations.getOrDefault(productId, List.of()))
+        //     ));
 
         // DTO 변환
-        return ReadProducts.Response.toResponse(productPage, productOptions, categories, providers, productImages, stockResults);
+        return ReadProducts.Response.toResponse(productPage, productOptions, categories, providers, productImages);
     }
 
     public ReadProductDetails.Response getProductDetail(Long productId) {
@@ -150,7 +150,7 @@ public class ProductService {
 
         List<ProductOption> productOptions = productDataProvider.findAllProductOptionsByProductId(productId);
 
-        List<OptionDetailsGroup> optionDetailsGrouped = convertToOptionGroups(productOptions);
+        // List<OptionDetailsGroup> optionDetailsGrouped = convertToOptionGroups(productOptions);
 
         for (ProductOption productOption : productOptions) {
             // 상품 옵션 상세 정보
@@ -172,10 +172,11 @@ public class ProductService {
         }
 
         // 옵션 상세 ID들의 가능한 모든 조합 생성
-        List<OptionDetailsGroup> optionCombinations = cartesianProduct(optionDetailsGrouped);
+        // List<OptionDetailsGroup> optionCombinations = cartesianProduct(optionDetailsGrouped);
 
-        // 공통 메서드 사용하여 재고 정보 조회
-        OptionStockResult stockResult = fetchOptionStockQuantities(productId, optionCombinations);
+        // // 공통 메서드 사용하여 재고 정보 조회
+        // OptionStockResult stockResult = fetchOptionStockQuantities(productId, optionCombinations);
+        OptionStockResult stockResult = new OptionStockResult(new ArrayList<>(),0);
 
         // 리뷰 평균 평점 및 리뷰 개수
         ReadProductReviewStatistic.Response reviewStatistic = ReadProductReviewStatistic.Response
