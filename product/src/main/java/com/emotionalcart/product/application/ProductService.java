@@ -340,7 +340,11 @@ public class ProductService {
                     .map(ProductDetail::getProviderId)
                     .findFirst()
                     .orElseThrow(() -> new ProductException(ErrorCode.NOT_FOUND_PRODUCT));
-                return ReadProductsPrice.toResponse(productId, providerId, details);
+                String providerName = details.stream()
+                    .map(ProductDetail::getProviderName)
+                    .findFirst()
+                    .orElseThrow(() -> new ProductException(ErrorCode.NOT_FOUND_PRODUCT));
+                return ReadProductsPrice.toResponse(productId, providerId, providerName, details);
             })
             .collect(Collectors.toList());
     }
