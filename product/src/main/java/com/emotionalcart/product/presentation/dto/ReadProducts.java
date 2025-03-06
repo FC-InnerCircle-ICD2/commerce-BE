@@ -61,7 +61,7 @@ public class ReadProducts {
         private List<ReadProductImages.Response> images;
         private int totalStockQuantity;
 
-        public Response(Product product, List<ProductOptionResponse> options, Category category, Provider provider, List<ReadProductImages.Response> images, OptionStockResult stockResult) {
+        public Response(Product product, List<ProductOptionResponse> options, Category category, Provider provider, List<ReadProductImages.Response> images ) {
             this.productId = product.getId();
             this.name = product.getName();
             this.description = product.getDescription();
@@ -71,14 +71,12 @@ public class ReadProducts {
             this.options = options;
             this.rating = product.getReviewStatistic() != null ? product.getReviewStatistic().getAverageRating() : null;
             this.images = images;
-            this.totalStockQuantity = stockResult.getTotalStockQuantity();
         }
 
         public static Page<Response> toResponse(Page<Product> products, ProductOptions productOptions,
                                                 Map<Long, Category> categoryMap,
                                                 Map<Long, Provider> providerMap,
-                                                ProductImages productImages,
-                                                Map<Long, OptionStockResult> stockResults) {
+                                                ProductImages productImages) {
             Map<Long,List<ProductOptionResponse>> optionsMap = productOptions.groupByProductId();
             Map<Product, List<ReadProductImages.Response>> readProductImagesMap = productImages.groupByProductId();
 
@@ -88,9 +86,8 @@ public class ReadProducts {
                 Category category = categoryMap.getOrDefault(product.getCategoryId(), null);
                 Provider provider = providerMap.getOrDefault(product.getProviderId(), null);
                 List<ReadProductImages.Response> images = readProductImagesMap.getOrDefault(product, List.of());
-                OptionStockResult optionStockResult = stockResults.get(productId);
 
-                return new Response(product, productOptionResponses, category, provider, images, optionStockResult);
+                return new Response(product, productOptionResponses, category, provider, images);
             });
         }
     }
