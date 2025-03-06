@@ -1,11 +1,11 @@
 package com.emotionalcart.domain.entity;
 
+import com.emotionalcart.domain.generator.IdGenerator;
 import jakarta.persistence.*;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
-import org.springframework.util.CollectionUtils;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -16,10 +16,11 @@ import java.util.List;
 public class Product extends BaseEntity {
 
     @Id
+    @IdGenerator
     private Long id;
 
     @Setter
-    @OneToOne(fetch = FetchType.LAZY)
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "provider_id")
     private Provider provider;
 
@@ -38,11 +39,19 @@ public class Product extends BaseEntity {
     private int price;
 
     @OneToMany(mappedBy = "product", fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
-    private List<ProductOption> productOptions;
+    private List<ProductOption> productOptions = new ArrayList<>();
 
-    public static Product of(String productId, Category category, String imageUrl, String productName, int price) {
+    @OneToMany(mappedBy = "product", fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<Stock> stocks = new ArrayList<>();
+
+    @OneToMany(mappedBy = "product", fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<ProductImage> images = new ArrayList<>();
+
+    @OneToMany(mappedBy = "product", fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<ReviewStatistic> reviewStatistics = new ArrayList<>();
+
+    public static Product of(Category category, String imageUrl, String productName, int price) {
         Product product = new Product();
-        product.id = Long.parseLong(productId);
         product.category = category;
         product.imageUrl = imageUrl;
         product.name = productName;
@@ -53,10 +62,20 @@ public class Product extends BaseEntity {
     }
 
     public void addOption(ProductOption option) {
-        if (CollectionUtils.isEmpty(productOptions)) {
-            productOptions = new ArrayList<>();
-        }
         productOptions.add(option);
+    }
+
+    public void addStocks(Stock stock) {
+        stocks.add(stock);
+    }
+
+    public void addImages(ProductImage image) {
+        image.markOrder(images.size());
+        images.add(image);
+    }
+
+    public void addReviewStatistics(ReviewStatistic reviewStatistic) {
+        reviewStatistics.add(reviewStatistic);
     }
 
 }
