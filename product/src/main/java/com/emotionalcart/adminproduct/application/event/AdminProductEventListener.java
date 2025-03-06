@@ -17,6 +17,6 @@ public class AdminProductEventListener {
     @TransactionalEventListener(phase = TransactionPhase.AFTER_COMMIT)
     public void handleProductCreated(ProductCreatedEvent event) {
         log.info("ProductCreatedEvent: {}", event);
-        searchService.saveProduct(event);
+        searchService.indexCreateProduct(event);
     }
 }

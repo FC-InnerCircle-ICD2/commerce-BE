@@ -37,8 +37,8 @@ public class SearchService {
     /**
      * 상품 적재
      */
-    public void saveProduct(ProductCreatedEvent event) {
-        searchFeignClient.saveProduct(event);
+    public void indexCreateProduct(ProductCreatedEvent event) {
+        searchFeignClient.indexCreateProduct(event);
     }
 
 }

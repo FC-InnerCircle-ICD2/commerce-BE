@@ -34,6 +34,6 @@ public interface SearchFeignClient {
     void indexDeleteBanner(@PathVariable Long bannerId);
 
     @PostMapping("/elastic/product")
-    void saveProduct(@RequestBody ProductCreatedEvent event);
+    void indexCreateProduct(@RequestBody ProductCreatedEvent event);
 
 }
