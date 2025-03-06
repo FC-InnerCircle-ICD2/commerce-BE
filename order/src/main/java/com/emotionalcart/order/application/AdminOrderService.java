@@ -24,12 +24,22 @@ public class AdminOrderService {
      * @return
      */
     @Transactional(readOnly = true)
-    public Page<AdminOrder> getOrderList(Pageable pageable) {
+    public Page<AdminOrder> getOrderList(Long orderId, Pageable pageable) {
+        if (orderId.describeConstable().isPresent()) {
+
+            return adminOrderRepository.findById(orderId, pageable).map(orders -> AdminOrder.of(orders.getId(),
+                                                                                                orders.getPaymentMethod().getMethodName(),
+                                                                                                orders.getStatus().getStatusName(),
+                                                                                                orders.getOrderAt(),
+                                                                                                orders.getTotalPrice()));
+        }
+
         return adminOrderRepository.findAll(pageable).map(orders -> AdminOrder.of(orders.getId(),
                                                                                   orders.getPaymentMethod().getMethodName(),
                                                                                   orders.getStatus().getStatusName(),
                                                                                   orders.getOrderAt(),
                                                                                   orders.getTotalPrice()));
+
     }
 
 }

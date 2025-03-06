@@ -10,6 +10,7 @@ import org.springframework.data.web.PageableDefault;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 @RestController
@@ -25,8 +26,9 @@ public class AdminOrderController implements AdminOrderApiDocs {
      * @return
      */
     @GetMapping("/orders")
-    public ResponseEntity<Page<AdminOrder>> getOrderList(@PageableDefault(sort = "orderAt", direction = Sort.Direction.DESC) Pageable pageable) {
-        return ResponseEntity.ok(adminOrderService.getOrderList(pageable));
+    public ResponseEntity<Page<AdminOrder>> getOrderList(@RequestParam(required = false) Long orderId,
+                                                         @PageableDefault(sort = "orderAt", direction = Sort.Direction.DESC) Pageable pageable) {
+        return ResponseEntity.ok(adminOrderService.getOrderList(orderId, pageable));
     }
 
 }
