@@ -19,19 +19,19 @@ public class IndexCreateProvider {
 
     private String description;
 
-    private LocalDateTime createTime;
+    private LocalDateTime createdAt;
 
     public static IndexCreateProvider of(
         Long id,
         String name,
         String description,
-        LocalDateTime createTime
+        LocalDateTime createdAt
     ) {
         IndexCreateProvider request = new IndexCreateProvider();
         request.id = id;
         request.name = name;
         request.description = description;
-        request.createTime = createTime;
+        request.createdAt = createdAt;
         return request;
     }
 
