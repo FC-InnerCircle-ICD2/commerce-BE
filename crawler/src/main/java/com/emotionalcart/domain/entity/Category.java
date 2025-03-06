@@ -1,8 +1,8 @@
 package com.emotionalcart.domain.entity;
 
+import com.emotionalcart.domain.generator.IdGenerator;
 import jakarta.persistence.*;
 import lombok.Getter;
-import lombok.ToString;
 import org.springframework.util.CollectionUtils;
 
 import java.util.ArrayList;
@@ -10,10 +10,10 @@ import java.util.List;
 
 @Getter
 @Entity
-@ToString(exclude = {"parent", "children", "products"})
 public class Category extends BaseEntity {
 
     @Id
+    @IdGenerator
     private Long id;
 
     @ManyToOne(fetch = FetchType.LAZY)
@@ -33,15 +33,14 @@ public class Category extends BaseEntity {
     @OneToMany(mappedBy = "category", fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Product> products;
 
-    public static Category of(String categoryId, String name) {
+    public static Category of(String name) {
         Category category = new Category();
-        category.id = Long.parseLong(categoryId);
         category.name = name;
         return category;
     }
 
-    public static Category of(String id, String name, Category parentCategory, int depth) {
-        Category category = Category.of(id, name);
+    public static Category of(String name, Category parentCategory, int depth) {
+        Category category = Category.of(name);
         category.parent = parentCategory;
         parentCategory.addChild(category);
         category.depth = depth;

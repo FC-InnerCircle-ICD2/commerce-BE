@@ -1,6 +1,7 @@
-package com.emotionalcart;
+package com.emotionalcart.application;
 
 import com.emotionalcart.domain.entity.*;
+import com.emotionalcart.infra.StockProvider;
 import com.emotionalcart.infra.properties.CoupangCrawlerProperties;
 import com.emotionalcart.infra.repository.CategoryRepository;
 import com.emotionalcart.infra.repository.ProductRepository;
@@ -8,14 +9,12 @@ import com.emotionalcart.infra.repository.ProviderRepository;
 import io.github.bonigarcia.wdm.WebDriverManager;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.openqa.selenium.By;
-import org.openqa.selenium.WebDriver;
-import org.openqa.selenium.WebElement;
-import org.openqa.selenium.WindowType;
+import org.openqa.selenium.*;
 import org.openqa.selenium.chrome.ChromeDriver;
 import org.openqa.selenium.chrome.ChromeOptions;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.client.RestTemplate;
 
 import java.time.Duration;
 import java.util.ArrayList;
@@ -37,23 +36,31 @@ public class CoupangCrawler {
     private final CategoryRepository categoryRepository;
     private final ProductRepository productRepository;
     private final ProviderRepository providerRepository;
+    private final RedisProductService redisProductService;
+    private final StockProvider stockProvider;
+    private final RestTemplate restTemplate;
     private WebDriver driver;
 
     public void initDriver() {
         // ChromeDriver 자동 다운로드 및 실행
         WebDriverManager.chromedriver().setup();
         ChromeOptions options = new ChromeOptions();
-        // options.addArguments("--headless=new");  // 창 없이 실행
-        options.addArguments("--disable-gpu");
-        options.addArguments("--no-sandbox");
-        options.addArguments("--disable-dev-shm-usage");
-        options.addArguments("start-maximized");
-        options.addArguments("disable-infobars");
-        options.addArguments("--disable-blink-features=AutomationControlled");
-        options.addArguments("--window-size=1920,1080");
+        // options.addArguments("--headless"); // 브라우저 창 없이 실행 (필요하면 제거)
+        options.addArguments("--disable-blink-features=AutomationControlled"); // 자동화 탐지 방지
+        options.addArguments("start-maximized"); // 창 최대화
+        options.addArguments("disable-infobars"); // 정보 표시줄 제거
+        options.addArguments("--disable-extensions"); // 확장 프로그램 비활성화
+        options.addArguments("--incognito"); // 시크릿 모드
+        options.addArguments("--disable-gpu"); // GPU 가속 비활성화
+        options.addArguments("--no-sandbox"); // 샌드박스 모드 비활성화
+        options.addArguments("--disable-dev-shm-usage"); // 공유 메모리 사용 안 함
+        options.addArguments(
+            "user-agent=Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36");
 
         driver = new ChromeDriver(options);
         driver.manage().timeouts().implicitlyWait(Duration.of(10, TimeUnit.SECONDS.toChronoUnit()));
+        // WebDriver 실행 후, 아래 코드 추가
+        ((JavascriptExecutor)driver).executeScript("Object.defineProperty(navigator, 'webdriver', {get: () => undefined})");
     }
 
     @Transactional
@@ -61,8 +68,14 @@ public class CoupangCrawler {
         initDriver();
         String url = coupangCrawlerProperties.getDefaultCategoryUrl();
         log.info("Crawling: {}", url);
-        Category category = Category.of(coupangCrawlerProperties.getDefaultCategory(), coupangCrawlerProperties.getDefaultCategoryName());
-        categoryRepository.save(category);
+        Optional<Category> byId = categoryRepository.findById(Long.parseLong(coupangCrawlerProperties.getDefaultCategory()));
+        Category category;
+        if (byId.isPresent()) {
+            category = byId.get();
+        } else {
+            category = Category.of(coupangCrawlerProperties.getDefaultCategoryName());
+            categoryRepository.saveAndFlush(category);
+        }
         try {
             driver.get(url);
 
@@ -74,20 +87,22 @@ public class CoupangCrawler {
                 String href = element.getAttribute("href");
                 categories.add(href);
             }
-
+            /*for (int i = 1; i < 2; i++) {
+                getProductByHref(categories.get(i), category);
+            }*/
             for (String href : categories) {
                 getProductByHref(href, category);
             }
-
         } catch (Exception e) {
             e.printStackTrace();
             log.error("Error while crawling: {}", e.getMessage());
+        } finally {
+            driver.quit(); // 브라우저 종료
         }
     }
 
     private void getProductByHref(String href, Category parentCategory) {
         initDriver();
-        String url = coupangCrawlerProperties.getBaseUrl() + href;
         try {
             driver.get(href);
             Optional<String> optionalCategoryId = getCategoryIdByHref(href);
@@ -95,8 +110,8 @@ public class CoupangCrawler {
             if (optionalCategoryId.isEmpty()) {
                 return;
             }
-            Category category = Category.of(optionalCategoryId.get(), text, parentCategory, parentCategory.getDepth() + 1);
-            categoryRepository.save(category);
+            Category category = Category.of(text, parentCategory, parentCategory.getDepth() + 1);
+            categoryRepository.saveAndFlush(category);
             List<WebElement> products = driver.findElements(By.cssSelector("li.baby-product"));
             for (WebElement productElement : products) {
                 WebElement linkElement = productElement.findElement(By.cssSelector(".baby-product-link"));
@@ -116,7 +131,9 @@ public class CoupangCrawler {
                         price = price.replace(",", "");
                     }
                     // 결과 출력
-                    Product product = Product.of(optionalProductId.get(), category, imageUrl, productName, Integer.parseInt(price));
+                    Product product = Product.of(category, imageUrl, productName, Integer.parseInt(price));
+                    ProductImage productImage = ProductImage.of(product, imageUrl, ImageType.MAIN);
+                    product.addImages(productImage);
                     getDetailOptions(detailLink, product);
                     log.info("상품명: {}", productName);
                     log.info("이미지 URL: {} ", imageUrl);
@@ -124,10 +141,9 @@ public class CoupangCrawler {
                     log.info("--------------------------------");
                 }
             }
-
         } catch (Exception e) {
             e.printStackTrace();
-            log.error("Failed to connect: {}", url);
+            log.error("Failed to connect: {}", href);
         } finally {
             driver.quit(); // 브라우저 종료
         }
@@ -139,7 +155,14 @@ public class CoupangCrawler {
         try {
             driver.get(detailLink);
             setProviderAndSaveProduct(product);
-
+            WebElement element = driver.findElement(By.xpath("//*[@id=\"productDetail\"]"));
+            List<WebElement> detailImageElements = element.findElements(By.xpath(".//img"));
+            for (WebElement detailImageElement : detailImageElements) {
+                String imageUrl = detailImageElement.getAttribute("src");
+                ProductImage productImage = ProductImage.of(product, imageUrl, ImageType.DETAIL);
+                product.addImages(productImage);
+            }
+            //*[@id="productDetail"]/div[1]/div/div/div/div/img[1]
             WebElement descriptionElement = driver.findElement(By.cssSelector(".prod-description-attribute"));
             List<WebElement> descriptionElementElements = descriptionElement.findElements(By.cssSelector(".prod-attr-item"));
             StringBuilder description = new StringBuilder();
@@ -150,6 +173,7 @@ public class CoupangCrawler {
             product.setDescription(description.toString());
             List<WebElement> optionContainers = driver.findElements(By.cssSelector("#optionWrapper > div"));
             for (WebElement optionContainer : optionContainers) {
+
                 String optionTypeId = optionContainer.getAttribute("data-attribute-type-id");
                 log.info("옵션 ID: {}", optionTypeId);
                 ProductOption productOption = ProductOption.of(product);
@@ -169,7 +193,22 @@ public class CoupangCrawler {
                     setSingleText(optionContainer, productOption, productOptionDetails);
                 }
             }
-            productRepository.save(product);
+            product.addReviewStatistics(ReviewStatistic.of(product));
+            productRepository.saveAndFlush(product);
+            stockProvider.generateOptionCombinations(product.getId());
+            /*RedisProduct redisProduct = RedisProduct.builder()
+                .id(product.getId())
+                .name(product.getName())
+                .description(product.getDescription())
+                .categoryId(product.getCategory().getId()).build();
+            VectorProduct vectorProduct =
+                VectorProduct.builder().name(redisProduct.getName()).description(redisProduct.getDescription()).build();
+            VectorEntity entity =
+                restTemplate.postForObject("http://127.0.0.1:8000/generate_vector", vectorProduct, VectorEntity.class);
+            assert entity != null;
+            log.error("entity: {}", entity.getVector());
+            redisProduct.setVector(entity.getVector());
+            redisProductService.saveProduct(redisProduct);*/
         } catch (Exception e) {
             e.printStackTrace();
             log.error("Failed to connect: {}", detailLink);

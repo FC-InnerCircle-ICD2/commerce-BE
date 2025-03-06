@@ -8,7 +8,7 @@ spring:
     password: KzXIA2t68L7wqAHueJzC
   jpa:
     hibernate:
-      ddl-auto: update
+      ddl-auto: none
     show-sql: true
     properties:
       hibernate:
@@ -25,3 +25,8 @@ coupang:
   default-category: 186764 # 남녀 공용 의류
   default-category-url: ${coupang.category}/${coupang.default-category}
   default-category-name: 여성패션
+
+redis:
+  stand-alone:
+    host: localhost
+    port: 6378
