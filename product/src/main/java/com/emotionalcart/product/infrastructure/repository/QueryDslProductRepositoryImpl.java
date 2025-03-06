@@ -1,6 +1,7 @@
 package com.emotionalcart.product.infrastructure.repository;
 
 import com.emotionalcart.core.feature.product.*;
+import com.emotionalcart.core.feature.provider.*;
 import com.emotionalcart.product.domain.dto.ProductSearch;
 import com.querydsl.core.BooleanBuilder;
 import com.querydsl.core.types.OrderSpecifier;
@@ -82,11 +83,13 @@ public class QueryDslProductRepositoryImpl implements QueryDslProductRepository 
 
     @Override
     public List<ProductDetail> findAllProductDetail(Set<Long> productIds) {
+        QProvider provider = QProvider.provider;
         return queryFactory.select(
                 Projections.constructor(
                     ProductDetail.class,
                     product.id,
                     product.providerId,
+                    provider.name,
                     product.price,
                     productOption.id,
                     productOptionDetail.id,
@@ -97,11 +100,14 @@ public class QueryDslProductRepositoryImpl implements QueryDslProductRepository 
             .on(product.id.eq(productOption.product.id))
             .leftJoin(productOptionDetail)
             .on(productOption.id.eq(productOptionDetail.productOption.id))
+            .join(provider)
+            .on(product.providerId.eq(provider.id))
             .where(
                 product.id.in(productIds),
                 product.isDeleted.isFalse(),
                 productOption.isDeleted.isFalse(),
-                productOptionDetail.isDeleted.isFalse()
+                productOptionDetail.isDeleted.isFalse(),
+                provider.isDeleted.isFalse()
             )
             .fetch();
     }

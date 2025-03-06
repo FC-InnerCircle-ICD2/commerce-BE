@@ -13,6 +13,7 @@ import jakarta.validation.Valid;
 import org.springframework.data.domain.Page;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.ModelAttribute;
+import org.springframework.web.bind.annotation.PathVariable;
 
 @Tag(name = "백오피스 판매처 (공급자) API", description = "백오피스 판매처 (공급자) 관련 API")
 public interface AdminProviderControllerDocs {
@@ -43,6 +44,10 @@ public interface AdminProviderControllerDocs {
     @Operation(summary = "판매처 (공급자) 조회")
     public ResponseEntity<ReadProviderResponse> readProvider(Long providerId);
 
-    void updateProviderMemberId(UpdateProviderMemberIdRequest request);
+    @Operation(summary = "판매처 (공급자) memberId 부여 <<❌ 연동 영역 아닙니다. ❌>>")
+    public ResponseEntity<Void> updateProviderMemberId(UpdateProviderMemberIdRequest request);
+
+    @Operation(summary = "판매처 (공급자) 삭제")
+    public ResponseEntity<Void> deleteProduct(@PathVariable Long providerId);
 
 }

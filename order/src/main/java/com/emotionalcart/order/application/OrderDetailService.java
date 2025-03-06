@@ -67,9 +67,8 @@ public class OrderDetailService {
     }
 
     public Boolean validateOrderByMember(Long userId, Long orderId) {
-        return orderRepository.findByIdAndOrderMemberId(orderId, userId)
-            .map(Orders::isCompleted)
-            .orElse(false);
+        return orderRepository.findByIdAndOrderMemberId(orderId, userId).isPresent() ? Boolean.TRUE : Boolean.FALSE;
+
     }
 
 }

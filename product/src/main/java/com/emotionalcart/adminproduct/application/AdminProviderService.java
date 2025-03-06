@@ -4,6 +4,8 @@ import com.emotionalcart.adminproduct.domain.AdminProviderDataProvider;
 import com.emotionalcart.adminproduct.infrastructure.AdminProviders;
 import com.emotionalcart.adminproduct.presentation.dto.*;
 import com.emotionalcart.core.feature.provider.Provider;
+import com.emotionalcart.product.infrastructure.search.SearchService;
+import com.emotionalcart.product.infrastructure.search.dto.IndexCreateProvider;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
@@ -18,6 +20,7 @@ import java.util.List;
 public class AdminProviderService {
 
     private final AdminProviderDataProvider adminProviderDataProvider;
+    private final SearchService searchService;
 
     public Page<ReadAdminProvidersResponse> readProviders(ReadAdminProvidersRequest request) {
         Page<AdminProviders> providers = adminProviderDataProvider.findAllProviders(request.getPageable());
@@ -41,6 +44,8 @@ public class AdminProviderService {
 
         Provider savedProvider = adminProviderDataProvider.saveProvider(provider);
 
+        searchService.indexCreateProvider(IndexCreateProvider.of(savedProvider.getId(), savedProvider.getName(), savedProvider.getDescription(), savedProvider.getCreatedAt()));
+
         return new CreateProviderResponse(savedProvider.getId());
     }
 
@@ -52,5 +57,14 @@ public class AdminProviderService {
 
     public void updateProviderMemberId(UpdateProviderMemberIdRequest request) {
         adminProviderDataProvider.updateProviderMemberId(request.getProviderId(), request.getMemberId());
+    }
+
+    /**
+     * 판매처 삭제 (논리삭제 isDeleted = ture)
+     */
+    public void deleteProvider(Long providerId) {
+        Provider provider =adminProviderDataProvider.findProviderById(providerId);
+        provider.delete();
+        searchService.indexDeleteProvider(providerId);
     }
 }

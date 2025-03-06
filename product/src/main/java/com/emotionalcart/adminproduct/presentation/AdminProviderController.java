@@ -35,7 +35,15 @@ public class AdminProviderController implements AdminProviderControllerDocs {
 
     @Override
     @PutMapping("/memberId")
-    public void updateProviderMemberId(@RequestBody UpdateProviderMemberIdRequest request) {
+    public ResponseEntity<Void> updateProviderMemberId(@RequestBody UpdateProviderMemberIdRequest request) {
         adminProviderService.updateProviderMemberId(request);
+        return ResponseEntity.ok().build();
+    }
+
+    @Override
+    @DeleteMapping("/{providerId}")
+    public ResponseEntity<Void> deleteProduct(@PathVariable Long providerId) {
+        adminProviderService.deleteProvider(providerId);
+        return ResponseEntity.ok().build();
     }
 }

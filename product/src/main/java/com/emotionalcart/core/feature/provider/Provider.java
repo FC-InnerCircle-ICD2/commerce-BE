@@ -61,4 +61,8 @@ public class Provider extends BaseEntity {
     public void updateMemberId(Long memberId) {
         this.memberId = memberId;
     }
+
+    public void delete() {
+        this.setIsDeleted(true);
+    }
 }
