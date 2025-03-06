@@ -1,4 +1,4 @@
-package com.emotionalcart.product.infrastructure.search.dto;
+package com.emotionalcart.adminproduct.infrastructure.search.dto;
 
 import lombok.AccessLevel;
 import lombok.Getter;

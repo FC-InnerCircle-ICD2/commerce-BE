@@ -1,8 +1,9 @@
-package com.emotionalcart.product.infrastructure.search;
+package com.emotionalcart.adminproduct.infrastructure.search;
 
-import com.emotionalcart.product.infrastructure.search.dto.IndexCreateBanner;
-import com.emotionalcart.product.infrastructure.search.dto.IndexCreateProvider;
-import com.emotionalcart.product.infrastructure.search.http.SearchFeignClient;
+import com.emotionalcart.adminproduct.domain.event.ProductCreatedEvent;
+import com.emotionalcart.adminproduct.infrastructure.search.dto.IndexCreateBanner;
+import com.emotionalcart.adminproduct.infrastructure.search.dto.IndexCreateProvider;
+import com.emotionalcart.adminproduct.infrastructure.search.http.SearchFeignClient;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -32,4 +33,12 @@ public class SearchService {
     public void indexDeleteBanner(@PathVariable Long bannerId) {
         searchFeignClient.indexDeleteBanner(bannerId);
     }
+
+    /**
+     * 상품 적재
+     */
+    public void saveProduct(ProductCreatedEvent event) {
+        searchFeignClient.saveProduct(event);
+    }
+
 }
