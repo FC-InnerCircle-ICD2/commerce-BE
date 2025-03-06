@@ -1,8 +1,9 @@
-package com.emotionalcart.product.infrastructure.search.http;
+package com.emotionalcart.adminproduct.infrastructure.search.http;
 
+import com.emotionalcart.adminproduct.domain.event.ProductCreatedEvent;
 import com.emotionalcart.core.config.FeignClientConfig;
-import com.emotionalcart.product.infrastructure.search.dto.IndexCreateBanner;
-import com.emotionalcart.product.infrastructure.search.dto.IndexCreateProvider;
+import com.emotionalcart.adminproduct.infrastructure.search.dto.IndexCreateBanner;
+import com.emotionalcart.adminproduct.infrastructure.search.dto.IndexCreateProvider;
 import org.springframework.cloud.openfeign.FeignClient;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -13,14 +14,12 @@ import org.springframework.web.bind.annotation.RequestBody;
 public interface SearchFeignClient {
 
     /**
-     *
      * @param request
      */
     @PostMapping("/providers")
     void indexCreateProvider(@RequestBody IndexCreateProvider request);
 
     /**
-     *
      * @param providerId
      */
     @DeleteMapping("/providers/{providerId}")
@@ -32,4 +31,9 @@ public interface SearchFeignClient {
     @DeleteMapping("/banners/{bannerId}")
     void indexDeleteBanner(@PathVariable Long bannerId);
 
+    @PostMapping("/elastic/product")
+    void indexCreateProduct(@RequestBody ProductCreatedEvent event);
+
+    @DeleteMapping("/products/{productId}")
+    void indexDeleteProduct(@PathVariable Long productId);
 }

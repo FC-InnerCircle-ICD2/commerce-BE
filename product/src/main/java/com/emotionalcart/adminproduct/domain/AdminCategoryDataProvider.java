@@ -12,12 +12,13 @@ import org.springframework.stereotype.Component;
 public class AdminCategoryDataProvider {
     private final AdminCategoryRepository categoryRepository;
 
-    public void validateCategory(Long categoryId) {
+    public Category validateCategory(Long categoryId) {
         Category category = categoryRepository.findByIdAndIsDeletedIsFalse(categoryId)
                 .orElseThrow(() -> new ProductException(ErrorCode.NOT_FOUND_CATEGORY));
         if (category.getDepth() != 2) {
             throw new ProductException(ErrorCode.CATEGORY_MUST_BE_DEPTH_2);
         }
+        return category;
     }
 
     public Category findCategory(Long categoryId) {
