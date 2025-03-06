@@ -1,6 +1,6 @@
 package com.emotionalcart.infra;
 
-import com.emotionalcart.CoupangCrawler;
+import com.emotionalcart.application.CoupangCrawler;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.boot.ApplicationArguments;
