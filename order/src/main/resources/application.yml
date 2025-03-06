@@ -51,6 +51,7 @@ search:
 app:
   allow-domains:
     - https://order-api.emmotional-cart.click
+    - http://localhost:5173
 swagger-config:
   servers:
     - url: https://order-api.emmotional-cart.click

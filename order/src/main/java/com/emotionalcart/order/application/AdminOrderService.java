@@ -9,6 +9,8 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.Optional;
+
 @Slf4j
 @Service
 @RequiredArgsConstructor
@@ -25,7 +27,7 @@ public class AdminOrderService {
      */
     @Transactional(readOnly = true)
     public Page<AdminOrder> getOrderList(Long orderId, Pageable pageable) {
-        if (orderId.describeConstable().isPresent()) {
+        if (Optional.ofNullable(orderId).isPresent()) {
 
             return adminOrderRepository.findById(orderId, pageable).map(orders -> AdminOrder.of(orders.getId(),
                                                                                                 orders.getPaymentMethod().getMethodName(),
