@@ -4,8 +4,6 @@ import com.emotionalcart.core.feature.product.Product;
 import org.springframework.data.domain.Page;
 
 import java.util.List;
-import java.util.Set;
-import java.util.function.Function;
 import java.util.stream.Collectors;
 
 public class Products {
@@ -37,7 +35,7 @@ public class Products {
 
     public List<Long> getProviderIds() {
         return this.products.stream()
-                .map(Product::getCategoryId)
+                .map(Product::getProviderId)
                 .collect(Collectors.toList());
     }
 }
