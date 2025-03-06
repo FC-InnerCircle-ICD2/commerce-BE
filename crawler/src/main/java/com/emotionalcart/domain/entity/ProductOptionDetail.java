@@ -6,6 +6,8 @@ import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
+import java.util.concurrent.ThreadLocalRandom;
+
 @Getter
 @Entity
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
@@ -23,12 +25,16 @@ public class ProductOptionDetail {
 
     private String imageUrl;
 
-    private int quantity;
+    private int additionalPrice;
+
+    private int optionOrder;
 
     public static ProductOptionDetail of(String name, ProductOption productOption) {
         ProductOptionDetail detail = new ProductOptionDetail();
         detail.value = name;
         detail.productOption = productOption;
+        detail.additionalPrice = getRandomNumber();
+        detail.optionOrder = productOption.getProductOptionDetails().size();
         productOption.addDetail(detail);
         return detail;
     }
@@ -38,7 +44,20 @@ public class ProductOptionDetail {
         detail.value = name;
         detail.imageUrl = imageUrl;
         detail.productOption = productOption;
+        detail.additionalPrice = getRandomNumber();
+        detail.optionOrder = productOption.getProductOptionDetails().size();
         productOption.addDetail(detail);
+        return detail;
+    }
+
+    private static int getRandomNumber() {
+        int random = ThreadLocalRandom.current().nextInt(1000, 10001); // 1000 ~ 10000
+        return (random / 100) * 100; // 100 단위 절삭
+    }
+
+    public static ProductOptionDetail of(Long optionDetailId) {
+        ProductOptionDetail detail = new ProductOptionDetail();
+        detail.id = optionDetailId;
         return detail;
     }
 
