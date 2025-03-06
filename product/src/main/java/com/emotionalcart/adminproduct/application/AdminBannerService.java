@@ -10,6 +10,8 @@ import com.emotionalcart.core.feature.banner.BannerImage;
 import com.emotionalcart.core.feature.banner.BannerType;
 import com.emotionalcart.core.feature.banner.ProductBanner;
 import com.emotionalcart.core.feature.product.Product;
+import com.emotionalcart.product.infrastructure.search.SearchService;
+import com.emotionalcart.product.infrastructure.search.dto.IndexCreateBanner;
 import com.emotionalcart.s3.S3Utils;
 import com.emotionalcart.s3.config.S3Constants;
 import lombok.RequiredArgsConstructor;
@@ -26,6 +28,7 @@ public class AdminBannerService {
     private final AdminBannerDataProvider adminBannerDataProvider;
     private final AdminProductDataProvider adminProductDataProvider;
     private final S3Utils s3Utils;
+    private SearchService searchService;
 
     @Transactional
     public CreateBannerResponse createBanner(CreateBannerRequest request) {
@@ -55,6 +58,8 @@ public class AdminBannerService {
             );
             adminBannerDataProvider.saveProductBanner(productBanner);
         }
+
+        searchService.indexCreateBanner(IndexCreateBanner.of(banner.getId(), banner.getIsDeleted(), banner.getTitle(), banner.getDescription(), banner.getBannerOrder(), banner.getCreatedAt()));
 
         return new CreateBannerResponse(savedBanner.getId());
     }
@@ -116,6 +121,8 @@ public class AdminBannerService {
 
         ProductBanner productBanner = adminBannerDataProvider.findProductBanner(bannerId);
         productBanner.delete();
+
+        searchService.indexDeleteBanner(bannerId);
     }
 
     @Transactional
