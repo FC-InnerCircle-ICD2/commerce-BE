@@ -164,6 +164,7 @@ public class AdminProductService {
     @Transactional
     public void updateProduct(Long productId, UpdateProductRequest request) {
         Product product = adminProductDataProvider.findProductById(productId);
+        Category category = adminCategoryDataProvider.findCategory(product.getCategoryId());
         product.updateBasicInfo(request.getName(), request.getPrice(), request.getDescription());
         for (OptionUpdateRequest optionRequest : request.getOptions()) {
             ProductOption option = updateOrCreateProductOption(product, optionRequest);
@@ -172,6 +173,8 @@ public class AdminProductService {
         handleOptionDeletions(product, request);
         handleOptionDetailDeletions(product, request);
         handleProductImageUpdates(product, request);
+
+        publishProductCreatedEvent(product, category);
     }
 
     /**
