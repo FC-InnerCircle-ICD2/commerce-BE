@@ -45,6 +45,9 @@ stock:
 shipment:
   find:
     feign-endpoint: ${SHIPMENT_SERVER_URL:http://localhost:7777}
+search:
+  find:
+    feign-endpoint: ${SEARCH_SERVER_URL:http://localhost:9998}
 app:
   allow-domains:
     - https://order-api.emmotional-cart.click
