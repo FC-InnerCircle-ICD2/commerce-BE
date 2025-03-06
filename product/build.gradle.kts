@@ -42,6 +42,9 @@ dependencies {
     // REDIS
     implementation("org.springframework.boot:spring-boot-starter-data-redis")
     implementation("io.lettuce:lettuce-core:6.5.3.RELEASE") // Redis 클라이언트
+
+    // 캐싱
+    implementation("org.springframework.boot:spring-boot-starter-cache")
 }
 
 dependencyManagement {
