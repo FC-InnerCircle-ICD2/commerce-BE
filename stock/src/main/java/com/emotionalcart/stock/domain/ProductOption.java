@@ -31,9 +31,6 @@ public class ProductOption {
     @Column(name = "is_deleted")
     private boolean deleted = false;
 
-    @Column(name = "is_required")
-    private boolean required = false;
-
     @OneToMany(mappedBy = "productOption", fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
     private List<ProductOptionDetail> productOptionDetails = new ArrayList<>();
 
