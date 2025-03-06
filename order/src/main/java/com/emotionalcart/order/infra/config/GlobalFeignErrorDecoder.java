@@ -1,9 +1,6 @@
 package com.emotionalcart.order.infra.config;
 
-import com.emotionalcart.order.infra.advice.exceptions.FeignClientDecodingException;
-import com.emotionalcart.order.infra.advice.exceptions.ProductPriceException;
-import com.emotionalcart.order.infra.advice.exceptions.ProductStockException;
-import com.emotionalcart.order.infra.advice.exceptions.ProductValidationException;
+import com.emotionalcart.order.infra.advice.exceptions.*;
 import com.emotionalcart.order.infra.product.dto.ErrorResponse;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import feign.Response;
@@ -36,6 +33,7 @@ public class GlobalFeignErrorDecoder implements ErrorDecoder {
                 switch (errorResponse.getErrorCode()) {
                     case "PRODUCT-0007" -> throw new ProductPriceException(errorResponse.getErrorMessage());
                     case "PRODUCT-0009" -> throw new ProductValidationException(errorResponse.getErrorMessage());
+                    case String s when s.startsWith("STOCK-") -> throw new StockException(errorResponse.getErrorMessage());
                     default -> throw new ProductStockException(errorResponse.getErrorMessage());
 
                 }
