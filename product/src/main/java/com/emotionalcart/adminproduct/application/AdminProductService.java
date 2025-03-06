@@ -3,6 +3,7 @@ package com.emotionalcart.adminproduct.application;
 import com.emotionalcart.adminproduct.domain.AdminCategoryDataProvider;
 import com.emotionalcart.adminproduct.domain.AdminProductDataProvider;
 import com.emotionalcart.adminproduct.domain.AdminProviderDataProvider;
+import com.emotionalcart.adminproduct.domain.event.ProductCreatedEvent;
 import com.emotionalcart.adminproduct.infrastructure.AdminProducts;
 import com.emotionalcart.adminproduct.presentation.dto.*;
 import com.emotionalcart.core.exception.ErrorCode;
@@ -16,6 +17,7 @@ import com.emotionalcart.product.infrastructure.stock.dto.StockQuantityUpdateReq
 import com.emotionalcart.s3.S3Utils;
 import com.emotionalcart.s3.config.S3Constants;
 import lombok.RequiredArgsConstructor;
+import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.stereotype.Service;
@@ -36,11 +38,12 @@ public class AdminProductService {
     private final AdminCategoryDataProvider adminCategoryDataProvider;
     private final S3Utils s3Utils;
     private final StockService stockService;
+    private final ApplicationEventPublisher applicationEventPublisher;
 
     @Transactional
     public CreateProductResponse createProduct(CreateProductRequest request) {
         // category, provider 유효성 체크
-        adminCategoryDataProvider.validateCategory(request.getCategoryId());
+        Category category = adminCategoryDataProvider.validateCategory(request.getCategoryId());
 
         Product product = request.toEntity();
 
@@ -61,7 +64,35 @@ public class AdminProductService {
         productImages.addAll(detailProductImages);
         savedProduct.setImages(productImages);
 
+        publishProductCreatedEvent(product, category);
+
         return new CreateProductResponse(savedProduct.getId());
+    }
+
+    private void publishProductCreatedEvent(Product product, Category category) {
+        // 상품 es 적재 이벤트 발행
+        List<ProductCreatedEvent.Option> options = product.getOptions().stream()
+            .map(option -> new ProductCreatedEvent.Option(
+                option.getId(),
+                option.getName(),
+                option.getDetails().stream()
+                    .map(detail -> new ProductCreatedEvent.Detail(detail.getId(), detail.getValue(), detail.getAdditionalPrice()))
+                    .toList()
+            ))
+            .toList();
+
+        ProductCreatedEvent event = new ProductCreatedEvent(
+            product.getId(),
+            product.getName(),
+            product.getDescription(),
+            product.getPrice(),
+            product.getProviderId(),
+            "물길열다", // 현재 업체 id 하드코딩되어있음
+            product.getCategoryId(),
+            category.getName(),
+            options
+        );
+        applicationEventPublisher.publishEvent(event);
     }
 
     /**

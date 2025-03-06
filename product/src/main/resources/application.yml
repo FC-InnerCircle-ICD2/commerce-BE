@@ -40,6 +40,9 @@ stock:
 order:
   find:
     feign-endpoint: ${ORDER_SERVER_URL:http://localhost:9999}
+elastic:
+  find:
+    feign-endpoint: ${ELASTIC_SERVER_URL:http://localhost:9998}
 app:
   allow-domains:
     - https://product-api.emmotional-cart.click
