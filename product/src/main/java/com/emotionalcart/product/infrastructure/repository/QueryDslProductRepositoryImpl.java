@@ -50,7 +50,8 @@ public class QueryDslProductRepositoryImpl implements QueryDslProductRepository 
             .leftJoin(orderStatistics).on(orderStatistics.productId.eq(product.id)) // 명시적 조인
             .leftJoin(product.reviewStatistic, reviewStatistic).fetchJoin()
             .where(
-                filterBuilder
+                filterBuilder,
+                product.isDeleted.isFalse()
             )
             .offset(productSearch.getPageRequest().getOffset())
             .limit(productSearch.getPageRequest().getPageSize())
@@ -60,7 +61,8 @@ public class QueryDslProductRepositoryImpl implements QueryDslProductRepository 
         JPAQuery<Long> count = queryFactory.select(product.count())
             .from(product)
             .where(
-                filterBuilder
+                filterBuilder,
+                product.isDeleted.isFalse()
             );
 
         return PageableExecutionUtils.getPage(products, productSearch.getPageRequest(), count::fetchOne);
