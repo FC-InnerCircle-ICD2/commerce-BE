@@ -28,7 +28,7 @@ public class AdminBannerService {
     private final AdminBannerDataProvider adminBannerDataProvider;
     private final AdminProductDataProvider adminProductDataProvider;
     private final S3Utils s3Utils;
-    private SearchService searchService;
+    private final SearchService searchService;
 
     @Transactional
     public CreateBannerResponse createBanner(CreateBannerRequest request) {
