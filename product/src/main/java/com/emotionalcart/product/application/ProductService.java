@@ -9,11 +9,14 @@ import com.emotionalcart.core.feature.product.ProductOptionDetail;
 import com.emotionalcart.core.feature.provider.Provider;
 import com.emotionalcart.core.feature.review.Review;
 import com.emotionalcart.core.feature.review.ReviewImage;
+import com.emotionalcart.core.feature.review.ReviewStatistic;
 import com.emotionalcart.product.domain.CategoryDataProvider;
 import com.emotionalcart.product.domain.ProductDataProvider;
 import com.emotionalcart.product.domain.ProviderDataProvider;
 import com.emotionalcart.product.domain.dto.ProductDetail;
 import com.emotionalcart.product.domain.support.*;
+import com.emotionalcart.product.infrastructure.elasticsearch.ProductESService;
+import com.emotionalcart.product.infrastructure.elasticsearch.dto.ElasticProduct;
 import com.emotionalcart.product.infrastructure.order.OrderService;
 import com.emotionalcart.product.infrastructure.stock.StockService;
 import com.emotionalcart.product.infrastructure.stock.dto.OptionStockDto;
@@ -28,9 +31,11 @@ import com.emotionalcart.s3.config.S3Constants;
 import jakarta.validation.constraints.NotNull;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
+import org.springframework.data.support.PageableExecutionUtils;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.util.StringUtils;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.util.*;
@@ -47,6 +52,7 @@ public class ProductService {
     private final OrderService orderService;
     private final S3Utils s3Utils;
     private final StockService stockService;
+    private final ProductESService productESService;
 
     public Page<ReadProductReviews.Response> readProductReviews(@NotNull Long productId,
                                                                 ReadProductReviews.Request request) {
@@ -108,6 +114,32 @@ public class ProductService {
     }
 
     public Page<ReadProducts.Response> readProducts(ReadProducts.Request request) {
+        if (StringUtils.hasText(request.getKeyword())) {
+            if(request.getRating() != null) {
+                return readProductsFromDatabase(request);
+            }
+            return readProductsFromElasticSearch(request);
+        }
+        return readProductsFromDatabase(request);
+    }
+
+    private Page<ReadProducts.Response> readProductsFromElasticSearch(ReadProducts.Request request) {
+        List<ElasticProduct> productPage = productESService.searchProduct(request.toProductSearch());
+
+        ElasticProducts products = ElasticProducts.from(productPage);
+
+        Map<Long, Category> categories = categoryDataProvider.findCategoryByIds(products.getCategoryIds());
+        Map<Long, Provider> providers = providerDataProvider.findProviderByIds(products.getProviderIds());
+        Map<Long, Double> ratings = productDataProvider.findProductRatings(products.ids());
+        ProductImages productImages = ProductImages.from(productDataProvider.findAllProductImages(products.ids()));
+
+        Page<ElasticProduct> elasticProducts = PageableExecutionUtils.getPage(productPage, request.toProductSearch().getPageRequest(), () -> (long) products.ids().size());
+
+        // DTO 변환
+        return ReadProducts.Response.toResponse(elasticProducts, categories, providers, ratings, productImages);
+    }
+
+    public Page<ReadProducts.Response> readProductsFromDatabase(ReadProducts.Request request) {
         Page<Product> productPage = productDataProvider.findAllProducts(request.toProductSearch());
 
         Products products = Products.from(productPage);
@@ -116,25 +148,6 @@ public class ProductService {
         Map<Long, Category> categories = categoryDataProvider.findCategoryByIds(products.getCategoryIds());
         Map<Long, Provider> providers = providerDataProvider.findProviderByIds(products.getProviderIds());
         ProductImages productImages = ProductImages.from(productDataProvider.findAllProductImages(products.ids()));
-
-        // 상품별 옵션 목록 그룹화
-        // Map<Long, List<ProductOption>> productOptionsMap = productOptions.getOptions().stream()
-        //     .collect(Collectors.groupingBy(ProductOption::getProductId));
-
-        // // 상품별 옵션 조합 생성
-        // Map<Long, List<OptionDetailsGroup>> productOptionCombinations = new HashMap<>();
-        // for (Long productId : products.ids()) {
-        //     List<ProductOption> productOptionsList = productOptionsMap.getOrDefault(productId, List.of());
-        //     List<OptionDetailsGroup> optionCombinations = cartesianProduct(convertToOptionGroups(productOptionsList));
-        //     productOptionCombinations.put(productId, optionCombinations);
-        // }
-
-        // // 상품별 옵션 조합별 재고 조회
-        // Map<Long, OptionStockResult> stockResults = products.ids().stream()
-        //     .collect(Collectors.toMap(
-        //         productId -> productId,
-        //         productId -> fetchOptionStockQuantities(productId, productOptionCombinations.getOrDefault(productId, List.of()))
-        //     ));
 
         // DTO 변환
         return ReadProducts.Response.toResponse(productPage, productOptions, categories, providers, productImages);
