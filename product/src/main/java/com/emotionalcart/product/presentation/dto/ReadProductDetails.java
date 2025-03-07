@@ -25,7 +25,7 @@ public class ReadProductDetails {
         private ReadProductReviewStatistic.Response reviewStatistic;
         private List<ReadProductImages.Response> images;
         private List<OptionStocksResponse> optionStocks;
-        private int totalStockQuantity;
+        //private int totalStockQuantity;
 
         public Response(Product product,
                 List<ReadProductOptions.Response> options, ReadProductCategories.Response categoryResponse,
@@ -41,7 +41,7 @@ public class ReadProductDetails {
             this.reviewStatistic = reviewStatistic;
             this.images = images;
             this.optionStocks = stockResult.getOptionStocksResponses();
-            this.totalStockQuantity = stockResult.getTotalStockQuantity();
+            //this.totalStockQuantity = stockResult.getTotalStockQuantity();
         }
 
         public static Response toResponse(Product product,
