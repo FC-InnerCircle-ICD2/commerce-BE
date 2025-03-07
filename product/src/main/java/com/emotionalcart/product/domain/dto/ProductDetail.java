@@ -11,7 +11,9 @@ public class ProductDetail {
     private String providerName;
     private Integer productPrice;
     private Long productOptionId;
+    private String productOptionName;
     private Long productOptionDetailId;
+    private String productOptionDetailName;
     private Integer productAdditionalPrice;
 
     public ProductDetail(Long productId,
@@ -19,7 +21,9 @@ public class ProductDetail {
                          String providerName,
                          Integer price,
                          Long productOptionId,
+                         String productOptionName,
                          Long productOptionDetailId,
+                         String productOptionDetailName,
                          Integer productAdditionalPrice
     ) {
         this.productId = productId;
@@ -27,7 +31,9 @@ public class ProductDetail {
         this.providerName = providerName;
         this.productPrice = price;
         this.productOptionId = productOptionId;
+        this.productOptionName = productOptionName;
         this.productOptionDetailId = productOptionDetailId;
+        this.productOptionDetailName = productOptionDetailName;
         this.productAdditionalPrice = productAdditionalPrice;
     }
 }
