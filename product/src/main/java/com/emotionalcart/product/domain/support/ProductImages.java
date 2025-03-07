@@ -18,11 +18,19 @@ public class ProductImages {
         return new ProductImages(productImages);
     }
 
-    public Map<Product, List<ReadProductImages.Response>> groupByProductId() {
+    public Map<Product, List<ReadProductImages.Response>> groupByProduct() {
         return productImages.stream()
                 .collect(Collectors.groupingBy(
                         ProductImage::getProduct,
                         Collectors.mapping(ReadProductImages.Response::new, Collectors.toList())
                 ));
+    }
+
+    public Map<Long, List<ReadProductImages.Response>> groupByProductId() {
+        return productImages.stream()
+            .collect(Collectors.groupingBy(
+                ProductImage::getProductId,
+                Collectors.mapping(ReadProductImages.Response::new, Collectors.toList())
+            ));
     }
 }

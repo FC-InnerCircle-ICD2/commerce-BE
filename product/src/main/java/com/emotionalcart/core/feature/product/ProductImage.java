@@ -67,4 +67,8 @@ public class ProductImage extends BaseImageEntity {
         this.setIsDeleted(true);
     }
 
+    public long getProductId() {
+        return product.getId();
+    }
+
 }
