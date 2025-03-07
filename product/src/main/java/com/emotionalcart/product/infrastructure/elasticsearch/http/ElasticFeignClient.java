@@ -9,7 +9,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 
 import java.util.List;
 
-@FeignClient(name = "elastic-service", url = "${elastic.find.feign-endpoint}", path = "/api/v1/elastic", configuration = FeignClientConfig.class)
+@FeignClient(name = "elastic-service", url = "${search.find.feign-endpoint}", path = "/api/v1/elastic", configuration = FeignClientConfig.class)
 public interface ElasticFeignClient {
 
     @GetMapping("/product")
