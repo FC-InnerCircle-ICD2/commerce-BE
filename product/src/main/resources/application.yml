@@ -43,9 +43,6 @@ order:
 search:
   find:
     feign-endpoint: ${SEARCH_SERVER_URL:http://localhost:9998}
-elastic:
-  find:
-    feign-endpoint: ${ELASTICSEARCH_URL:http://localhost:9998}
 
 app:
   allow-domains:
