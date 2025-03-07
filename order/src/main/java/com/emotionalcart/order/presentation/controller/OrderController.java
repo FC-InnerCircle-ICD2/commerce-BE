@@ -10,7 +10,6 @@ import com.emotionalcart.order.presentation.controller.request.CreateOrderReques
 import com.emotionalcart.order.presentation.controller.response.CreatedOrderResponse;
 import com.emotionalcart.order.presentation.controller.response.OrderDetailResponse;
 import com.emotionalcart.order.presentation.controller.response.UserOrderResponse;
-import com.emotionalcart.order.presentation.controller.response.ValidOrderResponse;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
@@ -60,10 +59,8 @@ public class OrderController implements OrderApiDocs {
      * 사용자 주문 검증
      */
     @GetMapping("/users/validate/{orderId}")
-    public ResponseEntity<ValidOrderResponse> validateOrderByMember(@AuthenticationPrincipal JwtAuthentication jwt,
-                                                                    @PathVariable Long orderId,
-                                                                    @RequestParam Long productId) {
-        ValidOrderResponse isExistOrder = orderDetailService.validateOrderByMember(jwt.id(), orderId, productId);
+    public ResponseEntity<Boolean> validateOrderByMember(@AuthenticationPrincipal JwtAuthentication jwt, @PathVariable Long orderId) {
+        Boolean isExistOrder = orderDetailService.validateOrderByMember(jwt.id(), orderId);
         return ResponseEntity.ok().body(isExistOrder);
     }
 
