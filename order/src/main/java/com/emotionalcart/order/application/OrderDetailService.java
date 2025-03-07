@@ -2,12 +2,15 @@ package com.emotionalcart.order.application;
 
 import com.emotionalcart.order.domain.dto.OrderDetail;
 import com.emotionalcart.order.domain.dto.UserOrder;
+import com.emotionalcart.order.domain.entity.OrderItem;
 import com.emotionalcart.order.domain.entity.OrderItemOption;
 import com.emotionalcart.order.domain.entity.Orders;
+import com.emotionalcart.order.infra.advice.exceptions.InvalidOrderException;
 import com.emotionalcart.order.infra.advice.exceptions.InvalidValueRequestException;
 import com.emotionalcart.order.infra.order.OrderRepository;
 import com.emotionalcart.order.infra.product.ProductService;
 import com.emotionalcart.order.infra.product.dto.ProductDetail;
+import com.emotionalcart.order.presentation.controller.response.ValidOrderResponse;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.*;
@@ -66,9 +69,25 @@ public class OrderDetailService {
         return new PageImpl<>(userOrders, request, orderList.getTotalElements());
     }
 
-    public Boolean validateOrderByMember(Long userId, Long orderId) {
-        return orderRepository.findByIdAndOrderMemberId(orderId, userId).isPresent() ? Boolean.TRUE : Boolean.FALSE;
+    public ValidOrderResponse validateOrderByMember(Long userId, Long orderId, Long productId) {
+        Orders orders = orderRepository.findByIdAndOrderMemberId(orderId, userId).orElseThrow(() -> new InvalidOrderException(
+            "일치하는 주문을 찾을 수 없습니다. 다시 확인 부탁드립니다."));
 
+        List<OrderItem> orderItems =
+            orders.getOrderItems().stream().filter(orderItem -> orderItem.getProductId().equals(productId)).toList();
+
+        if (!orderItems.isEmpty()) {
+            List<ValidOrderResponse.OrderDetailOption> orderDetailOptions = orderItems.stream()
+                .flatMap(orderItem -> orderItem.getOrderItemOptions().stream()
+                    .map(orderItemOption -> ValidOrderResponse.OrderDetailOption.from(
+                        orderItemOption.getProductOptionId(),
+                        orderItemOption.getProductOptionDetailId())))
+                .toList();
+
+            return ValidOrderResponse.of(productId, orderDetailOptions);
+        }
+
+        return ValidOrderResponse.empty();
     }
 
 }
