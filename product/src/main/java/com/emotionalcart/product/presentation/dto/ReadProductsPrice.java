@@ -54,17 +54,28 @@ public class ReadProductsPrice {
             private Long productOptionId;
             private Long productOptionDetailId;
             private Integer additionalPrice;
+            private String productOptionName;
+            private String productOptionDetailName;
 
-            private ProductOption(Long productOptionId, Long productOptionDetailId, Integer additionalPrice) {
+            private ProductOption(Long productOptionId,
+                                  String productOptionName,
+                                  Long productOptionDetailId,
+                                  String productOptionDetailName,
+                                  Integer additionalPrice
+            ) {
                 this.productOptionId = productOptionId;
+                this.productOptionName = productOptionName;
                 this.productOptionDetailId = productOptionDetailId;
+                this.productOptionDetailName = productOptionDetailName;
                 this.additionalPrice = (additionalPrice != null) ? additionalPrice : 0;
             }
 
             public static ProductOption fromProductDetail(ProductDetail productDetail) {
                 return new ProductOption(
                     productDetail.getProductOptionId(),
+                    productDetail.getProductOptionName(),
                     productDetail.getProductOptionDetailId(),
+                    productDetail.getProductOptionDetailName(),
                     productDetail.getProductAdditionalPrice()
                 );
             }

@@ -92,7 +92,9 @@ public class QueryDslProductRepositoryImpl implements QueryDslProductRepository 
                     provider.name,
                     product.price,
                     productOption.id,
+                    productOption.name,
                     productOptionDetail.id,
+                    productOptionDetail.value,
                     productOptionDetail.additionalPrice
                 ))
             .from(product)
