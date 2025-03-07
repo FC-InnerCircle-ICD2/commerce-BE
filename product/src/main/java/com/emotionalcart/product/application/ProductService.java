@@ -28,11 +28,10 @@ import com.emotionalcart.product.presentation.dto.request.CreateProductReviewReq
 import com.emotionalcart.product.presentation.dto.response.CreateProductReviewResponse;
 import com.emotionalcart.s3.S3Utils;
 import com.emotionalcart.s3.config.S3Constants;
+import com.querydsl.core.util.StringUtils;
 import jakarta.validation.constraints.NotNull;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageRequest;
-import org.springframework.data.domain.Pageable;
 import org.springframework.data.support.PageableExecutionUtils;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
@@ -116,13 +115,15 @@ public class ProductService {
     }
 
     public Page<ReadProducts.Response> readProducts(ReadProducts.Request request) {
-        if (StringUtils.hasText(request.getKeyword())) {
+        if (! StringUtils.isNullOrEmpty(request.getKeyword())) {
             if(request.getRating() != null) {
                 return readProductsFromDatabase(request);
+            }else{
+                return readProductsFromElasticSearch(request);
             }
-            return readProductsFromElasticSearch(request);
+        } else {
+            return readProductsFromDatabase(request);
         }
-        return readProductsFromDatabase(request);
     }
 
     private Page<ReadProducts.Response> readProductsFromElasticSearch(ReadProducts.Request request) {

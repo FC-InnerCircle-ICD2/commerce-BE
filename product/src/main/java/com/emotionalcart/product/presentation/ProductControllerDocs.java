@@ -205,7 +205,8 @@ public interface ProductControllerDocs {
                                   "url": "https://example.com/images/main.png",
                                   "type": "MAIN"
                               }
-                          ]
+                          ],
+                          "isDeleted": false
                       },
                     {
                          "productId": 2,
@@ -272,7 +273,8 @@ public interface ProductControllerDocs {
                                  "url": "https://example.com/images/main.png",
                                  "type": "MAIN"
                              }
-                         ]
+                         ],
+                         "isDeleted": true
                      }
                 ],
                 "page": {

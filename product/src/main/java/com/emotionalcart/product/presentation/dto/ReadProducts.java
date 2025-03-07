@@ -60,6 +60,7 @@ public class ReadProducts {
         private Double rating;
         private List<ReadProductImages.Response> images;
         //private int totalStockQuantity;
+        private Boolean isDeleted;
 
         //DB 응답
         public Response(Product product, List<ProductOptionResponse> options, Category category, Provider provider, List<ReadProductImages.Response> images ) {
@@ -72,6 +73,7 @@ public class ReadProducts {
             this.options = options;
             this.rating = product.getReviewStatistic() != null ? product.getReviewStatistic().getAverageRating() : null;
             this.images = images;
+            this.isDeleted = product.getIsDeleted();
         }
 
         //Elastic 응답
@@ -85,6 +87,7 @@ public class ReadProducts {
             this.options = options;
             this.rating = rating;
             this.images = images;
+            this.isDeleted = product.getIsDeleted();
         }
 
         //DB 응답

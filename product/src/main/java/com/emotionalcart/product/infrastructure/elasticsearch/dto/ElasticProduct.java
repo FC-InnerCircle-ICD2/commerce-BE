@@ -30,6 +30,11 @@ public class ElasticProduct {
 
     private List<ProductOptionField> options;
 
+    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd'T'HH:mm:ss")
+    private LocalDateTime createdAt;
+
+    private Boolean isDeleted;
+
     @Getter
     @NoArgsConstructor
     @AllArgsConstructor
