@@ -5,6 +5,7 @@ import com.emotionalcart.adminproduct.domain.AdminProductDataProvider;
 import com.emotionalcart.adminproduct.domain.AdminProviderDataProvider;
 import com.emotionalcart.adminproduct.domain.event.ProductCreatedEvent;
 import com.emotionalcart.adminproduct.domain.event.ProductDeletedEvent;
+import com.emotionalcart.adminproduct.domain.event.ProductStockCreateEvent;
 import com.emotionalcart.adminproduct.infrastructure.AdminProducts;
 import com.emotionalcart.adminproduct.presentation.dto.*;
 import com.emotionalcart.core.exception.ErrorCode;
@@ -66,6 +67,7 @@ public class AdminProductService {
         savedProduct.setImages(productImages);
 
         publishProductCreatedEvent(product, category);
+        applicationEventPublisher.publishEvent(new ProductStockCreateEvent(savedProduct.getId()));
 
         return new CreateProductResponse(savedProduct.getId());
     }
