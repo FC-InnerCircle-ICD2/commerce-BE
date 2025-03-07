@@ -32,7 +32,7 @@ public class ProductDataProvider {
 
     // 상품 관련 메서드
     public Product findProduct(Long productId) {
-        return productRepository.findByIdAndIsDeletedIsFalse(productId)
+        return productRepository.findById(productId)
                 .orElseThrow(() -> new ProductException(ErrorCode.NOT_FOUND_PRODUCT));
     }
 
