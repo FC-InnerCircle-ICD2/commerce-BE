@@ -26,7 +26,6 @@ public class ReadProductDetails {
         private List<ReadProductImages.Response> images;
         private List<OptionStocksResponse> optionStocks;
         //private int totalStockQuantity;
-        private Boolean isDeleted;
 
         public Response(Product product,
                 List<ReadProductOptions.Response> options, ReadProductCategories.Response categoryResponse,
@@ -43,7 +42,6 @@ public class ReadProductDetails {
             this.images = images;
             this.optionStocks = stockResult.getOptionStocksResponses();
             //this.totalStockQuantity = stockResult.getTotalStockQuantity();
-            this.isDeleted = false;
         }
 
         public static Response toResponse(Product product,
