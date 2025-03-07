@@ -205,8 +205,7 @@ public interface ProductControllerDocs {
                                   "url": "https://example.com/images/main.png",
                                   "type": "MAIN"
                               }
-                          ],
-                          "isDeleted": false
+                          ]
                       },
                     {
                          "productId": 2,
@@ -273,8 +272,7 @@ public interface ProductControllerDocs {
                                  "url": "https://example.com/images/main.png",
                                  "type": "MAIN"
                              }
-                         ],
-                         "isDeleted": true
+                         ]
                      }
                 ],
                 "page": {
@@ -287,5 +285,10 @@ public interface ProductControllerDocs {
             """)))
     })
     ResponseEntity<Page<ReadProducts.Response>> readProducts(ReadProducts.Request request);
+
+    //상품 목록 조회
+    @GetMapping("/similar/{productId}")
+    @Operation(summary = "추천 상품 조회", description = "검색한 상품의 유사도를 파악해 n개의 상품을 조회한다.")
+    ResponseEntity<Page<ReadProducts.Response>> readSimilarProducts(@PathVariable Long productId, Integer requestCount);
 
 }
