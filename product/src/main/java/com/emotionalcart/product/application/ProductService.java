@@ -149,25 +149,6 @@ public class ProductService {
         Map<Long, Provider> providers = providerDataProvider.findProviderByIds(products.getProviderIds());
         ProductImages productImages = ProductImages.from(productDataProvider.findAllProductImages(products.ids()));
 
-        // 상품별 옵션 목록 그룹화
-        // Map<Long, List<ProductOption>> productOptionsMap = productOptions.getOptions().stream()
-        //     .collect(Collectors.groupingBy(ProductOption::getProductId));
-
-        // // 상품별 옵션 조합 생성
-        // Map<Long, List<OptionDetailsGroup>> productOptionCombinations = new HashMap<>();
-        // for (Long productId : products.ids()) {
-        //     List<ProductOption> productOptionsList = productOptionsMap.getOrDefault(productId, List.of());
-        //     List<OptionDetailsGroup> optionCombinations = cartesianProduct(convertToOptionGroups(productOptionsList));
-        //     productOptionCombinations.put(productId, optionCombinations);
-        // }
-
-        // // 상품별 옵션 조합별 재고 조회
-        // Map<Long, OptionStockResult> stockResults = products.ids().stream()
-        //     .collect(Collectors.toMap(
-        //         productId -> productId,
-        //         productId -> fetchOptionStockQuantities(productId, productOptionCombinations.getOrDefault(productId, List.of()))
-        //     ));
-
         // DTO 변환
         return ReadProducts.Response.toResponse(productPage, productOptions, categories, providers, productImages);
     }
