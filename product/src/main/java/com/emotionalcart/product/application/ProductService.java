@@ -31,6 +31,8 @@ import com.emotionalcart.s3.config.S3Constants;
 import jakarta.validation.constraints.NotNull;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.support.PageableExecutionUtils;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
@@ -384,6 +386,23 @@ public class ProductService {
                 }
             }
         }
+    }
+
+    public Page<ReadProducts.Response> readSimilarProducts(Long productId, Integer requestCount) {
+        Pageable pageable = PageRequest.of(0, requestCount);
+        List<ElasticProduct> productPage = productESService.getSimilarProducts(productId, requestCount);
+
+        ElasticProducts products = ElasticProducts.from(productPage);
+
+        Map<Long, Category> categories = categoryDataProvider.findCategoryByIds(products.getCategoryIds());
+        Map<Long, Provider> providers = providerDataProvider.findProviderByIds(products.getProviderIds());
+        Map<Long, Double> ratings = productDataProvider.findProductRatings(products.ids());
+        ProductImages productImages = ProductImages.from(productDataProvider.findAllProductImages(products.ids()));
+
+        Page<ElasticProduct> elasticProducts = PageableExecutionUtils.getPage(productPage, pageable, () -> (long) products.ids().size());
+
+        // DTO 변환
+        return ReadProducts.Response.toResponse(elasticProducts, categories, providers, ratings, productImages);
     }
 
 }

@@ -67,4 +67,11 @@ public class ProductController implements ProductControllerDocs {
         return ResponseEntity.ok(productService.readProductsPrice(requests));
     }
 
+    @Override
+    public ResponseEntity<Page<ReadProducts.Response>> readSimilarProducts(
+        @PathVariable Long productId,
+        Integer requestCount){
+        return ResponseEntity.ok(productService.readSimilarProducts(productId, requestCount));
+    }
+
 }
