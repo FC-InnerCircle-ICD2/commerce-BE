@@ -1,9 +1,11 @@
 package com.emotionalcart.shipment.infra.redis;
 
+import com.emotionalcart.shipment.infra.redis.dto.RedisEvent;
 import com.emotionalcart.shipment.infra.redis.dto.RedisMessage;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.data.redis.connection.Message;
 import org.springframework.data.redis.connection.MessageListener;
 import org.springframework.data.redis.core.RedisTemplate;
@@ -14,6 +16,7 @@ import org.springframework.stereotype.Service;
 @RequiredArgsConstructor
 public class RedisSubscribeListener implements MessageListener {
 
+    private final ApplicationEventPublisher eventPublisher;
     private final RedisTemplate<String, RedisMessage> template;
     private final ObjectMapper objectMapper;
 
@@ -26,8 +29,11 @@ public class RedisSubscribeListener implements MessageListener {
 
             RedisMessage messageDto = objectMapper.readValue(publishMessage, RedisMessage.class);
 
-            log.info("Redis Subscribe Channel : " + messageDto.getRoomId());
-            log.info("Redis SUB Message : {}", publishMessage);
+            log.info("Received message from topic [{}]: {}", messageDto.getSender(), message);
+
+            // Spring 이벤트 발행
+            eventPublisher.publishEvent(new RedisEvent(messageDto.getSender(), messageDto.getMessage()));
+
         } catch (Exception e) {
             log.error("exception :: {}", e.getMessage());
             throw new RuntimeException(e);
