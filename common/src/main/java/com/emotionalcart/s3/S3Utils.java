@@ -1,7 +1,10 @@
 package com.emotionalcart.s3;
 
+import com.emotionalcart.s3.config.S3Config;
+import com.emotionalcart.s3.config.S3Constants;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnBean;
 import org.springframework.stereotype.Component;
 import org.springframework.web.multipart.MultipartFile;
 import software.amazon.awssdk.core.sync.RequestBody;
@@ -14,35 +17,33 @@ import software.amazon.awssdk.services.s3.model.PutObjectResponse;
 @Slf4j
 @Component
 @RequiredArgsConstructor
+@ConditionalOnBean(S3Config.class)
 public class S3Utils {
+
     private final S3Client s3Client;
 
-    public String uploadFile(String bucketName, String directory, String id, MultipartFile file) throws Exception {
+    public String uploadFile(String directory, String id, MultipartFile file) throws Exception {
         String key = directory + "/" + id + "/" + file.getOriginalFilename();
         log.info("upload key: " + key);
 
         PutObjectRequest request = PutObjectRequest.builder()
-                                                   .bucket(bucketName)
-                                                   .key(key)
-                                                   .build();
+            .bucket(S3Constants.BUCKET_NAME)
+            .key(key)
+            .build();
 
         PutObjectResponse response = s3Client.putObject(request, RequestBody.fromBytes(file.getBytes()));
 
         if (response.sdkHttpResponse().isSuccessful()) {
-            return createS3FileUrl(bucketName, key);
+            return S3Constants.getFileUrl(key);
         }
         throw new RuntimeException(response.sdkHttpResponse().statusText().toString());
     }
 
-    private String createS3FileUrl(String bucketName, String key) {
-        return String.format("https://%s.s3.amazonaws.com/%s", bucketName, key);
-    }
-
     public void deleteFile(String bucketName, String key) throws RuntimeException {
         DeleteObjectRequest deleteRequest = DeleteObjectRequest.builder()
-                                                               .bucket(bucketName)
-                                                               .key(key)
-                                                               .build();
+            .bucket(bucketName)
+            .key(key)
+            .build();
 
         DeleteObjectResponse response = s3Client.deleteObject(deleteRequest);
 
@@ -50,4 +51,5 @@ public class S3Utils {
             throw new RuntimeException(response.sdkHttpResponse().statusText().toString());
         }
     }
+
 }

@@ -5,6 +5,7 @@ import com.emotionalcart.order.domain.dto.CreateOrderItem;
 import com.emotionalcart.order.infra.validator.ValidPhoneNumber;
 import jakarta.validation.constraints.NotNull;
 import lombok.AccessLevel;
+import lombok.Data;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
@@ -59,9 +60,9 @@ public class CreateOrderRequest {
         for (CreateOrderItemRequest orderItem : orderItems) {
             CreateOrderItem createOrderItem =
                 createOrder.createOrderItem(orderItem.productId,
+                                            orderItem.getQuantity(),
                                             orderItem.productName,
                                             orderItem.price,
-                                            orderItem.quantity,
                                             orderItem.categoryId);
             orderItem.getProductOptionDetails().forEach(option -> createOrderItem.addOrderItemOption(option.productOptionId,
                                                                                                      option.productOptionDetailId,
@@ -124,10 +125,14 @@ public class CreateOrderRequest {
         @NotNull(message = "상품 금액을 입력해주세요.")
         private double price;
 
+        /**
+         * 수량
+         */
         private int quantity;
 
     }
 
+    @Data
     private static class CreateOrderItemOptionRequest {
 
         @NotNull(message = "상품 옵션을 선택해주세요.")
@@ -137,15 +142,12 @@ public class CreateOrderRequest {
         private Long productOptionDetailId;
 
         /**
-         * 수량
-         */
-        @NotNull(message = "수량을 입력해주세요.")
-        private int quantity;
-
-        /**
          * 추가 금액
          */
         private double additionalPrice;
+
+        @NotNull(message = "수량을 입력해주세요.")
+        private int quantity;
 
     }
 

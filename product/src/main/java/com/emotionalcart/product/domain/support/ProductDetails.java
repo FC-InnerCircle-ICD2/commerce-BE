@@ -47,7 +47,6 @@ public class ProductDetails {
             return Collections.emptySet();
         }
         return productDetails.stream()
-                .filter(ProductDetail::isRequired)
                 .map(ProductDetail::getProductOptionId)
                 .collect(Collectors.toSet());
     }

@@ -2,6 +2,7 @@ package com.emotionalcart.order.infra.advice;
 
 import com.emotionalcart.order.infra.advice.exceptions.*;
 import com.emotionalcart.order.infra.enums.OrderErrorCode;
+import com.emotionalcart.order.infra.enums.OrderHttpStatus;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -33,7 +34,7 @@ public class GlobalExceptionHandler {
     private ResponseEntity<ErrorResponse> buildErrorResponse(Exception ex, OrderErrorCode errorCode, HttpStatus status) {
         log.error("{} 발생: {}", ex.getClass().getName(), ex.getMessage(), ex);
 
-        ErrorResponse errorResponse = new ErrorResponse(errorCode.getErrorCode(), errorCode.getMessage());
+        ErrorResponse errorResponse = new ErrorResponse(errorCode.getErrorCode(), ex.getMessage());
         return ResponseEntity.status(status).body(errorResponse);
     }
 
@@ -79,17 +80,13 @@ public class GlobalExceptionHandler {
     @ExceptionHandler({RequiredValueException.class})
     @ResponseStatus(HttpStatus.BAD_REQUEST)
     public ResponseEntity<ErrorResponse> handleRequiredValueException(Exception ex) {
-        ErrorResponse errorResponse = new ErrorResponse("ORDER-0008", ex.getMessage());
-        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(errorResponse);
+        return buildErrorResponse(ex, OrderErrorCode.INVALID_PRODUCT, HttpStatus.BAD_REQUEST);
     }
 
     @ExceptionHandler({InvalidValueRequestException.class})
     @ResponseStatus(HttpStatus.BAD_REQUEST)
     public ResponseEntity<ErrorResponse> handleInvalidValueRequestException(InvalidValueRequestException ex) {
-
-        ErrorResponse errorResponse = new ErrorResponse(OrderErrorCode.BAD_REQUEST.getErrorCode(), ex.getMessage());
-        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(errorResponse);
-
+        return buildErrorResponse(ex, OrderErrorCode.BAD_REQUEST, HttpStatus.BAD_REQUEST);
     }
 
     /**
@@ -156,6 +153,21 @@ public class GlobalExceptionHandler {
     @ResponseStatus(HttpStatus.BAD_REQUEST)
     public ResponseEntity<ErrorResponse> invalidApiException(Exception ex) {
         return buildErrorResponse(ex, OrderErrorCode.INVALID_FEIGN_RESPONSE, HttpStatus.BAD_REQUEST);
+    }
+
+    /**
+     * 재고 조회 시 품절되었을 경우에 대한 에러 값
+     *
+     * @param ex
+     * @return
+     */
+    @ExceptionHandler(StockException.class)
+    @ResponseStatus(HttpStatus.CONFLICT)
+    public ResponseEntity<ErrorResponse> invalidStockException(Exception ex) {
+        log.error("{} 발생: {}", ex.getClass().getName(), ex.getMessage(), ex);
+
+        ErrorResponse errorResponse = new ErrorResponse(OrderHttpStatus.OUT_OF_STOCK.getCode(), ex.getMessage());
+        return ResponseEntity.status(HttpStatus.CONFLICT).body(errorResponse);
     }
 
     /**

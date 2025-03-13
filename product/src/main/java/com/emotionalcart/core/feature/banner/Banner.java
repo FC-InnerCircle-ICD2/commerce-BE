@@ -6,6 +6,7 @@ import jakarta.validation.constraints.NotNull;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import lombok.Setter;
 
 import java.time.LocalDateTime;
 
@@ -18,6 +19,7 @@ public class Banner extends BaseEntity {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
+    @Setter
     @OneToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "banner_image_id")
     private BannerImage bannerImage;
@@ -41,28 +43,61 @@ public class Banner extends BaseEntity {
     @NotNull
     private LocalDateTime endDate;
 
-    @NotNull
+    @Setter
     private String iconPath;
 
     private Banner(
-            Long id,
-            BannerImage bannerImage,
             BannerType type,
             String title,
             String description,
             Integer bannerOrder,
             LocalDateTime startDate,
-            LocalDateTime endDate,
-            String iconPath
+            LocalDateTime endDate
     ) {
-        this.id = id;
-        this.bannerImage = bannerImage;
         this.type = type;
         this.title = title;
         this.description = description;
         this.bannerOrder = bannerOrder;
         this.startDate = startDate;
         this.endDate = endDate;
+    }
+
+    public static Banner of(
+            BannerType type,
+            String title,
+            String description,
+            Integer bannerOrder,
+            LocalDateTime startDate,
+            LocalDateTime endDate
+    ){
+        return new Banner(
+                type,
+                title,
+                description,
+                bannerOrder,
+                startDate,
+                endDate
+        );
+    }
+
+    public void delete(){
+        this.setIsDeleted(true);
+    }
+
+    public void update(BannerType type, String title, String description, Integer bannerOrder, LocalDateTime startDate, LocalDateTime endDate) {
+        this.type = type;
+        this.title = title;
+        this.description = description;
+        this.bannerOrder = bannerOrder;
+        this.startDate = startDate;
+        this.endDate = endDate;
+    }
+
+    public void updateIconPath(String iconPath) {
         this.iconPath = iconPath;
+    }
+
+    public void updateBannerImage(BannerImage bannerImage) {
+        this.bannerImage = bannerImage;
     }
 }

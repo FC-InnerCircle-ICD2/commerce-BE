@@ -1,34 +1,33 @@
 package com.emotionalcart.core.config;
 
+import com.emotionalcart.common.jwt.JwtAccessDeniedHandler;
+import com.emotionalcart.common.jwt.JwtAuthenticationTokenFilter;
+import com.emotionalcart.common.security.AppProperties;
+import com.emotionalcart.common.security.CustomAuthenticationEntryPoint;
+import com.emotionalcart.common.security.DefaultSecurityConfig;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.security.config.annotation.web.builders.HttpSecurity;
-import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
-import org.springframework.security.config.http.SessionCreationPolicy;
-import org.springframework.security.web.SecurityFilterChain;
+import org.springframework.security.crypto.factory.PasswordEncoderFactories;
+import org.springframework.security.crypto.password.PasswordEncoder;
 
 @Configuration
-public class SecurityConfig {
+public class SecurityConfig extends DefaultSecurityConfig {
+
+    public SecurityConfig(AppProperties appProperties, CustomAuthenticationEntryPoint entryPoint, JwtAuthenticationTokenFilter jwtAuthenticationTokenFilter, JwtAccessDeniedHandler jwtAccessDeniedHandler) {
+        super(appProperties, entryPoint, jwtAuthenticationTokenFilter, jwtAccessDeniedHandler);
+    }
+
+    @Override
+    protected String[] getPermissionUrl() {
+        return new String[]{"/swagger-ui/**",
+                "/v3/api-docs/**",
+                "/swagger-resources/**",
+                "/actuator/**", "/api/v1/members/auth/**", "/api/v1/admin/members/auth/**", "/error"};
+    }
 
     @Bean
-    public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
-        http
-                // CSRF 비활성화 (REST API를 위한 경우)
-                .csrf(AbstractHttpConfigurer::disable)
-
-                // 세션을 Stateless로 설정
-                .sessionManagement(session -> session
-                        .sessionCreationPolicy(SessionCreationPolicy.STATELESS)
-                )
-
-                // 권한 및 인증 설정
-                .authorizeHttpRequests(auth -> auth
-                        .anyRequest().permitAll() // 모든 요청 인증 없이 접근 허용
-//                        .requestMatchers("/", "/login", "/css/**", "/js/**", "/images/**").permitAll()
-//                        .anyRequest().authenticated() // 나머지 요청은 인증 필요
-                );
-
-
-        return http.build();
+    public PasswordEncoder passwordEncoder() {
+        return PasswordEncoderFactories.createDelegatingPasswordEncoder();
     }
+
 }

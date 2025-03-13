@@ -2,26 +2,13 @@ package com.emotionalcart.product.domain;
 
 import com.emotionalcart.core.exception.ErrorCode;
 import com.emotionalcart.core.exception.ProductException;
-import com.emotionalcart.core.feature.category.Category;
 import com.emotionalcart.core.feature.product.*;
-import com.emotionalcart.product.domain.dto.ProductOptionDetailWithImages;
-import com.emotionalcart.product.domain.dto.ProductSearch;
-import com.emotionalcart.core.feature.provider.Provider;
 import com.emotionalcart.core.feature.review.Review;
 import com.emotionalcart.core.feature.review.ReviewImage;
 import com.emotionalcart.core.feature.review.ReviewStatistic;
 import com.emotionalcart.product.domain.dto.ProductDetail;
-import com.emotionalcart.product.infrastructure.repository.CategoryRepository;
-import com.emotionalcart.product.infrastructure.repository.ProductImageRepository;
-import com.emotionalcart.product.infrastructure.repository.ProductOptionDetailRepository;
-import com.emotionalcart.product.infrastructure.repository.ProductOptionRepository;
-import com.emotionalcart.product.infrastructure.repository.ProductRepository;
-import com.emotionalcart.product.infrastructure.repository.ProviderRepository;
-import com.emotionalcart.product.infrastructure.repository.ReviewImageRepository;
-import com.emotionalcart.product.infrastructure.repository.ReviewRepository;
-import com.emotionalcart.product.infrastructure.repository.ReviewStatisticRepository;
-import com.emotionalcart.product.presentation.dto.ReadProductReviewStatistic;
-
+import com.emotionalcart.product.domain.dto.ProductSearch;
+import com.emotionalcart.product.infrastructure.repository.*;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -29,8 +16,8 @@ import org.springframework.stereotype.Component;
 
 import java.util.List;
 import java.util.Map;
-import java.util.stream.Collectors;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 @Component
 @RequiredArgsConstructor
@@ -58,15 +45,30 @@ public class ProductDataProvider {
         return reviewImageRepository.findAllByReviewIdInAndIsDeletedIsFalse(reviewIds);
     }
 
+    public void findProductReview(Long productId, Long userId) {
+        reviewRepository.findByProductIdAndUserIdAndIsDeletedIsFalse(productId, userId)
+                .ifPresent(review -> {
+                    throw new ProductException(ErrorCode.DUPLICATE_REVIEW);
+                });
+    }
+
+    public void saveProductReview(Review review) {
+        reviewRepository.save(review);
+    }
+
+    public void saveProductReviewImages(List<ReviewImage> reviewImages) {
+        reviewImageRepository.saveAll(reviewImages);
+    }
+
     // 메인 이미지만 조회
     public List<ProductImage> findAllProductImages(List<Long> productIds) {
-        return productImageRepository.findAllByProductIdInAndIsDeletedIsFalseAndImageType(productIds, ProductImageType.MAIN)
+        return productImageRepository.findAllByProduct_IdInAndIsDeletedIsFalseAndImageType(productIds, ProductImageType.MAIN)
                 .orElseThrow(() -> new ProductException(ErrorCode.NOT_FOUND_PRODUCT_IMAGE));
     }
 
     // 메인 + 상세 이미지 조회
     public List<ProductImage> findProductImages(Long productId) {
-        return productImageRepository.findAllByProductIdAndIsDeletedIsFalse(productId)
+        return productImageRepository.findAllByProduct_IdAndIsDeletedIsFalse(productId)
                 .orElseThrow(() -> new ProductException(ErrorCode.NOT_FOUND_PRODUCT_IMAGE));
     }
 

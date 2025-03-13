@@ -1,0 +1,20 @@
+jwt:
+  secret-key: dlsjtjzmfdlzjajtmxlaghkdlxldgkqtlek
+  header-key: Authorization
+app:
+  allow-domains:
+    - ${MEMBER_SERVER_URL:http://localhost:8081}
+    - ${PRODUCT_SERVER_URL:http://localhost:8080}
+    - ${ORDER_SERVER_URL:http://localhost:9999}
+    - ${STOCK_SERVER_URL:http://localhost:9992}
+    - ${AUTH_SERVER_URL:http://localhost:8082}
+    - ${SEARCH_SERVER_URL:http://localhost:9998}
+    - ${FRONT_SERVER_URL:http://localhost:3000}
+    - ${FRONT_SERVER_ADMIN_URL:http://localhost:5173}
+    - https://www.emmotional-cart.click
+    - https://auth-api.emmotional-cart.click
+    - https://member-api.emmotional-cart.click
+    - https://product-api.emmotional-cart.click
+    - https://order-api.emmotional-cart.click
+    - https://fc-innercircle-icd2.github.io/commerce-FE-office
+    - https://fc-innercircle-icd2.github.io

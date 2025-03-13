@@ -1,15 +1,15 @@
 package com.emotionalcart.core.feature.product;
 
-import java.util.List;
-
 import com.emotionalcart.core.base.BaseEntity;
-import com.emotionalcart.core.feature.category.Category;
-
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotNull;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import lombok.Setter;
+
+import java.util.ArrayList;
+import java.util.List;
 
 @Entity
 @Table
@@ -24,9 +24,7 @@ public class ProductOption extends BaseEntity {
     @NotNull
     private String name;
 
-    @NotNull
-    private Boolean isRequired;
-
+    @Setter
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "product_id")
     private Product product;
@@ -34,14 +32,36 @@ public class ProductOption extends BaseEntity {
     @OneToMany(mappedBy = "productOption", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)
     private List<ProductOptionDetail> details;
 
-    private ProductOption(
-            String name,
-            Boolean isRequired) {
+    private ProductOption(String name) {
         this.name = name;
-        this.isRequired = isRequired;
     }
+
+    public static ProductOption of(String name) {
+        return new ProductOption(name);
+    }
+
+    public void setDetails(List<ProductOptionDetail> details) {
+        this.details = details != null ? details : new ArrayList<>();
+        for (ProductOptionDetail detail : this.details) {
+            detail.setProductOption(this);
+        }
+    }
+
+    public void addDetail(ProductOptionDetail detail) {
+        if (this.details == null) {
+            this.details = new ArrayList<>();
+        }
+        this.details.add(detail);
+        detail.setProductOption(this);
+    }
+
 
     public Long getProductId() {
         return product.getId();
+    }
+
+    public void delete() {
+        this.setIsDeleted(true);
+        this.details.forEach(ProductOptionDetail::delete);
     }
 }

@@ -2,12 +2,15 @@ package com.emotionalcart.product.presentation.dto;
 
 import com.emotionalcart.core.feature.provider.Provider;
 
+import com.fasterxml.jackson.databind.annotation.JsonSerialize;
+import com.fasterxml.jackson.databind.ser.std.ToStringSerializer;
 import lombok.Data;
 
 public class ReadProviders {
 
     @Data
     public static class Response {
+        @JsonSerialize(using = ToStringSerializer.class)
         private Long id;
         private String name;
         private String description;

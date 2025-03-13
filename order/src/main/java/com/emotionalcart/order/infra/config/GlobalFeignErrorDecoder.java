@@ -1,13 +1,11 @@
 package com.emotionalcart.order.infra.config;
 
-import com.emotionalcart.order.infra.advice.exceptions.FeignClientDecodingException;
-import com.emotionalcart.order.infra.advice.exceptions.ProductPriceException;
-import com.emotionalcart.order.infra.advice.exceptions.ProductStockException;
-import com.emotionalcart.order.infra.advice.exceptions.ProductValidationException;
+import com.emotionalcart.order.infra.advice.exceptions.*;
 import com.emotionalcart.order.infra.product.dto.ErrorResponse;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import feign.Response;
 import feign.codec.ErrorDecoder;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 
 import java.io.IOException;
@@ -15,6 +13,7 @@ import java.io.IOException;
 /**
  * feignClient global error handler
  */
+@Slf4j
 public class GlobalFeignErrorDecoder implements ErrorDecoder {
 
     private final ErrorDecoder errorDecoder = new Default();
@@ -29,12 +28,13 @@ public class GlobalFeignErrorDecoder implements ErrorDecoder {
             try {
                 // Response body를 문자열로 변환
                 String responseBody = responseBodyToString(response);
+                log.error("Error responseBody : {}", responseBody);
                 ErrorResponse errorResponse = objectMapper.readValue(responseBody, ErrorResponse.class);
-
                 switch (errorResponse.getErrorCode()) {
-                    case "PRODUCT-0007" -> throw new ProductPriceException(errorResponse.toString());
-                    case "PRODUCT-0009" -> throw new ProductValidationException(errorResponse.toString());
-                    default -> throw new ProductStockException(errorResponse.toString());
+                    case "PRODUCT-0007" -> throw new ProductPriceException(errorResponse.getErrorMessage());
+                    case "PRODUCT-0009" -> throw new ProductValidationException(errorResponse.getErrorMessage());
+                    case String s when s.startsWith("STOCK-") -> throw new StockException(errorResponse.getErrorMessage());
+                    default -> throw new ProductStockException(errorResponse.getErrorMessage());
 
                 }
             } catch (IOException e) {

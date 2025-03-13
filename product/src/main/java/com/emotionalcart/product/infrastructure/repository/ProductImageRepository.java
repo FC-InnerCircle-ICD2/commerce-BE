@@ -11,7 +11,7 @@ import com.emotionalcart.core.feature.product.ProductImage;
 
 @Repository
 public interface ProductImageRepository extends JpaRepository<ProductImage, Long> {
-    Optional<List<ProductImage>> findAllByProductIdInAndIsDeletedIsFalseAndImageType(List<Long> productIds, ProductImageType imageType);
+    Optional<List<ProductImage>> findAllByProduct_IdInAndIsDeletedIsFalseAndImageType(List<Long> productIds, ProductImageType imageType);
 
-    Optional<List<ProductImage>> findAllByProductIdAndIsDeletedIsFalse(Long productId);
+    Optional<List<ProductImage>> findAllByProduct_IdAndIsDeletedIsFalse(Long productId);
 }

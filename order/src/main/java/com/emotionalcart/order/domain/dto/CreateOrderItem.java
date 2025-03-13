@@ -45,6 +45,11 @@ public class CreateOrderItem extends SelfValidation<CreateOrderItem> {
     private double price;
 
     /**
+     * 상품 추가금액
+     */
+    private double additionalPrice;
+
+    /**
      * 상품 수량
      */
     @Min(value = 1, message = "상품 수량은 1개 이상이어야 합니다.")

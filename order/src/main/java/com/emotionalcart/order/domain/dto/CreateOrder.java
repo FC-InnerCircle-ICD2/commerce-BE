@@ -111,18 +111,27 @@ public class CreateOrder extends SelfValidation<CreateOrder> {
      * @return 주문 상품의 금액과 수량 목록
      */
     public List<PriceAndQuantity> getOrderItemsPriceAndQuantity() {
-        return this.orderItems.stream().map(item -> PriceAndQuantity.of(item.getPrice(), item.getQuantity())).toList();
+        return this.orderItems.stream().map(item -> {
+            Double reduce = item.getOrderItemOptions().stream().map(CreateOrderItemOption::getAdditionalPrice).reduce(
+                0d,
+                Double::sum
+            );
+            return PriceAndQuantity.of(item.getPrice(),
+                                       reduce,
+                                       item.getQuantity());
+        }).toList();
     }
 
     public CreateOrderItem createOrderItem(@NotNull(message = "상품을 선택해주세요.") Long productId,
+                                           @NotNull(message = "수량을 입력해주세요.") int quantity,
                                            @NotNull(message = "상품명을 입력해주세요.") String productName,
                                            @NotNull(message = "상품 금액을 입력해주세요.") double price,
-                                           int quantity, @NotNull(message = "상품 카테고리를 확인해주세요.") Long categoryId) {
+                                           @NotNull(message = "상품 카테고리를 확인해주세요.") Long categoryId) {
         return CreateOrderItem.builder()
             .productId(productId)
+            .quantity(quantity)
             .productName(productName)
             .price(price)
-            .quantity(quantity)
             .categoryId(categoryId)
             .build();
     }

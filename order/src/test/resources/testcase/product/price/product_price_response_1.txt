@@ -1,16 +1,13 @@
 [
-    {
-        "productId": 1,
-        "price": 25000,
-        "productOptionId": 1,
-        "productOptionDetailId": 1,
-        "additionalPrice": 5000
-    },
-    {
-        "productId": 2,
-        "price": 55000,
-        "productOptionId": 3,
-        "productOptionDetailId": 6,
-        "additionalPrice": null
-    }
+  {
+    "productId": 5976046,
+    "price": 9500,
+    "productOptions": [
+      {
+        "productOptionId": 3995554923455181000,
+        "productOptionDetailId": 3995554923454779400,
+        "additionalPrice": 0
+      }
+    ]
+  }
 ]

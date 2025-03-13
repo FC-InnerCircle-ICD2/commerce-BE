@@ -17,8 +17,6 @@ public class ReadProductReviews {
 
     @Getter
     public static class Request extends BasePageRequest {
-//        int pageSize = 10;
-//        int pageNumber = 0;
     }
 
     @Getter
@@ -34,8 +32,7 @@ public class ReadProductReviews {
 
         public Response(Review review, List<ReviewImageResponse> reviewImages) {
             this.id = review.getId();
-            this.productName = review.getProductName();
-            this.productOptionName = review.getProductOptionName();
+            // TODO 주문내역에서 상품명, 옵션 조회 필요
             this.rating = review.getRating();
             this.content = review.getContent();
             this.createdAt = review.getCreatedAt();

@@ -7,28 +7,34 @@ import lombok.Setter;
 @Setter
 public class ProductDetail {
     private Long productId;
+    private Long providerId;
+    private String providerName;
     private Integer productPrice;
     private Long productOptionId;
-    private boolean isRequired;
+    private String productOptionName;
     private Long productOptionDetailId;
+    private String productOptionDetailName;
     private Integer productAdditionalPrice;
-    private Integer quantity;
 
     public ProductDetail(Long productId,
+                         Long providerId,
+                         String providerName,
                          Integer price,
                          Long productOptionId,
-                         Boolean isRequired,
+                         String productOptionName,
                          Long productOptionDetailId,
-                         Integer productAdditionalPrice,
-                         Integer quantity
+                         String productOptionDetailName,
+                         Integer productAdditionalPrice
     ) {
         this.productId = productId;
+        this.providerId = providerId;
+        this.providerName = providerName;
         this.productPrice = price;
         this.productOptionId = productOptionId;
-        this.isRequired = isRequired;
+        this.productOptionName = productOptionName;
         this.productOptionDetailId = productOptionDetailId;
+        this.productOptionDetailName = productOptionDetailName;
         this.productAdditionalPrice = productAdditionalPrice;
-        this.quantity = quantity;
     }
 }
 

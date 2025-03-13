@@ -25,4 +25,19 @@ public class BannerImage extends BaseImageEntity {
     ) {
         super(bucketName, originalFileName, filePath, fileType, fileSize, fileOrder);
     }
+
+    public static BannerImage of(
+            String originalFileName,
+            String filePath,
+            String fileType,
+            Long fileSize,
+            Integer fileOrder) {
+        return new BannerImage(
+                "banners",
+                originalFileName,
+                filePath,
+                fileType,
+                fileSize,
+                fileOrder);
+    }
 }

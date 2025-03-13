@@ -1,14 +1,12 @@
 package com.emotionalcart.core.feature.product;
 
-import java.util.List;
-
 import com.emotionalcart.core.base.BaseEntity;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotNull;
-import jakarta.validation.constraints.Size;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import lombok.Setter;
 
 @Entity
 @Table
@@ -24,26 +22,47 @@ public class ProductOptionDetail extends BaseEntity {
     private String value;
 
     @NotNull
-    private Integer quantity;
+    @Column(nullable = false)
+    private Integer quantity = 0;
 
-    @Size(min = 1)
     @NotNull
-    private Integer optionOrder;
+    private Integer optionOrder = 1;
 
     private Integer additionalPrice;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "product_option_id")
+    @Setter
     private ProductOption productOption;
 
     private ProductOptionDetail(
-            String value,
-            Integer quantity,
-            Integer optionOrder,
-            Integer additionalPrice) {
+        String value,
+        Integer optionOrder,
+        Integer additionalPrice,
+        ProductOption productOption
+    ) {
         this.value = value;
-        this.quantity = quantity;
-        this.optionOrder = optionOrder;
+        this.optionOrder = optionOrder == null ? 1 : optionOrder;
+        this.additionalPrice = additionalPrice;
+        this.productOption = productOption;
+        this.quantity = 0;
+    }
+
+    public static ProductOptionDetail of(String value, Integer optionOrder, Integer additionalPrice, ProductOption productOption) {
+        return new ProductOptionDetail(
+            value,
+            optionOrder,
+            additionalPrice,
+            productOption
+        );
+    }
+
+    public void delete() {
+        this.setIsDeleted(true);
+    }
+
+    public void updateValue(String value, Integer additionalPrice) {
+        this.value = value;
         this.additionalPrice = additionalPrice;
     }
 }

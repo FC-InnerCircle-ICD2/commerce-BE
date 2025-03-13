@@ -7,6 +7,7 @@ import jakarta.validation.constraints.NotNull;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import lombok.Setter;
 
 @Entity
 @Table
@@ -17,10 +18,13 @@ public class ReviewStatistic extends BaseEntity {
     @Id
     private Long productId;
 
+    @Setter
     @OneToOne
     @MapsId
     @JoinColumn(name = "product_id")
     private Product product;
+
+    private Integer totalRating = 0;
 
     @NotNull
     private Double averageRating = 0.0;
@@ -29,20 +33,29 @@ public class ReviewStatistic extends BaseEntity {
     private Integer reviewCount = 0;
 
     private ReviewStatistic(
-            Long productId,
+            Product product,
+            Integer totalRating,
             Double averageRating,
             Integer reviewCount
     ) {
-        this.productId = productId;
+        this.product = product;
+        this.totalRating = totalRating;
         this.averageRating = averageRating;
         this.reviewCount = reviewCount;
     }
 
     public static ReviewStatistic of(
-            Long productId,
-            Double averageRating,
-            Integer reviewCount
+            Product product
     ) {
-        return new ReviewStatistic(productId, averageRating, reviewCount);
+        return new ReviewStatistic(product, 0, 0.0, 0);
+    }
+
+    /**
+     * 리뷰 통계 데이터 업데이트
+     */
+    public void updateStatistics(Integer newRating) {
+        this.totalRating += newRating;
+        this.reviewCount++;
+        this.averageRating = Math.round(((double) this.totalRating / this.reviewCount) * 100) / 100.0;
     }
 }

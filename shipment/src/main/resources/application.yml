@@ -1,0 +1,28 @@
+spring:
+  application:
+    name: shipment-service
+  profiles:
+    active: default
+    include:
+      - common
+  datasource:
+    driver-class-name: com.mysql.cj.jdbc.Driver
+    url: ${DATASOURCE_URL:jdbc:mysql://localhost:3306/emotional_cart}?useSSL=false&allowPublicKeyRetrieval=true&rewriteBatchedStatements=true
+    username: ${DATASOURCE_USERNAME:root}
+    password: ${DATASOURCE_PASSWORD:1234}
+  jpa:
+    hibernate:
+      ddl-auto: validate
+    show-sql: true
+    properties:
+      hibernate:
+        format_sql: true
+        use_sql_comments: true
+        dialect: org.hibernate.dialect.MySQLDialect
+        generate_statistics: true
+        id:
+          new_generator_mappings: true
+  flyway:
+    enabled: false
+server:
+  port: 7777

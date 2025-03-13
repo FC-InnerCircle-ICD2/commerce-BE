@@ -27,23 +27,17 @@ public class ProductService {
     /**
      * 상품 유효성 검사
      *
-     * @param productValidationRequest
+     * @param productQuantityValidateRequest
      * @return
      */
-    public boolean isValidProduct(List<ProductValidationRequest> productValidationRequest) {
-        ResponseEntity<Void> response = productFeignClient.validateProductPrice(productValidationRequest);
-        return response.getStatusCode().is2xxSuccessful();
+    public void isValidProduct(List<ProductQuantityValidateRequest> productQuantityValidateRequest) {
+        productFeignClient.validateProductPrice(productQuantityValidateRequest);
     }
 
-    /**
-     * 상품 재고 변경
-     *
-     * @param productStockRequest
-     * @return
-     */
-    public boolean updateProductStock(List<ProductStockRequest> productStockRequest) {
-        ResponseEntity<Void> response = productFeignClient.updateProductStock(productStockRequest);
-        return response.getStatusCode().is2xxSuccessful();
+    public ProductDetail getProductDetail(Long productId) {
+        ResponseEntity<ProductDetailResponse> response = productFeignClient.getProductDetail(productId);
+        ProductDetailResponse responseBody = response.getBody();
+        return ProductDetail.from(responseBody);
     }
 
 }

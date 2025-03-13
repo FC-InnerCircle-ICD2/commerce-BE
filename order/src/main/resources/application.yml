@@ -1,11 +1,20 @@
 spring:
   application:
     name: order-service
+  profiles:
+    active: default
+    include:
+      - common
   datasource:
     driver-class-name: com.mysql.cj.jdbc.Driver
-    url: ${DATASOURCE_RUL:jdbc:mysql://localhost:3306/emotional_cart}?serverTimezone=UTC&useSSL=false&allowPublicKeyRetrieval=true&rewriteBatchedStatements=true
+    url: ${DATASOURCE_URL:jdbc:mysql://localhost:3306/emotional_cart}?useSSL=false&allowPublicKeyRetrieval=true&rewriteBatchedStatements=true
     username: ${DATASOURCE_USERNAME:root}
     password: ${DATASOURCE_PASSWORD:1234}
+  data:
+    redis:
+      host: ${REDIS_SERVER_HOST:localhost} # Redis server IP address
+      port: ${REDIS_SERVER_PORT:6379} # Redis server port
+      timeout: 2000 # Connection timeout (in milliseconds)
   jpa:
     hibernate:
       ddl-auto: validate
@@ -20,19 +29,32 @@ spring:
           new_generator_mappings: true
   flyway:
     enabled: false
+  rabbitmq:
+    host: localhost
+    port: 5672
+    username: guest
+    password: guest
 server:
   port: 9999
 product:
   find:
-    feign-endpoint: ${PRODUCT_SERVER_URL:localhost}:8080
-springdoc:
-  swagger-ui:
-    urls:
-      - name: Order Service
-        url: ${PRODUCT_SERVER_URL:http://localhost}:8080/v3/api-docs
-      - name: Product Service
-        url: ${ORDER_SERVER_URL:http://localhost}:8080/api/v3/api-docs
-aws:
-  s3:
-    access-key: ${AWS_S3_ACCESS_KEY}
-    secret-key: ${AWS_S3_SECRET_KEY}
+    feign-endpoint: ${PRODUCT_SERVER_URL:http://localhost:8080}
+stock:
+  find:
+    feign-endpoint: ${STOCK_SERVER_URL:http://localhost:9992}
+shipment:
+  find:
+    feign-endpoint: ${SHIPMENT_SERVER_URL:http://localhost:7777}
+search:
+  find:
+    feign-endpoint: ${SEARCH_SERVER_URL:http://localhost:9998}
+app:
+  allow-domains:
+    - https://order-api.emmotional-cart.click
+    - http://localhost:5173
+swagger-config:
+  servers:
+    - url: https://order-api.emmotional-cart.click
+      description: Production Server
+    - url: http://localhost:9999
+      description: Local Server

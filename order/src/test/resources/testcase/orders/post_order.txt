@@ -1,0 +1,43 @@
+{
+  "paymentMethod": "CARD",
+  "cardInfo": {
+    "cardNumber": "1111-2222-3333-4444",
+    "expirationDate": "08/27",
+    "cvc": "123",
+    "cardOwnerName": "string"
+  },
+  "orderItems": [
+    {
+      "productId": 4004431091503561665,
+      "productOptionDetails": [
+        {
+          "productOptionId": 4004431091915682753,
+          "productOptionDetailId": 4004431091914229334,
+          "quantity": 1,
+          "additionalPrice": 7900
+        },
+{
+          "productOptionId": 4004431091917370153,
+          "productOptionDetailId": 4004431091922540803,
+          "quantity": 1,
+          "additionalPrice": 3700
+        }
+      ],
+      "categoryId": 502994,
+      "productName": "string",
+      "price": 5160,
+      "quantity": 1
+    }
+  ],
+  "delivery": {
+    "name": "테스트",
+    "phoneNumber": "010-1111-2222",
+    "zoneCode": "13842",
+    "address": "서울시 강서구",
+    "detailAddress": "하늘길",
+    "deliveryMemo": "빨리보내주세요"
+  },
+  "cvc": "string",
+  "expirationDate": "string",
+  "cardNumber": "string"
+}

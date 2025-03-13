@@ -1,7 +1,10 @@
-
 spring:
   application:
     name: auth-service
+  profiles:
+    include:
+      - common
+    active: default
   main:
     :allow-bean-definition-overriding: true
   security:
@@ -9,20 +12,19 @@ spring:
       client:
         registration:
           kakao:
-            client-name: Kakao
-            client-id: fc379f7f44f086c287618c49de7e366f
-            client-secret: a2MFseY5A70id14t2DFS5FSOoXXVMatv
-            redirect-uri: http://localhost:8082/login/oauth2/code/kakao
+            client-name: kakao
+            client-id: ${KAKAO_CLIENT_ID}
+            client-secret: ${KAKAO_CLIENT_SECRET}
+            redirect-uri: ${KAKAO_REDIRECT_URI:http://localhost:8082/login/oauth2/code/kakao}
             authorization-grant-type: authorization_code
             scope:
-#              - account_email
               - profile_nickname
             client-authentication-method: client_secret_post
           naver:
             client-name: naver
-            client-id: RUPtW98ZDcOmwOIVRibH
-            client-secret: NB0KEonYg_
-            redirect-uri: http://localhost:8082/login/oauth2/code/naver
+            client-id: ${NAVER_CLIENT_ID}
+            client-secret: ${NAVER_CLIENT_SECRET}
+            redirect-uri: ${NAVER_REDIRECT_URI:http://localhost:8082/login/oauth2/code/naver}
             authorization-grant-type: authorization_code
             scope:
               - name
@@ -40,14 +42,14 @@ spring:
             user-name-attribute: response
 
   datasource:
-    url: jdbc:mysql://localhost:3306/commerce
-    username: root
-    password: solhee1q2w3e4r!@
+    url: ${DATASOURCE_URL:jdbc:mysql://localhost:3306/emotional_cart}
+    username: ${DATASOURCE_USERNAME:root}
+    password: ${DATASOURCE_PASSWORD:1234}
     driver-class-name: com.mysql.cj.jdbc.Driver
 
   jpa:
     hibernate:
-      ddl-auto: update  # (옵션: create, update, validate, none. 개발 시 `update` 추천)
+      ddl-auto: none  # (옵션: create, update, validate, none. 개발 시 `update` 추천)
     properties:
       hibernate:
         dialect: org.hibernate.dialect.MySQLDialect
@@ -66,9 +68,23 @@ spring:
 logging:
   level:
     org.hibernate.SQL: DEBUG   # (선택) Hibernate 쿼리 로깅 활성화
+    feign:
+      client: DEBUG
+    com:
+      emotionalcart: DEBUG
 
 member:
   find:
-    feign-endpoint: http://localhost:8081
+    feign-endpoint: ${MEMBER_SERVER_URL:http://localhost:8081}
 server:
   port: 8082
+aws:
+  s3:
+    access-key: test
+    secret-key: test
+swagger-config:
+  servers:
+    - url: https://auth-api.emmotional-cart.click
+      description: Production Server
+    - url: http://localhost:8082
+      description: Local Server

@@ -6,6 +6,8 @@ import com.emotionalcart.order.domain.dto.CreateOrderItemOption;
 import com.emotionalcart.order.domain.dto.CreatedOrder;
 import com.emotionalcart.order.domain.entity.Orders;
 import com.emotionalcart.order.domain.enums.PaymentMethod;
+import com.emotionalcart.order.domain.repository.OrderItemHistoryRepository;
+import com.emotionalcart.order.domain.repository.OrderStatisticsRepository;
 import com.emotionalcart.order.infra.advice.exceptions.InvalidValueRequestException;
 import com.emotionalcart.order.infra.advice.exceptions.RequiredValueException;
 import com.emotionalcart.order.infra.order.OrderRepository;
@@ -35,6 +37,12 @@ class CreateOrderServiceTest {
 
     @Mock
     private OrderRepository orderRepository;
+
+    @Mock
+    private OrderStatisticsRepository orderStatisticsRepository;
+
+    @Mock
+    private OrderItemHistoryRepository orderItemHistoryRepository;
 
     @Mock
     private PaymentService paymentService;

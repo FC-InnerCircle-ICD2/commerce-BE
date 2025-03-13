@@ -1,7 +1,7 @@
 package com.emotionalcart.core.config.jwt;
 
-import com.emotionalcart.auth.domain.CustomOAuth2User;
 import com.emotionalcart.auth.application.dto.MemberResponse;
+import com.emotionalcart.auth.domain.CustomOAuth2User;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
@@ -20,7 +20,9 @@ public class JWTFilter extends OncePerRequestFilter {
     private final JWTUtil jwtUtil;
 
     @Override
-    protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException {
+    protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws
+        ServletException,
+        IOException {
 
         // Authorization 헤더에서 토큰 추출
         String authorizationHeader = request.getHeader("Authorization");
@@ -45,8 +47,8 @@ public class JWTFilter extends OncePerRequestFilter {
 
         // 사용자 정보를 담아서 생성
         MemberResponse memberResponse = new MemberResponse();
-        memberResponse.setUserName(userName);
-        memberResponse.setRole("COMMERCE_MEMBER");
+        memberResponse.setName(userName);
+        // memberResponse.setRole("COMMERCE_MEMBER");
 
         // CustomOAuth2User 객체 생성
         CustomOAuth2User customOAuth2User = new CustomOAuth2User(memberResponse);
@@ -60,4 +62,5 @@ public class JWTFilter extends OncePerRequestFilter {
         // 필터 체인 계속 진행
         filterChain.doFilter(request, response);
     }
+
 }
