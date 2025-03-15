@@ -3,12 +3,9 @@ spring:
     name: crawler
   datasource:
     driver-class-name: com.mysql.cj.jdbc.Driver
-    url: jdbc:mysql://innercircle-ecommerce.ct4smm2qc37u.ap-northeast-2.rds.amazonaws.com/ecommerce?serverTimezone=UTC&useSSL=false&allowPublicKeyRetrieval=true&rewriteBatchedStatements=true
-    username: admin
-    password: KzXIA2t68L7wqAHueJzC
-  #    url: jdbc:mysql://127.0.0.1:3306/ecommerce?serverTimezone=UTC&useSSL=false&allowPublicKeyRetrieval=true&rewriteBatchedStatements=true
-  #    username: root
-  #    password: Yeji961126!
+    url: jdbc:mysql://localhost:3306/ecommerce?serverTimezone=UTC&useSSL=false&allowPublicKeyRetrieval=true&rewriteBatchedStatements=true
+    username: root
+    password: 1234
   jpa:
     hibernate:
       ddl-auto: none
@@ -33,3 +30,4 @@ redis:
   stand-alone:
     host: localhost
     port: 6378
+
