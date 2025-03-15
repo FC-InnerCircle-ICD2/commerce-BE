@@ -1,5 +1,6 @@
 package com.emotionalcart.order.infra.redis;
 
+import com.emotionalcart.order.infra.redis.dto.RedisMessage;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.redis.listener.ChannelTopic;
 import org.springframework.stereotype.Service;
@@ -15,9 +16,8 @@ public class RedisPublisherService {
      *
      * @param channel
      * @param message
-     * @param <T>
      */
-    public <T> void pubMsgChannel(String channel, T message) {
+    public void pubMsgChannel(String channel, RedisMessage message) {
         redisPublisher.publish(ChannelTopic.of(channel), message);
     }
 

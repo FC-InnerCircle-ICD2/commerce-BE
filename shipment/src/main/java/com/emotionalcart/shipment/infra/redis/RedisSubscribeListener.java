@@ -8,7 +8,6 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.data.redis.connection.Message;
 import org.springframework.data.redis.connection.MessageListener;
-import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Service;
 
 @Slf4j
@@ -17,17 +16,15 @@ import org.springframework.stereotype.Service;
 public class RedisSubscribeListener implements MessageListener {
 
     private final ApplicationEventPublisher eventPublisher;
-    private final RedisTemplate<String, RedisMessage> template;
     private final ObjectMapper objectMapper;
 
     @Override
     public void onMessage(Message message, byte[] pattern) {
 
         try {
-            String publishMessage = template
-                .getStringSerializer().deserialize(message.getBody());
+            log.info("received message : {}", message);
 
-            RedisMessage messageDto = objectMapper.readValue(publishMessage, RedisMessage.class);
+            RedisMessage messageDto = objectMapper.readValue(message.getBody(), RedisMessage.class);
 
             log.info("Received message from topic [{}]: {}", messageDto.getSender(), message);
 
