@@ -8,24 +8,24 @@
   },
   "orderItems": [
     {
-      "productId": 4004431091503561665,
+      "productId": 4024380338898476615,
       "productOptionDetails": [
         {
-          "productOptionId": 4004431091915682753,
-          "productOptionDetailId": 4004431091914229334,
+          "productOptionId": 4024380349637576061,
+          "productOptionDetailId": 4024380349635270854,
           "quantity": 1,
-          "additionalPrice": 7900
+          "additionalPrice": 8300
         },
 {
-          "productOptionId": 4004431091917370153,
-          "productOptionDetailId": 4004431091922540803,
+          "productOptionId": 4024380349646866630,
+          "productOptionDetailId": 4024380349642557637,
           "quantity": 1,
-          "additionalPrice": 3700
+          "additionalPrice": 6000
         }
       ],
-      "categoryId": 502994,
+      "categoryId": 4024380312588934000,
       "productName": "string",
-      "price": 5160,
+      "price": 16900,
       "quantity": 1
     }
   ],
