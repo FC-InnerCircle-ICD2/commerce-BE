@@ -17,7 +17,7 @@ public class RedisMessage<T> {
         this.message = message;
     }
 
-    public static <T> RedisMessage<T> convert(String sender, T message) {
+    public static <T> RedisMessage convert(String sender, T message) {
         return new RedisMessage<>(sender, message);
     }
 
