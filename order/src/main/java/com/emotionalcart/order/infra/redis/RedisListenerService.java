@@ -25,7 +25,7 @@ public class RedisListenerService implements MessageListener {
 
             RedisMessage messageDto = objectMapper.readValue(publishMessage, RedisMessage.class);
 
-            log.info("Redis Subscribe Channel : " + messageDto.getRoomId());
+            log.info("Redis Subscribe Channel : {}", messageDto.getRoomId());
             log.info("Redis SUB Message : {}", publishMessage);
         } catch (Exception e) {
             log.error("exception :: {}", e.getMessage());
