@@ -5,11 +5,9 @@ import com.emotionalcart.core.exception.ProductException;
 import com.emotionalcart.core.feature.category.Category;
 import com.emotionalcart.core.feature.product.Product;
 import com.emotionalcart.core.feature.product.ProductOption;
-import com.emotionalcart.core.feature.product.ProductOptionDetail;
 import com.emotionalcart.core.feature.provider.Provider;
 import com.emotionalcart.core.feature.review.Review;
 import com.emotionalcart.core.feature.review.ReviewImage;
-import com.emotionalcart.core.feature.review.ReviewStatistic;
 import com.emotionalcart.product.domain.CategoryDataProvider;
 import com.emotionalcart.product.domain.ProductDataProvider;
 import com.emotionalcart.product.domain.ProviderDataProvider;
@@ -40,7 +38,10 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.StringUtils;
 import org.springframework.web.multipart.MultipartFile;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 @Service
@@ -117,7 +118,7 @@ public class ProductService {
 
     public Page<ReadProducts.Response> readProducts(ReadProducts.Request request) {
         if (StringUtils.hasText(request.getKeyword())) {
-            if(request.getRating() != null) {
+            if (request.getRating() != null) {
                 return readProductsFromDatabase(request);
             }
             return readProductsFromElasticSearch(request);
@@ -135,7 +136,8 @@ public class ProductService {
         Map<Long, Double> ratings = productDataProvider.findProductRatings(products.ids());
         ProductImages productImages = ProductImages.from(productDataProvider.findAllProductImages(products.ids()));
 
-        Page<ElasticProduct> elasticProducts = PageableExecutionUtils.getPage(productPage, request.toProductSearch().getPageRequest(), () -> (long) products.ids().size());
+        Page<ElasticProduct> elasticProducts =
+            PageableExecutionUtils.getPage(productPage, request.toProductSearch().getPageRequest(), () -> (long)products.ids().size());
 
         // DTO 변환
         return ReadProducts.Response.toResponse(elasticProducts, categories, providers, ratings, productImages);
@@ -167,31 +169,12 @@ public class ProductService {
 
         // List<OptionDetailsGroup> optionDetailsGrouped = convertToOptionGroups(productOptions);
 
-        for (ProductOption productOption : productOptions) {
-            // 상품 옵션 상세 정보
-            List<ProductOptionDetail> productOptionDetails = productDataProvider
-                .findAllProductOptionDetailsByProductOptionId(productOption.getId());
-
-            List<ReadProductOptionDetails.Response> productOptionDetailResponses = new ArrayList<>();
-
-            for (ProductOptionDetail productOptionDetail : productOptionDetails) {
-                ReadProductOptionDetails.Response productOptionDetailResponse =
-                    ReadProductOptionDetails.Response.toResponse(productOptionDetail);
-                productOptionDetailResponses.add(productOptionDetailResponse);
-            }
-
-            ReadProductOptions.Response productOptionResponse = ReadProductOptions.Response
-                .toResponse(productOption, productOptionDetailResponses);
-
-            productOptionsResponses.add(productOptionResponse);
-        }
-
         // 옵션 상세 ID들의 가능한 모든 조합 생성
         // List<OptionDetailsGroup> optionCombinations = cartesianProduct(optionDetailsGrouped);
 
         // // 공통 메서드 사용하여 재고 정보 조회
         // OptionStockResult stockResult = fetchOptionStockQuantities(productId, optionCombinations);
-        OptionStockResult stockResult = new OptionStockResult(new ArrayList<>(),0);
+        OptionStockResult stockResult = new OptionStockResult(new ArrayList<>(), 0);
 
         // 리뷰 평균 평점 및 리뷰 개수
         ReadProductReviewStatistic.Response reviewStatistic = ReadProductReviewStatistic.Response
@@ -209,7 +192,7 @@ public class ProductService {
         List<ReadProductImages.Response> productImages = ReadProductImages.Response
             .toResponse(productDataProvider.findProductImages(productId));
 
-        return ReadProductDetails.Response.toResponse(product, productOptionsResponses, categoryResponse,
+        return ReadProductDetails.Response.toResponse(product, productOptions, categoryResponse,
                                                       providerResponse, reviewStatistic, productImages, stockResult);
     }
 
@@ -399,7 +382,7 @@ public class ProductService {
         Map<Long, Double> ratings = productDataProvider.findProductRatings(products.ids());
         ProductImages productImages = ProductImages.from(productDataProvider.findAllProductImages(products.ids()));
 
-        Page<ElasticProduct> elasticProducts = PageableExecutionUtils.getPage(productPage, pageable, () -> (long) products.ids().size());
+        Page<ElasticProduct> elasticProducts = PageableExecutionUtils.getPage(productPage, pageable, () -> (long)products.ids().size());
 
         // DTO 변환
         return ReadProducts.Response.toResponse(elasticProducts, categories, providers, ratings, productImages);

@@ -73,7 +73,7 @@ public class CreateOrderService {
                 validateQuantity(createOrder);
                 List<ProductPrice> productPriceList = requestOriginalPriceAndValidatePrice(createOrder);
                 payment(orders, createOrder.getCardInfo());
-                //shipment(orders, productPriceList);
+                shipment(orders, productPriceList);
                 orderHistory(orders);
                 updateQuantity(orders);
                 orderStatistics(orders.getOrderItems());
@@ -203,11 +203,7 @@ public class CreateOrderService {
     private void shipment(Orders orders, List<ProductPrice> productPriceList) {
         log.info("request shipment orders.id: {}", orders.getId());
         OrderShipmentRequest orderShipmentRequest = OrderShipmentRequest.of(orders.getId(), orders.getOrderRecipient(), productPriceList);
-        if (Boolean.TRUE.equals(shipmentService.createShipment(orderShipmentRequest))) {
-            return;
-        }
-        log.error("request fail shipment orders.id: {}", orders.getId());
-        orders.failRequest();
+        shipmentService.createShipment(orderShipmentRequest);
     }
 
 }

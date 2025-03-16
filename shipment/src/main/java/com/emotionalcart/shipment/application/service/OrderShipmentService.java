@@ -33,7 +33,6 @@ public class OrderShipmentService {
 
     private final OrderShipmentRepository orderShipmentRepository;
     private final ProviderRepository providerRepository;
-    private final ShipmentStatusConverter shipmentStatusConverter;
     private final OrdersRepository ordersRepository;
 
     /**

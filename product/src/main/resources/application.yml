@@ -27,9 +27,9 @@ spring:
         format_sql: true
   data:
     redis:
-      host: ${REDIS_SERVER_HOST:localhost}   # Redis server IP address
-      port: ${REDIS_SERVER_PORT:6379}             # Redis server port
-      timeout: 2000           # Connection timeout (in milliseconds)
+      host: ${REDIS_SERVER_HOST:localhost} # Redis server IP address
+      port: ${REDIS_SERVER_PORT:6379} # Redis server port
+      timeout: 2000 # Connection timeout (in milliseconds)
 aws:
   s3:
     access-key: ${AWS_S3_ACCESS_KEY}
