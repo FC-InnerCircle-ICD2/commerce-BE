@@ -1,7 +1,6 @@
 package com.emotionalcart.shipment.infra.redis;
 
 import com.emotionalcart.shipment.application.service.OrderShipmentService;
-import com.emotionalcart.shipment.infra.redis.dto.RedisMessage;
 import com.emotionalcart.shipment.presentation.controller.request.OrderShipmentRequest;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.RequiredArgsConstructor;
@@ -19,10 +18,10 @@ import java.util.List;
 @Service
 public class ShipmentConsumerService {
 
-    private final RedisTemplate<String, RedisMessage> redisTemplate;
+    private final RedisTemplate<String, Object> redisTemplate;
     private final ObjectMapper objectMapper;
     private final OrderShipmentService orderShipmentService;
-    private static final String STREAM_KEY = "shipment_stream";
+    private static final String STREAM_KEY = "shipment:request:stream";
 
     public void consumeShipmentEvents() {
         List<MapRecord<String, Object, Object>> messages = redisTemplate
@@ -32,10 +31,8 @@ public class ShipmentConsumerService {
         for (MapRecord<String, Object, Object> message : messages) {
             try {
                 // JSON 문자열을 객체로 변환
-                String jsonMessage = message.getValue().get("data").toString();
-                RedisMessage redisMessage = objectMapper.readValue(jsonMessage, RedisMessage.class);
                 OrderShipmentRequest orderShipmentRequest =
-                    objectMapper.convertValue(redisMessage.getMessage(), OrderShipmentRequest.class);
+                    objectMapper.readValue((String)message.getValue().get("shipmentOrderRequest"), OrderShipmentRequest.class);
 
                 log.info("배송 요청 처리 - 주문 ID: " + orderShipmentRequest.getOrderId());
                 orderShipmentService.createShipment(orderShipmentRequest.mapToDomain());
