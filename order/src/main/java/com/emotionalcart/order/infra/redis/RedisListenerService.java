@@ -14,7 +14,7 @@ import org.springframework.stereotype.Service;
 @RequiredArgsConstructor
 public class RedisListenerService implements MessageListener {
 
-    private final RedisTemplate<String, RedisMessage> template;
+    private final RedisTemplate<String, Object> template;
     private final ObjectMapper objectMapper;
 
     @Override
